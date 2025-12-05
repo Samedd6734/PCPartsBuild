@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="app-title">PC Parça Uyumluluk Kontrolü</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#16a3b2",
+                        "background-light": "#e5e7eb",
+                        "background-dark": "#0d1117",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "rgb(31, 41, 55)",
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .transition-default { transition: color 0.3s, background-color 0.3s, border-color 0.3s, box-shadow 0.3s; }
+        .icon-transition { transition: opacity 0.3s, transform 0.3s; }
+        body { min-height: max(884px, 100dvh); }
+        
+        /* SweetAlert Karanlık Mod */
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: #1f2937 !important; color: #e5e7eb !important; border: 1px solid #374151;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-200 antialiased transition-default">
+<div class="flex flex-col min-h-screen">
+    <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 transition-default">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+                <img src="Assets/Images/logo.png" alt="Match Parts Logo" class="h-20 transition-all duration-300 filter brightness-50 dark:filter-none">
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300">
+                <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                <a class="text-primary dark:text-primary text-sm font-medium leading-normal transition-colors" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <a id="signup-button" href="kaydol.html" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity" data-i18n="auth-signup">Kayıt Ol</a>
+                <a id="login-button" href="giris.html" class="bg-gray-200 border border-gray-300 text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700" data-i18n="auth-login">Giriş Yap</a>
+
+                <div id="languageSelector" class="relative">
+                    <button id="languageButton" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+                        <span class="material-symbols-outlined text-xl">language</span>
+                    </button>
+                    <div id="languageDropdown" class="absolute right-0 top-full pt-1 w-32 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+                        <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">Türkçe (TR)</a>
+                        <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">English (EN)</a>
+                    </div>
+                </div>
+
+                <div id="account-section" class="relative hidden"> 
+                    <button id="account_circle" class="flex material-icons-outlined cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-white/10 text-white text-xl font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-white/20">
+                        <span>account_circle</span>
+                    </button>
+                    <div id="profileDropdown" class="absolute right-0 top-full pt-1 w-48 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="auth-welcome">Hoş geldin,</p>
+                            <p id="welcome-username" class="text-sm font-medium text-gray-900 dark:text-white truncate">Kullanıcı</p>
+                        </div>
+                        <a href="profil.html" class="block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200" data-i18n="nav-profile">Hesabım</a>
+                        <a href="#" id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-red-600 font-medium hover:bg-red-500 hover:text-white transition-colors duration-150 dark:text-red-400 dark:hover:bg-red-500/50">
+                            <span data-i18n="auth-logout">Çıkış Yap</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <button id="darkModeButton" class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+                    <span id="moonIcon" class="material-symbols-outlined text-xl icon-transition absolute opacity-0 scale-75 dark:opacity-100 dark:scale-100">dark_mode</span>
+                    <span id="sunIcon" class="material-symbols-outlined text-xl icon-transition absolute opacity-100 scale-100 dark:opacity-0 dark:scale-75">light_mode</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight" data-i18n="main-title">PC Parça Uyumluluk Kontrolü</h1>
+            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400" data-i18n="main-subtitle">Yeni bir parça almadan önce mevcut sisteminizle uyumlu olup olmadığını anında öğrenin.</p>
+        </div>
+        
+        <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-lg border border-gray-200 dark:border-gray-800/80 shadow-lg transition-default">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6" data-i18n="current-title">Mevcut Sistem Bileşenleriniz</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="cpu" data-i18n="label-cpu">İşlemci (CPU)</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="cpu" name="cpu">
+                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
+                            <option>Intel Core i9-13900K</option>
+                            <option>AMD Ryzen 9 7950X</option>
+                            <option>Intel Core i5-13600K</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="motherboard" data-i18n="label-motherboard">Anakart</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="motherboard" name="motherboard">
+                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
+                            <option>ASUS ROG STRIX Z790-E</option>
+                            <option>MSI MPG B650I EDGE WIFI</option>
+                            <option>Gigabyte Z790 AORUS ELITE AX</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="ram" data-i18n="label-ram">Bellek (RAM)</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="ram" name="ram">
+                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
+                            <option>Corsair Vengeance 32GB DDR5</option>
+                            <option>G.Skill Trident Z5 32GB DDR5</option>
+                            <option>Kingston FURY Beast 16GB DDR4</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="psu" data-i18n="label-psu">Güç Kaynağı (PSU)</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="psu" name="psu">
+                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
+                            <option>Corsair RM850x 850W</option>
+                            <option>SeaSonic FOCUS Plus Gold 750W</option>
+                            <option>be quiet! Straight Power 11 1000W</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-lg border border-gray-200 dark:border-gray-800/80 shadow-lg transition-default">
+                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6" data-i18n="new-title">Yeni Bileşen</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="new-component-type" data-i18n="label-type">Bileşen Türü</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="new-component-type" name="new-component-type">
+                            <option data-i18n="type-gpu">Ekran Kartı (GPU)</option>
+                            <option data-i18n="type-storage">Depolama (SSD/HDD)</option>
+                            <option data-i18n="type-cooler">Soğutucu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="new-component" data-i18n="label-component">Kontrol Edilecek Bileşen</label>
+                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="new-component" name="new-component">
+                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
+                            <option>NVIDIA GeForce RTX 4090</option>
+                            <option>AMD Radeon RX 7900 XTX</option>
+                            <option>NVIDIA GeForce RTX 4070 Ti</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button class="bg-primary text-black font-bold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity shadow-lg shadow-primary/20" data-i18n="action-check">
+                Uyumluluğu Kontrol Et
+            </button>
+            <button id="expertOpinionButton" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/30 disabled:opacity-50 mt-4 md:mt-0" disabled data-i18n="action-expert">
+                Parça Uzman Görüşü Al ✨
+            </button>
+        </div>
+
+        <div class="mt-12 max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8" data-i18n="results-title">Kontrol Sonuçları</h2>
+            <div class="bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-lg border border-gray-200 dark:border-gray-800/80 shadow-lg transition-default">
+                <div class="flex flex-col md:flex-row items-center gap-6 p-4 rounded-lg bg-emerald-100 border border-emerald-300 dark:bg-emerald-900/50 dark:border-emerald-800">
+                    <div class="flex-shrink-0">
+                        <span class="material-symbols-outlined text-4xl text-emerald-600 dark:text-emerald-500">verified</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-emerald-700 dark:text-emerald-300" data-i18n="result-success-title">Tebrikler, Sisteminiz Uyumlu!</h3>
+                        <p class="mt-1 text-emerald-600 dark:text-emerald-400" data-i18n="result-success-text">Seçtiğiniz ekran kartı, mevcut sistem bileşenleriniz ile tamamen uyumludur. Herhangi bir sorun yaşamadan montaj yapabilirsiniz.</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-start gap-6 p-4 mt-6 rounded-lg bg-red-100 border border-red-300 dark:bg-red-900/50 dark:border-red-800">
+                    <div class="flex-shrink-0">
+                        <span class="material-symbols-outlined text-4xl text-red-600 dark:text-red-500">error</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-red-700 dark:text-red-300" data-i18n="result-fail-title">Uyumluluk Sorunu Tespit Edildi!</h3>
+                        <ul class="mt-2 space-y-2 list-disc list-inside text-red-600 dark:text-red-400">
+                            <li data-i18n="fail-reason-1"><strong class="font-medium">Anakart Soketi:</strong> Seçilen işlemci, anakartınızın LGA1200 soketi ile uyumlu değil. LGA1700 soketli bir anakart gereklidir.</li>
+                            <li data-i18n="fail-reason-2"><strong class="font-medium">Güç Kaynağı:</strong> Seçilen ekran kartı için önerilen minimum güç kaynağı 850W'tır. Mevcut 750W güç kaynağınız yetersiz kalabilir.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center gap-6 p-4 mt-6 rounded-lg bg-sky-100 border border-sky-300 dark:bg-sky-900/50 dark:border-sky-800">
+                    <div class="flex-shrink-0">
+                        <span class="material-symbols-outlined text-4xl text-sky-600 dark:text-sky-500">info</span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-sky-700 dark:text-sky-300" data-i18n="result-info-title">Bilgilendirme</h3>
+                        <p class="mt-1 text-sky-600 dark:text-sky-400" data-i18n="result-info-text">Kontrole başlamak için lütfen yukarıdaki alanlardan mevcut sisteminizi ve kontrol etmek istediğiniz yeni parçayı seçin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full mt-20 py-8 border-t border-gray-200 dark:border-gray-800">
+        <div class="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
+            <p>© 2025 Match Parts. Tüm Hakları Saklıdır. Bize Ulaşın: <a class="text-primary hover:underline" href="mailto:MatchParts@gmail.com">MatchParts@gmail.com</a></p>
+        </div>
+    </footer>
+</div>
+
+<div id="geminiModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b pb-3 mb-4 border-gray-200 dark:border-gray-700">
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-900 dark:text-white" data-i18n="action-expert">Parça Uzman Görüşü Al</h3>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="modalContent" class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap"></div>
+    </div>
+</div>
+
+<script>
+    // Axios kütüphanesini dahil et
+    document.write('<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></' + 'script>');
+
+    // Çeviri Sözlüğü
+    const translations = {
+        tr: {
+            "app-title": "PC Parça Uyumluluk Kontrolü",
+            "nav-wizard": "PC Toplama Sihirbazı",
+            "nav-compatibility": "Parça Uyumluluk Kontrolü",
+            "nav-info": "PC Bileşenleri",
+            "auth-signup": "Kayıt Ol",
+            "auth-login": "Giriş Yap",
+            "auth-welcome": "Hoş geldin,",
+            "nav-profile": "Hesabım",
+            "auth-logout": "Çıkış Yap",
+            "main-title": "PC Parça Uyumluluk Kontrolü",
+            "main-subtitle": "Yeni bir parça almadan önce mevcut sisteminizle uyumlu olup olmadığını anında öğrenin.",
+            "current-title": "Mevcut Sistem Bileşenleriniz",
+            "label-cpu": "İşlemci (CPU)",
+            "label-motherboard": "Anakart",
+            "label-ram": "Bellek (RAM)",
+            "label-psu": "Güç Kaynağı (PSU)",
+            "new-title": "Yeni Bileşen",
+            "label-type": "Bileşen Türü",
+            "type-gpu": "Ekran Kartı (GPU)",
+            "type-storage": "Depolama (SSD/HDD)",
+            "type-cooler": "Soğutucu",
+            "label-component": "Kontrol Edilecek Bileşen",
+            "select-default": "Seçim yapınız...",
+            "action-check": "Uyumluluğu Kontrol Et",
+            "action-expert": "Parça Uzman Görüşü Al ✨",
+            "results-title": "Kontrol Sonuçları",
+            "result-success-title": "Tebrikler, Sisteminiz Uyumlu!",
+            "result-success-text": "Seçtiğiniz ekran kartı, mevcut sistem bileşenleriniz ile tamamen uyumludur. Herhangi bir sorun yaşamadan montaj yapabilirsiniz.",
+            "fail-reason-1": "<strong class=\"font-medium\">Anakart Soketi:</strong> Seçilen işlemci, anakartınızın LGA1200 soketi ile uyumlu değil. LGA1700 soketli bir anakart gereklidir.",
+            "fail-reason-2": "<strong class=\"font-medium\">Güç Kaynağı:</strong> Seçilen ekran kartı için önerilen minimum güç kaynağı 850W'tır. Mevcut 750W güç kaynağınız yetersiz kalabilir.",
+            "result-info-title": "Bilgilendirme",
+            "result-info-text": "Kontrole başlamak için lütfen yukarıdaki alanlardan mevcut sisteminizi ve kontrol etmek istediğiniz yeni parçayı seçin.",
+            "error-api": "Analiz alınamadı. Lütfen daha sonra tekrar deneyin.",
+            "error-selection": "Lütfen analiz için mevcut sistemden en az 1 parça ve yeni bileşen seçin.",
+            "loading-text": "Analiz ediliyor..."
+        },
+        en: {
+            "app-title": "PC Part Compatibility Check",
+            "nav-wizard": "PC Build Wizard",
+            "nav-compatibility": "Part Compatibility Check",
+            "nav-info": "PC Components",
+            "auth-signup": "Sign Up",
+            "auth-login": "Log In",
+            "auth-welcome": "Welcome,",
+            "nav-profile": "My Account",
+            "auth-logout": "Log Out",
+            "main-title": "PC Part Compatibility Check",
+            "main-subtitle": "Instantly find out if a new component is compatible with your current system before you buy it.",
+            "current-title": "Your Current System Components",
+            "label-cpu": "Processor (CPU)",
+            "label-motherboard": "Motherboard",
+            "label-ram": "Memory (RAM)",
+            "label-psu": "Power Supply (PSU)",
+            "new-title": "New Component",
+            "label-type": "Component Type",
+            "type-gpu": "Graphics Card (GPU)",
+            "type-storage": "Storage (SSD/HDD)",
+            "type-cooler": "Cooler",
+            "label-component": "Component to Check",
+            "select-default": "Select a component...",
+            "action-check": "Check Compatibility",
+            "action-expert": "Get Expert Part Opinion ✨",
+            "results-title": "Check Results",
+            "result-success-title": "Congratulations, Your System is Compatible!",
+            "result-success-text": "The selected graphics card is fully compatible with your current system components. You can proceed with assembly without any issues.",
+            "fail-reason-1": "<strong class=\"font-medium\">Motherboard Socket:</strong> The selected processor is not compatible with your motherboard's LGA1200 socket. An LGA1700 socket motherboard is required.",
+            "fail-reason-2": "<strong class=\"font-medium\">Power Supply:</strong> The recommended minimum power supply for the selected graphics card is 850W. Your current 750W PSU might be insufficient.",
+            "result-info-title": "Information",
+            "result-info-text": "To start the check, please select your current system and the new part you want to check from the fields above.",
+            "error-api": "Could not retrieve analysis. Please try again later.",
+            "error-selection": "Please select at least 1 current part and the new component for analysis."
+        }
+    };
+    
+    translations.tr["analysis-prompt-title"] = "Aşağıdaki mevcut sistem bileşenleri göz önüne alındığında, yeni bileşenin uyumluluğunu, faydalarını, olası darboğazları ve teknik uyumunu (soket/güç vb.) analiz et ve Markdown formatında yanıtla.";
+    translations.en["analysis-prompt-title"] = "Considering the existing system components below, analyze the compatibility, benefits, potential bottlenecks, and technical fit (socket/power, etc.) of the new component, and respond in Markdown format.";
+
+    // Gemini API
+    const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+    const API_KEY = ""; // Buraya kendi API anahtarını gireceksin
+    const MAX_RETRIES = 5;
+
+    const getModalElements = () => ({
+        modal: document.getElementById('geminiModal'),
+        modalContent: document.getElementById('modalContent'),
+        modalTitle: document.getElementById('modalTitle')
+    });
+
+    const openModal = (title, content, isLoading = false) => {
+        const { modal, modalTitle, modalContent } = getModalElements();
+        modalTitle.textContent = title;
+        modalContent.innerHTML = isLoading 
+            ? `<div class="flex items-center justify-center space-x-2 text-primary">
+                   <svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"></circle><path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                   <span data-i18n="loading-text">Analiz ediliyor...</span>
+                 </div>`
+            : content;
+        modal.classList.remove('hidden');
+    };
+
+    const closeModal = () => {
+        const { modal } = getModalElements();
+        modal.classList.add('hidden');
+    };
+
+    const callGeminiAPI = async (prompt, retries = 0) => {
+        try {
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: "You are a specialized PC component expert. Analyze the selected part's impact on the existing system, focusing on benefits, potential bottlenecks, and technical fit. Respond using Markdown." }] }
+            };
+            const response = await fetch(API_URL + API_KEY, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                if (response.status === 429 && retries < MAX_RETRIES) {
+                    const delay = Math.pow(2, retries) * 1000;
+                    console.warn(`API Rate Limit. Retrying in ${delay / 1000}s...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return callGeminiAPI(prompt, retries + 1);
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text || translations[localStorage.getItem('lang') || 'tr']['error-api'];
+            return text;
+        } catch (error) {
+            console.error("Gemini API Error:", error);
+            return translations[localStorage.getItem('lang') || 'tr']['error-api'];
+        }
+    };
+
+    const getExpertOpinion = async () => {
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        const currentCpu = document.getElementById('cpu').value;
+        const currentMotherboard = document.getElementById('motherboard').value;
+        const currentRam = document.getElementById('ram').value;
+        const currentPsu = document.getElementById('psu').value;
+        const newComponentType = document.getElementById('new-component-type').value;
+        const newComponent = document.getElementById('new-component').value;
+        const defaultText = translations[currentLang]['select-default'];
+        
+        const existingParts = [currentCpu, currentMotherboard, currentRam, currentPsu].filter(val => val !== defaultText);
+        
+        if (existingParts.length === 0 || newComponent === defaultText) {
+            // SweetAlert ile hata gösterimi (Daha modern)
+            Swal.fire({
+                title: 'Eksik Bilgi',
+                text: translations[currentLang]['error-selection'],
+                icon: 'warning',
+                background: '#1f2937',
+                color: '#fff',
+                confirmButtonColor: '#16a3b2'
+            });
+            return;
+        }
+        
+        const systemParts = existingParts.join(', ');
+        const prompt = `${translations[currentLang]['analysis-prompt-title']}\n\nMevcut Sistem: ${systemParts}\nYeni Bileşen: ${newComponentType} - ${newComponent}`;
+        
+        openModal(translations[currentLang]['action-expert'], '', true);
+        const resultText = await callGeminiAPI(prompt);
+        openModal(translations[currentLang]['action-expert'], resultText);
+    };
+
+    const checkExpertButtonStatus = () => {
+        const expertButton = document.getElementById('expertOpinionButton');
+        const currentCpu = document.getElementById('cpu').value;
+        const newComponent = document.getElementById('new-component').value;
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        const defaultText = translations[currentLang]['select-default'];
+        const isReady = currentCpu !== defaultText && newComponent !== defaultText;
+        expertButton.disabled = !isReady;
+    }
+
+    // Dil ve Tema
+    const setLanguage = (lang) => {
+        localStorage.setItem('lang', lang);
+        document.documentElement.lang = lang;
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = translations[lang][key];
+            if (translation) {
+                if (key.includes('fail-reason')) {
+                    element.innerHTML = translation;
+                } else {
+                    element.textContent = translation;
+                }
+            }
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            const translation = translations[lang][key];
+            if (translation) element.placeholder = translation;
+        });
+        document.title = translations[lang]["app-title"];
+        document.querySelectorAll('option[data-i18n="select-default"]').forEach(opt => {
+            opt.textContent = translations[lang]['select-default'];
+        });
+        
+        const typeGpu = document.querySelector('option[data-i18n="type-gpu"]');
+        if (typeGpu) typeGpu.textContent = translations[lang]['type-gpu'];
+        const typeStorage = document.querySelector('option[data-i18n="type-storage"]');
+        if (typeStorage) typeStorage.textContent = translations[lang]['type-storage'];
+        const typeCooler = document.querySelector('option[data-i18n="type-cooler"]');
+        if (typeCooler) typeCooler.textContent = translations[lang]['type-cooler'];
+
+        checkExpertButtonStatus();
+    };
+
+    const toggleDarkMode = () => {
+        const html = document.documentElement;
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const accountCircleButton = document.getElementById('account_circle');
+        const isDarkMode = html.classList.contains('dark');
+        const newTheme = isDarkMode ? 'light' : 'dark';
+        if (isDarkMode) {
+            html.classList.remove('dark');
+            if (accountCircleButton) {
+                accountCircleButton.classList.remove('bg-white/10', 'text-white'); 
+                accountCircleButton.classList.add('bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
+            }
+        } else {
+            html.classList.add('dark');
+            if (accountCircleButton) {
+                accountCircleButton.classList.remove('bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white'); 
+                accountCircleButton.classList.add('bg-white/10', 'text-white');
+            }
+        }
+        localStorage.setItem('theme_builder', newTheme);
+        if (sunIcon && moonIcon) {
+            if (newTheme === 'light') {
+                moonIcon.classList.remove('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+                sunIcon.classList.remove('opacity-0', 'scale-75');
+                sunIcon.classList.add('opacity-100', 'scale-100'); 
+            } else {
+                sunIcon.classList.remove('opacity-100', 'scale-100'); 
+                sunIcon.classList.add('opacity-0', 'scale-75'); 
+                moonIcon.classList.remove('opacity-0', 'scale-75');
+                moonIcon.classList.add('opacity-100', 'scale-100');
+            }
+        }
+    };
+
+    const initializeTheme = (key = 'theme_builder') => {
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem(key);
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const accountCircleButton = document.getElementById('account_circle');
+        let isDark = false;
+        if (savedTheme === 'dark') {
+            html.classList.add('dark');
+            isDark = true;
+        } else if (savedTheme === 'light') {
+            html.classList.remove('dark');
+            isDark = false;
+        } else if (html.classList.contains('dark')) {
+            localStorage.setItem(key, 'dark');
+            isDark = true;
+        } else {
+            localStorage.setItem(key, 'light');
+            isDark = false;
+        }
+        if (accountCircleButton) {
+            accountCircleButton.classList.remove('bg-white/10', 'text-white', 'bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
+            if (isDark) {
+                accountCircleButton.classList.add('bg-white/10', 'text-white'); 
+            } else {
+                accountCircleButton.classList.add('bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white'); 
+            }
+        }
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                moonIcon.classList.add('opacity-100', 'scale-100');
+                sunIcon.classList.add('opacity-0', 'scale-75');
+            } else {
+                sunIcon.classList.add('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+            }
+        }
+    };
+    
+    const initializeLang = () => {
+        const savedLang = localStorage.getItem('lang');
+        let currentLang = savedLang || document.documentElement.lang || 'tr'; 
+        setLanguage(currentLang);
+    };
+
+    // DOM Yüklendiğinde
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme('theme_builder'); 
+        initializeLang();
+        
+        // Dil Menüsü
+        const languageSelector = document.getElementById('languageSelector');
+        const languageButton = document.getElementById('languageButton');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageOptions = languageDropdown.querySelectorAll('.language-option');
+        const darkModeButton = document.getElementById('darkModeButton');
+        
+        const hideDropdown = () => { languageDropdown.classList.add('hidden'); };
+        const showDropdown = () => { languageDropdown.classList.remove('hidden'); };
+        languageButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            if (languageDropdown.classList.contains('hidden')) { showDropdown(); } else { hideDropdown(); }
+        });
+        languageSelector.addEventListener('mouseleave', function() { hideDropdown(); });
+        document.addEventListener('click', function(event) {
+            if (!languageSelector.contains(event.target)) { hideDropdown(); }
+        });
+        languageOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const selectedLang = this.getAttribute('data-lang');
+                setLanguage(selectedLang);
+                hideDropdown();
+            });
+        });
+
+        if (darkModeButton) {
+            darkModeButton.addEventListener('click', toggleDarkMode);
+        }
+        
+        const expertButton = document.getElementById('expertOpinionButton');
+        if (expertButton) {
+            expertButton.addEventListener('click', getExpertOpinion);
+        }
+        const formControls = document.querySelectorAll('#cpu, #motherboard, #ram, #psu, #new-component-type, #new-component');
+        formControls.forEach(control => {
+            control.addEventListener('change', checkExpertButtonStatus);
+        });
+        checkExpertButtonStatus();
+
+        // --- GİRİŞ / ÇIKIŞ & PROFİL YÖNETİMİ ---
+        const loginButton = document.getElementById('login-button');
+        const signupButton = document.getElementById('signup-button');
+        const accountSection = document.getElementById('account-section');
+        const profileButton = document.getElementById('account_circle');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const welcomeUsername = document.getElementById('welcome-username');
+        const logoutButton = document.getElementById('logout-button');
+        
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        if (loggedInUser) {
+            if (loginButton) loginButton.style.display = 'none';
+            if (signupButton) signupButton.style.display = 'none';
+            if (accountSection) {
+                accountSection.classList.remove('hidden'); 
+                accountSection.classList.add('flex');
+            }
+            if (welcomeUsername) welcomeUsername.textContent = loggedInUser;
+        } else {
+            if (loginButton) loginButton.style.display = 'flex';
+            if (signupButton) signupButton.style.display = 'flex';
+            if (accountSection) accountSection.classList.add('hidden');
+        }
+
+        if (profileButton && profileDropdown) {
+            profileButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                profileDropdown.classList.toggle('hidden');
+            });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (profileDropdown && !profileDropdown.classList.contains('hidden') && !accountSection.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+
+        // --- MODERN ÇIKIŞ YAP (SWEETALERT) ---
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                
+                Swal.fire({
+                    title: 'Çıkış Yapılıyor...',
+                    text: 'Oturumunuz güvenli bir şekilde kapatılıyor. Tekrar bekleriz!',
+                    icon: 'success',
+                    background: '#1f2937', 
+                    color: '#fff',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                }).then(() => {
+                    localStorage.removeItem('loggedInUser');
+                    window.location.reload(); 
+                });
+            });
+        }
+    });
+</script>
+</body>
+</html>
