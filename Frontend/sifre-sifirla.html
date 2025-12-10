@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Yeni Şifre Belirle - Match Parts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#16a3b2", "background-dark": "#0d1117" },
+                    fontFamily: { display: ["Poppins", "sans-serif"] },
+                },
+            },
+        };
+    </script>
+    <style> 
+        body { min-height: 100vh; } 
+        #bg-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -100; object-fit: cover; opacity: 0.1; } 
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 } 
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: #1f2937 !important;
+            color: #e5e7eb !important;
+            border: 1px solid #374151;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark font-display text-gray-300 transition-default overflow-hidden">
+    <video autoplay="" id="bg-video" loop="" muted="" playsinline="">
+        <source src="Assets/Videos/video1.mp4" type="video/mp4"/>
+    </video>
+
+    <div class="relative min-h-screen flex items-center justify-center p-4 lg:p-8">
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+        <div class="relative w-full max-w-md p-6 sm:p-8 bg-gray-900/90 rounded-lg shadow-2xl">
+            <header class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-white">Yeni Şifrenizi Belirleyin</h1>
+            </header>
+            <main>
+                <form id="resetPasswordForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1" for="password">Yeni Şifre</label>
+                        <input class="w-full bg-gray-800 border-gray-700 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" 
+                               id="password" name="password" placeholder="••••••••" type="password" required/>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1" for="repeat-password">Yeni Şifre (Tekrar)</label>
+                        <input class="w-full bg-gray-800 border-gray-700 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" 
+                               id="repeat-password" name="repeat-password" placeholder="••••••••" type="password" required/>
+                    </div>
+
+                    <button id="submitButton" class="w-full bg-primary text-white font-semibold py-3 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 mt-2 hover:bg-primary/90 transition-colors" type="submit">
+                        Şifreyi Güncelle
+                    </button>
+                </form>
+            </main>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const BASE_URL = "https://pcpartsbuild.com/api/auth";
+        
+        const form = document.getElementById('resetPasswordForm');
+        const submitButton = document.getElementById('submitButton');
+
+        // URL'den Token ve Email'i alıyoruz
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get('email');
+        let token = params.get('token');
+
+        // Token'daki boşluk karakterlerini düzelt (URL'de + işareti bazen boşluğa dönüşür)
+        if(token) token = token.replace(/ /g, '+');
+
+        // Eğer linkte token yoksa hata ver ve geri gönder
+        if (!email || !token) {
+            Swal.fire({
+                title: 'Hatalı Link',
+                text: 'Lütfen şifremi unuttum işlemini tekrar başlatın.',
+                icon: 'error',
+                background: '#1f2937', color: '#fff', confirmButtonColor: '#d33'
+            }).then(() => {
+                window.location.href = 'sifremi-unuttum.html';
+            });
+            return;
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const repeatPassword = document.getElementById('repeat-password').value;
+
+            if (password !== repeatPassword) {
+                Swal.fire({
+                    title: 'Hata', text: 'Şifreler eşleşmiyor!',
+                    icon: 'warning', background: '#1f2937', color: '#fff', confirmButtonColor: '#16a3b2'
+                });
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Güncelleniyor...';
+
+            try {
+                const response = await fetch(`${BASE_URL}/reset-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        token: token,
+                        newPassword: password
+                    })
+                });
+
+                let result;
+                try { result = await response.json(); } catch(e) { result = {}; }
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Şifre Değiştirildi!',
+                        text: 'Yeni şifrenizle giriş yapabilirsiniz. Yönlendiriliyorsunuz...',
+                        icon: 'success',
+                        background: '#1f2937', color: '#fff', confirmButtonColor: '#16a3b2',
+                        timer: 3000, timerProgressBar: true
+                    }).then(() => {
+                        window.location.href = 'giris.html'; // Giriş sayfasına yönlendir
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'İşlem Başarısız',
+                        text: result.message || 'Şifre sıfırlanamadı.',
+                        icon: 'error',
+                        background: '#1f2937', color: '#fff', confirmButtonColor: '#d33'
+                    });
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Şifreyi Güncelle';
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Bağlantı Hatası', text: 'Sunucuya ulaşılamadı.',
+                    icon: 'error', background: '#1f2937', color: '#fff'
+                });
+                submitButton.disabled = false;
+                submitButton.textContent = 'Şifreyi Güncelle';
+            }
+        });
+    });
+</script>
+</body>
+</html>

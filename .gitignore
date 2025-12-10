@@ -1,0 +1,40 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build outputs
+bin/
+obj/
+Debug/
+Release/
+appsettings.json
+appsettings.Development.json
+
+# Rider
+.idea/
+
+# Logs
+*.log
+
+# ASP.NET temp files
+*.db
+*.db-wal
+*.db-shm
+
+# Auto-generated files
+*.cache
+*.pdb
+*.dll
+*.exe
+
+# NuGet
+*.nupkg
+packages/
+
+# Publish folder
+publish/
+
+# Others
+*.tmp
+*.temp
