@@ -35,7 +35,7 @@
 
 <body class="bg-background-dark font-display text-gray-300 transition-default overflow-hidden">
     <video autoplay="" id="bg-video" loop="" muted="" playsinline="">
-        <source src="Assets/Videos/video1.mp4" type="video/mp4"/>
+        <source src="Assets/Videos/Video1.webm" type="video/webm"/>
         Your browser does not support the video tag.
     </video>
 
@@ -57,7 +57,7 @@
 
     <div class="relative min-h-screen grid grid-cols-1 lg:grid-cols-2">
         <div class="hidden lg:flex flex-col items-center justify-center text-center px-8">
-            <img src="Assets/Images/logo.png" alt="Match Parts Logo" class="h-40">
+            <img src="Assets/Images/logo.webp" alt="PCPartsBuild Logo" class="h-40">
             <h2 class="font-bold text-5xl text-white mt-4"></h2>
             <p class="text-gray-400 mt-2 max-w-sm" data-i18n="auth-welcome-subtitle">Hayalinizdeki Bilgisayarı hassasiyet ve güvenle tasarlayın.</p>
         </div>
@@ -104,8 +104,8 @@
                 </footer>
             </div>
             <footer class="absolute bottom-8"> 
-                <p class="text-xs text-gray-500"> © 2025 Match Parts. Tüm Hakları Saklıdır. Bize Ulaşın: 
-                    <a class="text-primary hover:underline" href="mailto:MatchParts@gmail.com">MatchParts@gmail.com</a>
+                <p class="text-xs text-gray-500"> © 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın: 
+                    <a class="text-primary hover:underline" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a>
                 </p>
             </footer>
         </div>
@@ -129,8 +129,8 @@
     // Çeviri Sözlüğü
     const translations = {
         tr: {
-            "app-builder": "Match Parts",
-            "auth-signup-title": "Giriş Yap - Match Parts",
+            "app-builder": "PCPartsBuild",
+            "auth-signup-title": "Giriş Yap - PCPartsBuild",
             "auth-welcome-title": "Hoşgeldiniz",
             "auth-login-title": "Giriş Yap",
             "auth-login-subtitle": "Lütfen hesabınıza giriş yapın.",
@@ -143,8 +143,8 @@
             "link-signup": "Kayıt Ol",
         },
         en: {
-            "app-builder": "Match Parts",
-            "auth-signup-title": "Log In - Match Parts",
+            "app-builder": "PCPartsBuild",
+            "auth-signup-title": "Log In - PCPartsBuild",
             "auth-welcome-title": "Welcome Back",
             "auth-login-title": "Log In",
             "auth-login-subtitle": "Please log into your account.",
@@ -258,7 +258,7 @@
                             background: '#1f2937',
                             color: '#fff',
                             confirmButtonColor: '#16a3b2',
-                            timer: 2000,
+                            timer: 1000,
                             timerProgressBar: true,
                             showConfirmButton: false
                         }).then(() => {
