@@ -28,13 +28,12 @@ namespace PCPartsAPI.Controllers
             _memoryCache = memoryCache;
         }
 
-        // --- 1. KAYIT OLMA ---
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             var user = new IdentityUser
             {
-                UserName = registerDto.Email,
+                UserName = registerDto.Username,
                 Email = registerDto.Email
             };
 
