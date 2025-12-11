@@ -97,126 +97,188 @@
         </nav>
     </header>
 
-    <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
-        <div class="text-center max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight" data-i18n="main-title">PC Parça Uyumluluk Kontrolü</h1>
-            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400" data-i18n="main-subtitle">Yeni bir parça almadan önce mevcut sisteminizle uyumlu olup olmadığını anında öğrenin.</p>
-        </div>
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+        <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight mb-4" data-i18n="main-title">
+            PC Uyumluluk Kontrolü
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400" data-i18n="main-subtitle">
+            Sisteminizi aşağıdaki slotlara yerleştirin. Yapay zeka ve algoritmalarımız parçalarınızın uyumunu anında denetlesin.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
         
-        <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-lg border border-gray-200 dark:border-gray-800/80 shadow-lg transition-default">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6" data-i18n="current-title">Mevcut Sistem Bileşenleriniz</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="cpu" data-i18n="label-cpu">İşlemci (CPU)</label>
-                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="cpu" name="cpu">
-                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
-                            <option>Intel Core i9-13900K</option>
-                            <option>AMD Ryzen 9 7950X</option>
-                            <option>Intel Core i5-13600K</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="motherboard" data-i18n="label-motherboard">Anakart</label>
-                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="motherboard" name="motherboard">
-                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
-                            <option>ASUS ROG STRIX Z790-E</option>
-                            <option>MSI MPG B650I EDGE WIFI</option>
-                            <option>Gigabyte Z790 AORUS ELITE AX</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="ram" data-i18n="label-ram">Bellek (RAM)</label>
-                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="ram" name="ram">
-                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
-                            <option>Corsair Vengeance 32GB DDR5</option>
-                            <option>G.Skill Trident Z5 32GB DDR5</option>
-                            <option>Kingston FURY Beast 16GB DDR4</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="psu" data-i18n="label-psu">Güç Kaynağı (PSU)</label>
-                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="psu" name="psu">
-                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
-                            <option>Corsair RM850x 850W</option>
-                            <option>SeaSonic FOCUS Plus Gold 750W</option>
-                            <option>be quiet! Straight Power 11 1000W</option>
-                        </select>
-                    </div>
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                    <span class="material-symbols-outlined text-2xl">memory</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-cpu">İşlemci</h3>
+            </div>
+            <select id="cpu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+                </select>
+            <p id="error-cpu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
+                    <span class="material-symbols-outlined text-2xl">developer_board</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-motherboard">Anakart</h3>
+            </div>
+            <select id="motherboard" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-motherboard" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600 dark:text-green-400">
+                    <span class="material-symbols-outlined text-2xl">straighten</span> </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-ram">Bellek (RAM)</h3>
+            </div>
+            <select id="ram" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-ram" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                    <span class="material-symbols-outlined text-2xl">videogame_asset</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-gpu">Ekran Kartı</h3>
+            </div>
+            <select id="gpu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-gpu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-orange-50 dark:bg-orange-900/20 rounded-lg text-orange-600 dark:text-orange-400">
+                    <span class="material-symbols-outlined text-2xl">hard_drive</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-storage">Depolama</h3>
+            </div>
+            <select id="storage" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-storage" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300">
+                    <span class="material-symbols-outlined text-2xl">computer</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="tab-case">Kasa</h3>
+            </div>
+            <select id="case" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-case" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-yellow-600 dark:text-yellow-400">
+                    <span class="material-symbols-outlined text-2xl">power</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-psu">Güç Kaynağı</h3>
+            </div>
+            <select id="psu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-psu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-cyan-50 dark:bg-cyan-900/20 rounded-lg text-cyan-600 dark:text-cyan-400">
+                    <span class="material-symbols-outlined text-2xl">mode_fan</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-cooler">Soğutucu</h3>
+            </div>
+            <select id="cpuCooler" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-cpuCooler" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="text-center mb-12">
+        <button id="checkCompatibilityBtn" class="bg-primary text-white font-bold py-3.5 px-10 rounded-xl text-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-xl shadow-primary/25" data-i18n="action-check">
+            Uyumluluğu Kontrol Et
+        </button>
+        <button id="expertOpinionButton" class="bg-indigo-600 text-white font-bold py-3.5 px-10 rounded-xl text-lg hover:bg-indigo-700 hover:scale-105 transition-all shadow-xl shadow-indigo-600/30 disabled:opacity-50 disabled:hover:scale-100 mt-4 md:mt-0 md:ml-4" disabled data-i18n="action-expert">
+            Parça Uzman Görüşü Al ✨
+        </button>
+    </div>
+
+    <div class="max-w-5xl mx-auto">
+        <div id="results-container" class="bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-2xl border border-gray-200 dark:border-gray-800/80 shadow-2xl transition-default">
+            
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-800 pb-4" data-i18n="results-title">Kontrol Sonuçları</h2>
+
+            <div id="result-info" class="flex flex-col md:flex-row items-center gap-6 p-6 rounded-xl bg-sky-50 border border-sky-200 dark:bg-sky-900/20 dark:border-sky-800/50">
+                <div class="flex-shrink-0 p-3 bg-sky-100 dark:bg-sky-900/50 rounded-full">
+                    <span class="material-symbols-outlined text-3xl text-sky-600 dark:text-sky-400">info</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 class="text-lg font-bold text-sky-800 dark:text-sky-300" data-i18n="result-info-title">Sistem Hazır Bekliyor</h3>
+                    <p class="mt-1 text-sky-700 dark:text-sky-400 text-sm" data-i18n="result-info-text">
+                        Analize başlamak için yukarıdaki slotlara en az iki parça (Örn: İşlemci ve Anakart) yerleştirin.
+                    </p>
                 </div>
             </div>
 
-            <div class="bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-lg border border-gray-200 dark:border-gray-800/80 shadow-lg transition-default">
-                <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6" data-i18n="new-title">Yeni Bileşen</h2>
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="new-component-type" data-i18n="label-type">Bileşen Türü</label>
-                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="new-component-type" name="new-component-type">
-                            <option data-i18n="type-gpu">Ekran Kartı (GPU)</option>
-                            <option data-i18n="type-storage">Depolama (SSD/HDD)</option>
-                            <option data-i18n="type-cooler">Soğutucu</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2" for="new-component" data-i18n="label-component">Kontrol Edilecek Bileşen</label>
-                        <select class="w-full bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded-lg focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 transition-default" id="new-component" name="new-component">
-                            <option selected="" data-i18n="select-default">Seçim yapınız...</option>
-                            <option>NVIDIA GeForce RTX 4090</option>
-                            <option>AMD Radeon RX 7900 XTX</option>
-                            <option>NVIDIA GeForce RTX 4070 Ti</option>
-                        </select>
-                    </div>
+            <div id="result-success" class="hidden flex-col md:flex-row items-center gap-6 p-6 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800/50">
+                <div class="flex-shrink-0 p-3 bg-emerald-100 dark:bg-emerald-900/50 rounded-full">
+                    <span class="material-symbols-outlined text-3xl text-emerald-600 dark:text-emerald-400">verified</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 class="text-lg font-bold text-emerald-800 dark:text-emerald-300" data-i18n="result-success-title">Mükemmel Uyum!</h3>
+                    <p id="success-text" class="mt-1 text-emerald-700 dark:text-emerald-400 text-sm"></p>
                 </div>
             </div>
-        </div>
-
-        <div class="mt-8 text-center">
-            <button class="bg-primary text-black font-bold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity shadow-lg shadow-primary/20" data-i18n="action-check">
-                Uyumluluğu Kontrol Et
-            </button>
-            <button id="expertOpinionButton" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/30 disabled:opacity-50 mt-4 md:mt-0" disabled data-i18n="action-expert">
-                Parça Uzman Görüşü Al ✨
-            </button>
-        </div>
-
-        <div class="mt-12 max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8" data-i18n="results-title">Kontrol Sonuçları</h2>
-            <div class="bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-lg border border-gray-200 dark:border-gray-800/80 shadow-lg transition-default">
-                <div class="flex flex-col md:flex-row items-center gap-6 p-4 rounded-lg bg-emerald-100 border border-emerald-300 dark:bg-emerald-900/50 dark:border-emerald-800">
-                    <div class="flex-shrink-0">
-                        <span class="material-symbols-outlined text-4xl text-emerald-600 dark:text-emerald-500">verified</span>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold text-emerald-700 dark:text-emerald-300" data-i18n="result-success-title">Tebrikler, Sisteminiz Uyumlu!</h3>
-                        <p class="mt-1 text-emerald-600 dark:text-emerald-400" data-i18n="result-success-text">Seçtiğiniz ekran kartı, mevcut sistem bileşenleriniz ile tamamen uyumludur. Herhangi bir sorun yaşamadan montaj yapabilirsiniz.</p>
-                    </div>
+            
+            <div id="result-fail" class="hidden flex-col md:flex-row items-start gap-6 p-6 rounded-xl bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800/50">
+                <div class="flex-shrink-0 p-3 bg-red-100 dark:bg-red-900/50 rounded-full">
+                    <span class="material-symbols-outlined text-3xl text-red-600 dark:text-red-400">warning</span>
                 </div>
-                
-                <div class="flex flex-col md:flex-row items-start gap-6 p-4 mt-6 rounded-lg bg-red-100 border border-red-300 dark:bg-red-900/50 dark:border-red-800">
-                    <div class="flex-shrink-0">
-                        <span class="material-symbols-outlined text-4xl text-red-600 dark:text-red-500">error</span>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold text-red-700 dark:text-red-300" data-i18n="result-fail-title">Uyumluluk Sorunu Tespit Edildi!</h3>
-                        <ul class="mt-2 space-y-2 list-disc list-inside text-red-600 dark:text-red-400">
-                            <li data-i18n="fail-reason-1"><strong class="font-medium">Anakart Soketi:</strong> Seçilen işlemci, anakartınızın LGA1200 soketi ile uyumlu değil. LGA1700 soketli bir anakart gereklidir.</li>
-                            <li data-i18n="fail-reason-2"><strong class="font-medium">Güç Kaynağı:</strong> Seçilen ekran kartı için önerilen minimum güç kaynağı 850W'tır. Mevcut 750W güç kaynağınız yetersiz kalabilir.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row items-center gap-6 p-4 mt-6 rounded-lg bg-sky-100 border border-sky-300 dark:bg-sky-900/50 dark:border-sky-800">
-                    <div class="flex-shrink-0">
-                        <span class="material-symbols-outlined text-4xl text-sky-600 dark:text-sky-500">info</span>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold text-sky-700 dark:text-sky-300" data-i18n="result-info-title">Bilgilendirme</h3>
-                        <p class="mt-1 text-sky-600 dark:text-sky-400" data-i18n="result-info-text">Kontrole başlamak için lütfen yukarıdaki alanlardan mevcut sisteminizi ve kontrol etmek istediğiniz yeni parçayı seçin.</p>
-                    </div>
+                <div class="w-full">
+                    <h3 class="text-lg font-bold text-red-800 dark:text-red-300" data-i18n="result-fail-title">Uyumsuzluk Tespit Edildi</h3>
+                    <ul id="fail-reasons" class="mt-3 space-y-2 text-sm text-red-700 dark:text-red-400"></ul>
                 </div>
             </div>
+
         </div>
-    </main>
+    </div>
+</main>
 
     <footer class="w-full mt-20 py-8 border-t border-gray-200 dark:border-gray-800">
         <div class="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
@@ -641,6 +703,201 @@
             });
         }
     });
+
+    // ==========================================
+    // YENİ EKLENEN KISIM: VERİ VE SEÇİM MOTORU
+    // ==========================================
+
+    const API_BASE_URL = "https://pcpartsbuild.com"; // Senin API adresin
+
+    // Backend Controller İsimleri ile HTML ID Eşleşmesi
+    const endpoints = {
+        cpu: 'processors',
+        motherboard: 'motherboards',
+        ram: 'rams',
+        gpu: 'gpus',
+        storage: 'storages',
+        case: 'cases',
+        psu: 'psus',
+        cpuCooler: 'cpuCoolers'
+    };
+
+    // Kullanıcının Seçtiği Parçalar (Hafıza)
+    let selectedParts = {
+        cpu: null,
+        motherboard: null,
+        ram: null,
+        gpu: null,
+        storage: null,
+        case: null,
+        psu: null,
+        cpuCooler: null
+    };
+
+    /**
+     * 1. Sayfa Yüklendiğinde Tüm Verileri Çek
+     */
+    async function initializeData() {
+        console.log("🚀 Veri motoru başlatılıyor...");
+        
+        // Object.keys(endpoints) -> ['cpu', 'motherboard', ...]
+        for (const category of Object.keys(endpoints)) {
+            await loadComponentData(category);
+        }
+    }
+
+    /**
+     * 2. Veriyi Getir (Önce Cache, Yoksa API)
+     */
+    async function loadComponentData(category) {
+        const cacheKey = `puk_cache_${category}`;
+        const cachedData = localStorage.getItem(cacheKey);
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 Dakika
+
+        // Dropdown elementini bul
+        const selectElement = document.getElementById(category);
+        if (!selectElement) return;
+
+        // Yükleniyor yazısı ekle
+        const loadingOption = document.createElement('option');
+        loadingOption.text = "Veriler yükleniyor...";
+        loadingOption.disabled = true;
+        selectElement.add(loadingOption);
+
+        try {
+            let data = null;
+            let isFresh = false;
+
+            // Cache Kontrolü
+            if (cachedData) {
+                const parsed = JSON.parse(cachedData);
+                if (Date.now() - parsed.timestamp < CACHE_DURATION) {
+                    data = parsed.data;
+                    isFresh = true;
+                    // console.log(`📦 ${category} önbellekten alındı.`);
+                }
+            }
+
+            // Cache yoksa veya eskiyse API'ye git
+            if (!isFresh) {
+                // console.log(`📡 ${category} için sunucuya gidiliyor...`);
+                const response = await axios.get(`${API_BASE_URL}/api/${endpoints[category]}`);
+                data = response.data;
+
+                // Yeni veriyi kaydet
+                localStorage.setItem(cacheKey, JSON.stringify({
+                    timestamp: Date.now(),
+                    data: data
+                }));
+            }
+
+            // Dropdown'ı doldur
+            populateDropdown(selectElement, data, category);
+
+        } catch (error) {
+            console.error(`❌ ${category} yüklenemedi:`, error);
+            loadingOption.text = "Hata: Veri alınamadı";
+        }
+    }
+
+    /**
+     * 3. Dropdown İçini Doldurma
+     */
+    function populateDropdown(selectElement, data, category) {
+        // Önce "Yükleniyor" yazısını ve varsa eski verileri temizle
+        // Ama ilk seçenek olan "Seçim Yapınız..." kalsın (index 0)
+        while (selectElement.options.length > 1) {
+            selectElement.remove(1);
+        }
+
+        if (!data || data.length === 0) return;
+
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id; // Backend ID'si
+            
+            // Modele göre ekranda ne yazacak?
+            // Çoğu modelde Brand + ModelName var.
+            let displayName = `${item.brand || ''} ${item.modelName || ''}`.trim();
+            
+            // Eğer özel bir durum varsa (Örn: Kapasite eklemek istersen)
+            if (category === 'storage') displayName += ` (${item.capacity} GB)`;
+            if (category === 'psu') displayName += ` (${item.wattage}W)`;
+
+            option.text = displayName;
+            
+            // Tüm parça verisini option elementine gizle (İleride uyumluluk kontrolü için lazım olacak)
+            option.dataset.fullData = JSON.stringify(item);
+            
+            selectElement.add(option);
+        });
+    }
+
+    /**
+     * 4. Kullanıcı Seçim Yaptığında (Görsel Değişim)
+     */
+    function handleSelectionChange(event) {
+        const category = event.target.id;
+        const selectedId = event.target.value;
+        const card = event.target.closest('.component-card'); // Kartın kendisi
+
+        // Hata mesajını gizle (Yeni seçim yapınca hata silinsin)
+        const errorText = document.getElementById(`error-${category}`);
+        if(errorText) errorText.classList.add('hidden');
+
+        if (selectedId) {
+            // --- SEÇİM YAPILDI ---
+            
+            // 1. Veriyi Hafızaya Al
+            // Seçilen option'ın içindeki gizli data'yı alıyoruz
+            const selectedOption = event.target.options[event.target.selectedIndex];
+            if (selectedOption.dataset.fullData) {
+                selectedParts[category] = JSON.parse(selectedOption.dataset.fullData);
+            }
+
+            // 2. Görseli Güncelle (Aktif Kart)
+            if (card) {
+                card.classList.remove('border-dashed', 'border-gray-300', 'dark:border-gray-700');
+                card.classList.add('border-solid', 'border-primary', 'shadow-md');
+                // Arkaplanı hafif renklendir
+                card.classList.add('bg-blue-50/50', 'dark:bg-blue-900/10');
+            }
+
+        } else {
+            // --- SEÇİM İPTAL EDİLDİ ---
+            selectedParts[category] = null;
+
+            // Görseli Eski Haline Getir
+            if (card) {
+                card.classList.add('border-dashed', 'border-gray-300', 'dark:border-gray-700');
+                card.classList.remove('border-solid', 'border-primary', 'shadow-md');
+                card.classList.remove('bg-blue-50/50', 'dark:bg-blue-900/10');
+            }
+        }
+        
+        console.log("Mevcut Sistem:", selectedParts); // Konsoldan takip edebilirsin
+    }
+
+    // --- BAŞLATMA ---
+    // Sayfa yüklendiğinde çalışacaklar
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // 1. Verileri Çek
+        initializeData();
+
+        // 2. Event Listener'ları Ekle (Her kutu değiştiğinde)
+        const dropdowns = document.querySelectorAll('select');
+        dropdowns.forEach(dropdown => {
+            // Sadece bizim parça kutularımız ise (id'si endpoints içinde varsa)
+            if (endpoints[dropdown.id]) {
+                dropdown.addEventListener('change', handleSelectionChange);
+            }
+        });
+    });
+
+    // ==========================================
+    // SEÇİM MOTORU BİTİŞ
+    // ==========================================
 </script>
 </body>
 </html>

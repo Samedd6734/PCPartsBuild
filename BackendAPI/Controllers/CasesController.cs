@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCPartsAPI.Models;
 using PCPartsAPI.Data;
 
-namespace PCPartsAPI.Contollers
+namespace PCPartsAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

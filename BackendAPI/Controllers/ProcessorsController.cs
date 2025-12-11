@@ -30,5 +30,21 @@ namespace PCPartsAPI.Controllers
 
             return Ok(processors); // Bulunan listeyi "Başarılı" (200 OK) koduyla birlikte cevap olarak gönder.
         }
+
+        // --- AŞAĞIDAKİ KISIM EKLENDİ (Tek bir işlemciyi bulmak için) ---
+        // GET: api/processors/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Processor>> GetProcessor(int id)
+        {
+            var processor = await _context.Processors.FindAsync(id);
+
+            if (processor == null)
+            {
+                return NotFound();
+            }
+
+            return processor;
+        }
+        // --- EKLENEN KISIM BİTTİ ---
     }
 }

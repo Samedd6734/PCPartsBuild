@@ -15,18 +15,19 @@ namespace PCPartsAPI
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddMemoryCache();
 
-            // --- 1. CORS AYARLARI (Production İçin Güvenli Hali) ---
+            // --- 1. CORS AYARLARI ---
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
                     b => b.WithOrigins(
-                            "https://pcpartsbuild.com",       // Ana domain
-                            "https://www.pcpartsbuild.com"    // www'li versiyonu (Garanti olsun)
-                                                              // "http://localhost:5500"        // Eğer yerelde test edeceksen yorumu kaldırabilirsin
+                            "https://pcpartsbuild.com",
+                            "https://www.pcpartsbuild.com",
+                            "http://localhost:5500",       // VS Code Live Server (Localhost)
+                            "http://127.0.0.1:5500"        // VS Code Live Server (IP versiyonu - Genelde bu çalışır)
                          )
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials()); // Cookie/Auth token kullanıyorsan bu kalmalı
+                         .AllowAnyHeader()
+                         .AllowAnyMethod()
+                         .AllowCredentials());
             });
 
             // --- VERİTABANI BAĞLANTISI ---
