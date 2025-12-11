@@ -7,6 +7,7 @@
     <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
@@ -50,7 +51,7 @@
     <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 transition-default">
         <nav class="container mx-auto flex justify-between items-center">
             <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
-                <img src="Assets/Images/logo.webp" alt="PCPartsBuild Logo" class="h-14 transition-all duration-300 filter brightness-50 dark:filter-none">
+                <img src="Assets/Images/logo.webp" alt="PCPartsBuild Logo" class="h-14 transition-all duration-300 filter dark:filter-none">
             </a>
 
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300">
@@ -303,6 +304,33 @@
     // Axios kütüphanesini dahil et
     document.write('<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></' + 'script>');
 
+    // ==========================================
+    // 1. AYARLAR VE ÇEVİRİLER
+    // ==========================================
+    
+    // API Ayarları
+    const API_BASE_URL = "https://pcpartsbuild.com"; // Senin API adresin
+    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+    const GEMINI_API_KEY = ""; // Buraya kendi API anahtarını gireceksin
+
+    // Endpoint Eşleşmeleri
+    const endpoints = {
+        cpu: 'processors',
+        motherboard: 'motherboards',
+        ram: 'rams',
+        gpu: 'gpus',
+        storage: 'storages',
+        case: 'cases',
+        psu: 'psus',
+        cpuCooler: 'cpuCoolers'
+    };
+
+    // Seçilen Parçalar (Global Hafıza)
+    let selectedParts = {
+        cpu: null, motherboard: null, ram: null, gpu: null,
+        storage: null, case: null, psu: null, cpuCooler: null
+    };
+
     // Çeviri Sözlüğü
     const translations = {
         tr: {
@@ -316,31 +344,27 @@
             "nav-profile": "Hesabım",
             "auth-logout": "Çıkış Yap",
             "main-title": "PC Parça Uyumluluk Kontrolü",
-            "main-subtitle": "Yeni bir parça almadan önce mevcut sisteminizle uyumlu olup olmadığını anında öğrenin.",
-            "current-title": "Mevcut Sistem Bileşenleriniz",
-            "label-cpu": "İşlemci (CPU)",
+            "main-subtitle": "Sisteminizi aşağıdaki slotlara yerleştirin. Yapay zeka ve algoritmalarımız parçalarınızın uyumunu anında denetlesin.",
+            "label-cpu": "İşlemci",
             "label-motherboard": "Anakart",
             "label-ram": "Bellek (RAM)",
-            "label-psu": "Güç Kaynağı (PSU)",
-            "new-title": "Yeni Bileşen",
-            "label-type": "Bileşen Türü",
-            "type-gpu": "Ekran Kartı (GPU)",
-            "type-storage": "Depolama (SSD/HDD)",
+            "label-psu": "Güç Kaynağı",
+            "type-gpu": "Ekran Kartı",
+            "type-storage": "Depolama",
             "type-cooler": "Soğutucu",
-            "label-component": "Kontrol Edilecek Bileşen",
-            "select-default": "Seçim yapınız...",
+            "tab-case": "Kasa",
+            "select-default": "Seçim Yapınız...",
             "action-check": "Uyumluluğu Kontrol Et",
             "action-expert": "Parça Uzman Görüşü Al ✨",
             "results-title": "Kontrol Sonuçları",
-            "result-success-title": "Tebrikler, Sisteminiz Uyumlu!",
-            "result-success-text": "Seçtiğiniz ekran kartı, mevcut sistem bileşenleriniz ile tamamen uyumludur. Herhangi bir sorun yaşamadan montaj yapabilirsiniz.",
-            "fail-reason-1": "<strong class=\"font-medium\">Anakart Soketi:</strong> Seçilen işlemci, anakartınızın LGA1200 soketi ile uyumlu değil. LGA1700 soketli bir anakart gereklidir.",
-            "fail-reason-2": "<strong class=\"font-medium\">Güç Kaynağı:</strong> Seçilen ekran kartı için önerilen minimum güç kaynağı 850W'tır. Mevcut 750W güç kaynağınız yetersiz kalabilir.",
-            "result-info-title": "Bilgilendirme",
-            "result-info-text": "Kontrole başlamak için lütfen yukarıdaki alanlardan mevcut sisteminizi ve kontrol etmek istediğiniz yeni parçayı seçin.",
+            "result-info-title": "Sistem Hazır Bekliyor",
+            "result-info-text": "Analize başlamak için yukarıdaki slotlara en az iki parça (Örn: İşlemci ve Anakart) yerleştirin.",
+            "result-success-title": "Mükemmel Uyum!",
+            "result-fail-title": "Uyumsuzluk Tespit Edildi",
+            "error-selection": "Lütfen analiz için en az 2 parça seçin.",
+            "loading-text": "Analiz ediliyor...",
             "error-api": "Analiz alınamadı. Lütfen daha sonra tekrar deneyin.",
-            "error-selection": "Lütfen analiz için mevcut sistemden en az 1 parça ve yeni bileşen seçin.",
-            "loading-text": "Analiz ediliyor..."
+            "analysis-prompt-title": "Aşağıdaki seçili sistem parçalarını birbiriyle uyumluluk, darboğaz ve performans açısından teknik bir uzman diliyle analiz et. Markdown formatında yanıtla."
         },
         en: {
             "app-title": "PC Part Compatibility Check",
@@ -353,40 +377,110 @@
             "nav-profile": "My Account",
             "auth-logout": "Log Out",
             "main-title": "PC Part Compatibility Check",
-            "main-subtitle": "Instantly find out if a new component is compatible with your current system before you buy it.",
-            "current-title": "Your Current System Components",
-            "label-cpu": "Processor (CPU)",
+            "main-subtitle": "Place your system components in the slots below. Our AI and algorithms will instantly check for compatibility.",
+            "label-cpu": "Processor",
             "label-motherboard": "Motherboard",
             "label-ram": "Memory (RAM)",
-            "label-psu": "Power Supply (PSU)",
-            "new-title": "New Component",
-            "label-type": "Component Type",
-            "type-gpu": "Graphics Card (GPU)",
-            "type-storage": "Storage (SSD/HDD)",
+            "label-psu": "Power Supply",
+            "type-gpu": "Graphics Card",
+            "type-storage": "Storage",
             "type-cooler": "Cooler",
-            "label-component": "Component to Check",
-            "select-default": "Select a component...",
+            "tab-case": "Case",
+            "select-default": "Select...",
             "action-check": "Check Compatibility",
-            "action-expert": "Get Expert Part Opinion ✨",
+            "action-expert": "Get Expert Opinion ✨",
             "results-title": "Check Results",
-            "result-success-title": "Congratulations, Your System is Compatible!",
-            "result-success-text": "The selected graphics card is fully compatible with your current system components. You can proceed with assembly without any issues.",
-            "fail-reason-1": "<strong class=\"font-medium\">Motherboard Socket:</strong> The selected processor is not compatible with your motherboard's LGA1200 socket. An LGA1700 socket motherboard is required.",
-            "fail-reason-2": "<strong class=\"font-medium\">Power Supply:</strong> The recommended minimum power supply for the selected graphics card is 850W. Your current 750W PSU might be insufficient.",
-            "result-info-title": "Information",
-            "result-info-text": "To start the check, please select your current system and the new part you want to check from the fields above.",
+            "result-info-title": "System Ready",
+            "result-info-text": "To start analysis, place at least two components (e.g., CPU and Motherboard) into the slots above.",
+            "result-success-title": "Perfect Match!",
+            "result-fail-title": "Incompatibility Detected",
+            "error-selection": "Please select at least 2 parts for analysis.",
+            "loading-text": "Analyzing...",
             "error-api": "Could not retrieve analysis. Please try again later.",
-            "error-selection": "Please select at least 1 current part and the new component for analysis."
+            "analysis-prompt-title": "Analyze the selected system components below for compatibility, bottlenecks, and performance using technical expert language. Respond in Markdown format."
         }
     };
-    
-    translations.tr["analysis-prompt-title"] = "Aşağıdaki mevcut sistem bileşenleri göz önüne alındığında, yeni bileşenin uyumluluğunu, faydalarını, olası darboğazları ve teknik uyumunu (soket/güç vb.) analiz et ve Markdown formatında yanıtla.";
-    translations.en["analysis-prompt-title"] = "Considering the existing system components below, analyze the compatibility, benefits, potential bottlenecks, and technical fit (socket/power, etc.) of the new component, and respond in Markdown format.";
 
-    // Gemini API
-    const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
-    const API_KEY = ""; // Buraya kendi API anahtarını gireceksin
-    const MAX_RETRIES = 5;
+    // ==========================================
+    // 2. TEMA VE DİL YÖNETİMİ
+    // ==========================================
+
+    const setLanguage = (lang) => {
+        localStorage.setItem('lang', lang);
+        document.documentElement.lang = lang;
+        
+        // Metinleri güncelle
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = translations[lang][key];
+            if (translation) element.textContent = translation;
+        });
+
+        // Placeholder'ları güncelle
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            const translation = translations[lang][key];
+            if (translation) element.placeholder = translation;
+        });
+
+        // Dropdown Varsayılan Yazılarını güncelle
+        const defaultText = translations[lang]['select-default'];
+        document.querySelectorAll('select').forEach(select => {
+            if (select.options.length > 0 && select.options[0].value === "") {
+                select.options[0].text = defaultText;
+            }
+        });
+
+        checkExpertButtonStatus(); // Buton durumunu kontrol et
+    };
+
+    const toggleDarkMode = () => {
+        const html = document.documentElement;
+        const isDarkMode = html.classList.contains('dark');
+        const newTheme = isDarkMode ? 'light' : 'dark';
+        
+        if (isDarkMode) {
+            html.classList.remove('dark');
+        } else {
+            html.classList.add('dark');
+        }
+        
+        localStorage.setItem('theme_builder', newTheme);
+        updateThemeIcons(newTheme);
+    };
+
+    const updateThemeIcons = (theme) => {
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const accountCircleButton = document.getElementById('account_circle');
+        
+        if (theme === 'dark') {
+            if(moonIcon) moonIcon.classList.add('opacity-100', 'scale-100');
+            if(sunIcon) sunIcon.classList.add('opacity-0', 'scale-75');
+            if(accountCircleButton) accountCircleButton.classList.add('bg-white/10', 'text-white');
+        } else {
+            if(sunIcon) sunIcon.classList.add('opacity-100', 'scale-100');
+            if(moonIcon) moonIcon.classList.add('opacity-0', 'scale-75');
+            if(accountCircleButton) accountCircleButton.classList.add('bg-gray-900/10', 'text-gray-900');
+        }
+    };
+
+    const initializeTheme = () => {
+        const savedTheme = localStorage.getItem('theme_builder');
+        const html = document.documentElement;
+        
+        if (savedTheme === 'dark' || (!savedTheme && html.classList.contains('dark'))) {
+            html.classList.add('dark');
+            updateThemeIcons('dark');
+        } else {
+            html.classList.remove('dark');
+            updateThemeIcons('light');
+        }
+    };
+
+    // ==========================================
+    // 3. UZMAN GÖRÜŞÜ (GEMINI API)
+    // ==========================================
 
     const getModalElements = () => ({
         modal: document.getElementById('geminiModal'),
@@ -394,257 +488,246 @@
         modalTitle: document.getElementById('modalTitle')
     });
 
+    // Modal Aç/Kapa
     const openModal = (title, content, isLoading = false) => {
         const { modal, modalTitle, modalContent } = getModalElements();
         modalTitle.textContent = title;
         modalContent.innerHTML = isLoading 
-            ? `<div class="flex items-center justify-center space-x-2 text-primary">
-                   <svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"></circle><path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                   <span data-i18n="loading-text">Analiz ediliyor...</span>
+            ? `<div class="flex items-center justify-center space-x-2 text-primary py-8">
+                   <svg class="animate-spin h-6 w-6 mr-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"></circle><path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                   <span class="text-lg animate-pulse">Yapay Zeka Analiz Ediyor...</span>
                  </div>`
             : content;
         modal.classList.remove('hidden');
     };
 
-    const closeModal = () => {
-        const { modal } = getModalElements();
-        modal.classList.add('hidden');
+    window.closeModal = () => {
+        document.getElementById('geminiModal').classList.add('hidden');
     };
 
-    const callGeminiAPI = async (prompt, retries = 0) => {
+    // API İsteği
+    const callGeminiAPI = async (prompt) => {
         try {
             const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: "You are a specialized PC component expert. Analyze the selected part's impact on the existing system, focusing on benefits, potential bottlenecks, and technical fit. Respond using Markdown." }] }
+                contents: [{ parts: [{ text: prompt }] }]
             };
-            const response = await fetch(API_URL + API_KEY, {
+            const response = await fetch(GEMINI_API_URL + GEMINI_API_KEY, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            if (!response.ok) {
-                if (response.status === 429 && retries < MAX_RETRIES) {
-                    const delay = Math.pow(2, retries) * 1000;
-                    console.warn(`API Rate Limit. Retrying in ${delay / 1000}s...`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    return callGeminiAPI(prompt, retries + 1);
-                }
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
             const result = await response.json();
-            const text = result.candidates?.[0]?.content?.parts?.[0]?.text || translations[localStorage.getItem('lang') || 'tr']['error-api'];
-            return text;
+            return result.candidates?.[0]?.content?.parts?.[0]?.text || "Yanıt alınamadı.";
         } catch (error) {
             console.error("Gemini API Error:", error);
             return translations[localStorage.getItem('lang') || 'tr']['error-api'];
         }
     };
 
+    // Uzman Görüşü Al Butonu
     const getExpertOpinion = async () => {
         const currentLang = localStorage.getItem('lang') || 'tr';
-        const currentCpu = document.getElementById('cpu').value;
-        const currentMotherboard = document.getElementById('motherboard').value;
-        const currentRam = document.getElementById('ram').value;
-        const currentPsu = document.getElementById('psu').value;
-        const newComponentType = document.getElementById('new-component-type').value;
-        const newComponent = document.getElementById('new-component').value;
-        const defaultText = translations[currentLang]['select-default'];
         
-        const existingParts = [currentCpu, currentMotherboard, currentRam, currentPsu].filter(val => val !== defaultText);
-        
-        if (existingParts.length === 0 || newComponent === defaultText) {
-            // SweetAlert ile hata gösterimi (Daha modern)
+        // Seçili parçaları listele
+        const partsList = [];
+        for (const [key, value] of Object.entries(selectedParts)) {
+            if (value) {
+                const label = translations[currentLang][`label-${key}`] || translations[currentLang][`type-${key}`] || translations[currentLang][`tab-${key}`] || key;
+                partsList.push(`- **${label}:** ${value.brand} ${value.modelName}`);
+            }
+        }
+
+        if (partsList.length < 2) {
             Swal.fire({
                 title: 'Eksik Bilgi',
                 text: translations[currentLang]['error-selection'],
                 icon: 'warning',
-                background: '#1f2937',
-                color: '#fff',
-                confirmButtonColor: '#16a3b2'
+                background: '#1f2937', color: '#fff', confirmButtonColor: '#16a3b2'
             });
             return;
         }
-        
-        const systemParts = existingParts.join(', ');
-        const prompt = `${translations[currentLang]['analysis-prompt-title']}\n\nMevcut Sistem: ${systemParts}\nYeni Bileşen: ${newComponentType} - ${newComponent}`;
+
+        const prompt = `${translations[currentLang]['analysis-prompt-title']}\n\n${partsList.join('\n')}`;
         
         openModal(translations[currentLang]['action-expert'], '', true);
         const resultText = await callGeminiAPI(prompt);
-        openModal(translations[currentLang]['action-expert'], resultText);
+        
+        // Markdown benzeri formatı basit HTML'e çevir (Bold için)
+        const formattedText = resultText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        openModal(translations[currentLang]['action-expert'], formattedText);
     };
 
+    // Buton Aktif/Pasif Kontrolü
     const checkExpertButtonStatus = () => {
         const expertButton = document.getElementById('expertOpinionButton');
-        const currentCpu = document.getElementById('cpu').value;
-        const newComponent = document.getElementById('new-component').value;
-        const currentLang = localStorage.getItem('lang') || 'tr';
-        const defaultText = translations[currentLang]['select-default'];
-        const isReady = currentCpu !== defaultText && newComponent !== defaultText;
-        expertButton.disabled = !isReady;
+        if (!expertButton) return;
+
+        // En az 2 parça seçili mi kontrol et
+        const selectedCount = Object.values(selectedParts).filter(p => p !== null).length;
+        expertButton.disabled = selectedCount < 2;
+    };
+
+
+    // ==========================================
+    // 4. VERİ ÇEKME MOTORU (LAZY LOAD)
+    // ==========================================
+
+    function initializeData() {
+        console.log("⚡ Lazy Load Modu Aktif.");
+        
+        const dropdowns = document.querySelectorAll('select');
+        dropdowns.forEach(dropdown => {
+            if (endpoints[dropdown.id]) {
+                // Tıklayınca Veri Çek
+                dropdown.addEventListener('focus', function() {
+                    if (this.dataset.loaded !== "true") {
+                        loadComponentData(this.id);
+                    }
+                });
+
+                // Seçim Değişince
+                dropdown.addEventListener('change', handleSelectionChange);
+            }
+        });
     }
 
-    // Dil ve Tema
-    const setLanguage = (lang) => {
-        localStorage.setItem('lang', lang);
-        document.documentElement.lang = lang;
-        document.querySelectorAll('[data-i18n]').forEach(element => {
-            const key = element.getAttribute('data-i18n');
-            const translation = translations[lang][key];
-            if (translation) {
-                if (key.includes('fail-reason')) {
-                    element.innerHTML = translation;
-                } else {
-                    element.textContent = translation;
+    async function loadComponentData(category) {
+        const selectElement = document.getElementById(category);
+        if (!selectElement) return;
+
+        const defaultOption = selectElement.options[0];
+        const originalText = defaultOption.text;
+        defaultOption.text = "Veriler Yükleniyor... ⏳";
+        
+        const cacheKey = `puk_cache_${category}`;
+        const cachedData = localStorage.getItem(cacheKey);
+        const CACHE_DURATION = 5 * 60 * 1000;
+
+        try {
+            let data = null;
+            let isFresh = false;
+
+            if (cachedData) {
+                const parsed = JSON.parse(cachedData);
+                if (Date.now() - parsed.timestamp < CACHE_DURATION) {
+                    data = parsed.data;
+                    isFresh = true;
                 }
             }
+
+            if (!isFresh) {
+                const response = await axios.get(`${API_BASE_URL}/api/${endpoints[category]}`);
+                data = response.data;
+                localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: data }));
+            }
+
+            populateDropdown(selectElement, data, category);
+            selectElement.dataset.loaded = "true";
+
+        } catch (error) {
+            console.error(`❌ ${category} yüklenemedi:`, error);
+            defaultOption.text = "Hata: Veri Alınamadı";
+        } finally {
+            if (selectElement.options.length > 0 && selectElement.options[0].text.includes("⏳")) {
+                 defaultOption.text = originalText;
+            }
+        }
+    }
+
+    function populateDropdown(selectElement, data, category) {
+        while (selectElement.options.length > 1) selectElement.remove(1);
+        if (!data || data.length === 0) return;
+
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            let displayName = `${item.brand || ''} ${item.modelName || ''}`.trim();
+            if (category === 'storage') displayName += ` (${item.capacity} GB)`;
+            if (category === 'psu') displayName += ` (${item.wattage}W)`;
+            option.text = displayName;
+            option.dataset.fullData = JSON.stringify(item);
+            selectElement.add(option);
         });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-            const key = element.getAttribute('data-i18n-placeholder');
-            const translation = translations[lang][key];
-            if (translation) element.placeholder = translation;
-        });
-        document.title = translations[lang]["app-title"];
-        document.querySelectorAll('option[data-i18n="select-default"]').forEach(opt => {
-            opt.textContent = translations[lang]['select-default'];
-        });
+    }
+
+    function handleSelectionChange(event) {
+        const category = event.target.id;
+        const selectedId = event.target.value;
+        const card = event.target.closest('.component-card');
+        const errorText = document.getElementById(`error-${category}`);
         
-        const typeGpu = document.querySelector('option[data-i18n="type-gpu"]');
-        if (typeGpu) typeGpu.textContent = translations[lang]['type-gpu'];
-        const typeStorage = document.querySelector('option[data-i18n="type-storage"]');
-        if (typeStorage) typeStorage.textContent = translations[lang]['type-storage'];
-        const typeCooler = document.querySelector('option[data-i18n="type-cooler"]');
-        if (typeCooler) typeCooler.textContent = translations[lang]['type-cooler'];
+        if(errorText) errorText.classList.add('hidden');
 
-        checkExpertButtonStatus();
-    };
-
-    const toggleDarkMode = () => {
-        const html = document.documentElement;
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const accountCircleButton = document.getElementById('account_circle');
-        const isDarkMode = html.classList.contains('dark');
-        const newTheme = isDarkMode ? 'light' : 'dark';
-        if (isDarkMode) {
-            html.classList.remove('dark');
-            if (accountCircleButton) {
-                accountCircleButton.classList.remove('bg-white/10', 'text-white'); 
-                accountCircleButton.classList.add('bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
+        if (selectedId) {
+            const selectedOption = event.target.options[event.target.selectedIndex];
+            if (selectedOption.dataset.fullData) {
+                selectedParts[category] = JSON.parse(selectedOption.dataset.fullData);
+            }
+            if (card) {
+                card.classList.remove('border-dashed', 'border-gray-300', 'dark:border-gray-700');
+                card.classList.add('border-solid', 'border-primary', 'shadow-md', 'bg-blue-50/50', 'dark:bg-blue-900/10');
             }
         } else {
-            html.classList.add('dark');
-            if (accountCircleButton) {
-                accountCircleButton.classList.remove('bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white'); 
-                accountCircleButton.classList.add('bg-white/10', 'text-white');
+            selectedParts[category] = null;
+            if (card) {
+                card.classList.add('border-dashed', 'border-gray-300', 'dark:border-gray-700');
+                card.classList.remove('border-solid', 'border-primary', 'shadow-md', 'bg-blue-50/50', 'dark:bg-blue-900/10');
             }
         }
-        localStorage.setItem('theme_builder', newTheme);
-        if (sunIcon && moonIcon) {
-            if (newTheme === 'light') {
-                moonIcon.classList.remove('opacity-100', 'scale-100');
-                moonIcon.classList.add('opacity-0', 'scale-75');
-                sunIcon.classList.remove('opacity-0', 'scale-75');
-                sunIcon.classList.add('opacity-100', 'scale-100'); 
-            } else {
-                sunIcon.classList.remove('opacity-100', 'scale-100'); 
-                sunIcon.classList.add('opacity-0', 'scale-75'); 
-                moonIcon.classList.remove('opacity-0', 'scale-75');
-                moonIcon.classList.add('opacity-100', 'scale-100');
-            }
-        }
-    };
+        
+        checkExpertButtonStatus(); // Her seçimde buton durumunu güncelle
+    }
 
-    const initializeTheme = (key = 'theme_builder') => {
-        const html = document.documentElement;
-        const savedTheme = localStorage.getItem(key);
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const accountCircleButton = document.getElementById('account_circle');
-        let isDark = false;
-        if (savedTheme === 'dark') {
-            html.classList.add('dark');
-            isDark = true;
-        } else if (savedTheme === 'light') {
-            html.classList.remove('dark');
-            isDark = false;
-        } else if (html.classList.contains('dark')) {
-            localStorage.setItem(key, 'dark');
-            isDark = true;
-        } else {
-            localStorage.setItem(key, 'light');
-            isDark = false;
-        }
-        if (accountCircleButton) {
-            accountCircleButton.classList.remove('bg-white/10', 'text-white', 'bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
-            if (isDark) {
-                accountCircleButton.classList.add('bg-white/10', 'text-white'); 
-            } else {
-                accountCircleButton.classList.add('bg-gray-900/10', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white'); 
-            }
-        }
-        if (sunIcon && moonIcon) {
-            if (isDark) {
-                moonIcon.classList.add('opacity-100', 'scale-100');
-                sunIcon.classList.add('opacity-0', 'scale-75');
-            } else {
-                sunIcon.classList.add('opacity-100', 'scale-100');
-                moonIcon.classList.add('opacity-0', 'scale-75');
-            }
-        }
-    };
-    
-    const initializeLang = () => {
-        const savedLang = localStorage.getItem('lang');
-        let currentLang = savedLang || document.documentElement.lang || 'tr'; 
-        setLanguage(currentLang);
-    };
 
-    // DOM Yüklendiğinde
+    // ==========================================
+    // 5. BAŞLATMA (INIT)
+    // ==========================================
+
     document.addEventListener('DOMContentLoaded', function() {
-        initializeTheme('theme_builder'); 
-        initializeLang();
-        
-        // Dil Menüsü
-        const languageSelector = document.getElementById('languageSelector');
+        // Temel Ayarlar
+        initializeTheme();
+        const savedLang = localStorage.getItem('lang') || 'tr';
+        setLanguage(savedLang);
+        initializeData(); // Veri motorunu hazırla
+
+        // Dil Menüsü Olayları
         const languageButton = document.getElementById('languageButton');
         const languageDropdown = document.getElementById('languageDropdown');
-        const languageOptions = languageDropdown.querySelectorAll('.language-option');
-        const darkModeButton = document.getElementById('darkModeButton');
-        
-        const hideDropdown = () => { languageDropdown.classList.add('hidden'); };
-        const showDropdown = () => { languageDropdown.classList.remove('hidden'); };
-        languageButton.addEventListener('click', function(event) {
-            event.stopPropagation();
-            if (languageDropdown.classList.contains('hidden')) { showDropdown(); } else { hideDropdown(); }
-        });
-        languageSelector.addEventListener('mouseleave', function() { hideDropdown(); });
-        document.addEventListener('click', function(event) {
-            if (!languageSelector.contains(event.target)) { hideDropdown(); }
-        });
-        languageOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
+        const languageSelector = document.getElementById('languageSelector');
+
+        if (languageButton) {
+            languageButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('hidden');
+            });
+        }
+        if (languageSelector) {
+            languageSelector.addEventListener('mouseleave', () => languageDropdown.classList.add('hidden'));
+        }
+        document.querySelectorAll('.language-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
                 e.preventDefault();
-                const selectedLang = this.getAttribute('data-lang');
-                setLanguage(selectedLang);
-                hideDropdown();
+                setLanguage(e.target.getAttribute('data-lang'));
+                languageDropdown.classList.add('hidden');
             });
         });
 
+        // Karanlık Mod Butonu
+        const darkModeButton = document.getElementById('darkModeButton');
         if (darkModeButton) {
             darkModeButton.addEventListener('click', toggleDarkMode);
         }
-        
+
+        // Uzman Görüşü Butonu
         const expertButton = document.getElementById('expertOpinionButton');
         if (expertButton) {
             expertButton.addEventListener('click', getExpertOpinion);
         }
-        const formControls = document.querySelectorAll('#cpu, #motherboard, #ram, #psu, #new-component-type, #new-component');
-        formControls.forEach(control => {
-            control.addEventListener('change', checkExpertButtonStatus);
-        });
-        checkExpertButtonStatus();
 
-        // --- GİRİŞ / ÇIKIŞ & PROFİL YÖNETİMİ ---
+        // Kullanıcı Giriş Kontrolleri
         const loginButton = document.getElementById('login-button');
         const signupButton = document.getElementById('signup-button');
         const accountSection = document.getElementById('account-section');
@@ -652,252 +735,52 @@
         const profileDropdown = document.getElementById('profileDropdown');
         const welcomeUsername = document.getElementById('welcome-username');
         const logoutButton = document.getElementById('logout-button');
-        
         const loggedInUser = localStorage.getItem('loggedInUser');
 
         if (loggedInUser) {
-            if (loginButton) loginButton.style.display = 'none';
-            if (signupButton) signupButton.style.display = 'none';
-            if (accountSection) {
-                accountSection.classList.remove('hidden'); 
+            if(loginButton) loginButton.style.display = 'none';
+            if(signupButton) signupButton.style.display = 'none';
+            if(accountSection) {
+                accountSection.classList.remove('hidden');
                 accountSection.classList.add('flex');
             }
-            if (welcomeUsername) welcomeUsername.textContent = loggedInUser;
-        } else {
-            if (loginButton) loginButton.style.display = 'flex';
-            if (signupButton) signupButton.style.display = 'flex';
-            if (accountSection) accountSection.classList.add('hidden');
+            if(welcomeUsername) welcomeUsername.textContent = loggedInUser;
         }
 
-        if (profileButton && profileDropdown) {
-            profileButton.addEventListener('click', function(event) {
-                event.stopPropagation();
-                profileDropdown.classList.toggle('hidden');
+        if (profileButton) {
+            profileButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(profileDropdown) profileDropdown.classList.toggle('hidden');
             });
         }
 
-        document.addEventListener('click', function(event) {
-            if (profileDropdown && !profileDropdown.classList.contains('hidden') && !accountSection.contains(event.target)) {
+        // Dışarı tıklayınca dropdownları kapat
+        document.addEventListener('click', (e) => {
+            if (profileDropdown && !profileDropdown.classList.contains('hidden') && !accountSection.contains(e.target)) {
                 profileDropdown.classList.add('hidden');
+            }
+            if (languageDropdown && !languageDropdown.classList.contains('hidden') && !languageSelector.contains(e.target)) {
+                languageDropdown.classList.add('hidden');
             }
         });
 
-        // --- MODERN ÇIKIŞ YAP (SWEETALERT) ---
         if (logoutButton) {
-            logoutButton.addEventListener('click', function(e) {
-                e.preventDefault(); 
-                
+            logoutButton.addEventListener('click', (e) => {
+                e.preventDefault();
                 Swal.fire({
                     title: 'Çıkış Yapılıyor...',
-                    text: 'Oturumunuz güvenli bir şekilde kapatılıyor. Tekrar bekleriz!',
                     icon: 'success',
-                    background: '#1f2937', 
-                    color: '#fff',
                     showConfirmButton: false,
                     timer: 1000,
-                    timerProgressBar: true
+                    background: '#1f2937', color: '#fff'
                 }).then(() => {
                     localStorage.removeItem('loggedInUser');
-                    window.location.reload(); 
+                    window.location.reload();
                 });
             });
         }
     });
 
-    // ==========================================
-    // YENİ EKLENEN KISIM: VERİ VE SEÇİM MOTORU
-    // ==========================================
-
-    const API_BASE_URL = "https://pcpartsbuild.com"; // Senin API adresin
-
-    // Backend Controller İsimleri ile HTML ID Eşleşmesi
-    const endpoints = {
-        cpu: 'processors',
-        motherboard: 'motherboards',
-        ram: 'rams',
-        gpu: 'gpus',
-        storage: 'storages',
-        case: 'cases',
-        psu: 'psus',
-        cpuCooler: 'cpuCoolers'
-    };
-
-    // Kullanıcının Seçtiği Parçalar (Hafıza)
-    let selectedParts = {
-        cpu: null,
-        motherboard: null,
-        ram: null,
-        gpu: null,
-        storage: null,
-        case: null,
-        psu: null,
-        cpuCooler: null
-    };
-
-    /**
-     * 1. Sayfa Yüklendiğinde Tüm Verileri Çek
-     */
-    async function initializeData() {
-        console.log("🚀 Veri motoru başlatılıyor...");
-        
-        // Object.keys(endpoints) -> ['cpu', 'motherboard', ...]
-        for (const category of Object.keys(endpoints)) {
-            await loadComponentData(category);
-        }
-    }
-
-    /**
-     * 2. Veriyi Getir (Önce Cache, Yoksa API)
-     */
-    async function loadComponentData(category) {
-        const cacheKey = `puk_cache_${category}`;
-        const cachedData = localStorage.getItem(cacheKey);
-        const CACHE_DURATION = 5 * 60 * 1000; // 5 Dakika
-
-        // Dropdown elementini bul
-        const selectElement = document.getElementById(category);
-        if (!selectElement) return;
-
-        // Yükleniyor yazısı ekle
-        const loadingOption = document.createElement('option');
-        loadingOption.text = "Veriler yükleniyor...";
-        loadingOption.disabled = true;
-        selectElement.add(loadingOption);
-
-        try {
-            let data = null;
-            let isFresh = false;
-
-            // Cache Kontrolü
-            if (cachedData) {
-                const parsed = JSON.parse(cachedData);
-                if (Date.now() - parsed.timestamp < CACHE_DURATION) {
-                    data = parsed.data;
-                    isFresh = true;
-                    // console.log(`📦 ${category} önbellekten alındı.`);
-                }
-            }
-
-            // Cache yoksa veya eskiyse API'ye git
-            if (!isFresh) {
-                // console.log(`📡 ${category} için sunucuya gidiliyor...`);
-                const response = await axios.get(`${API_BASE_URL}/api/${endpoints[category]}`);
-                data = response.data;
-
-                // Yeni veriyi kaydet
-                localStorage.setItem(cacheKey, JSON.stringify({
-                    timestamp: Date.now(),
-                    data: data
-                }));
-            }
-
-            // Dropdown'ı doldur
-            populateDropdown(selectElement, data, category);
-
-        } catch (error) {
-            console.error(`❌ ${category} yüklenemedi:`, error);
-            loadingOption.text = "Hata: Veri alınamadı";
-        }
-    }
-
-    /**
-     * 3. Dropdown İçini Doldurma
-     */
-    function populateDropdown(selectElement, data, category) {
-        // Önce "Yükleniyor" yazısını ve varsa eski verileri temizle
-        // Ama ilk seçenek olan "Seçim Yapınız..." kalsın (index 0)
-        while (selectElement.options.length > 1) {
-            selectElement.remove(1);
-        }
-
-        if (!data || data.length === 0) return;
-
-        data.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.id; // Backend ID'si
-            
-            // Modele göre ekranda ne yazacak?
-            // Çoğu modelde Brand + ModelName var.
-            let displayName = `${item.brand || ''} ${item.modelName || ''}`.trim();
-            
-            // Eğer özel bir durum varsa (Örn: Kapasite eklemek istersen)
-            if (category === 'storage') displayName += ` (${item.capacity} GB)`;
-            if (category === 'psu') displayName += ` (${item.wattage}W)`;
-
-            option.text = displayName;
-            
-            // Tüm parça verisini option elementine gizle (İleride uyumluluk kontrolü için lazım olacak)
-            option.dataset.fullData = JSON.stringify(item);
-            
-            selectElement.add(option);
-        });
-    }
-
-    /**
-     * 4. Kullanıcı Seçim Yaptığında (Görsel Değişim)
-     */
-    function handleSelectionChange(event) {
-        const category = event.target.id;
-        const selectedId = event.target.value;
-        const card = event.target.closest('.component-card'); // Kartın kendisi
-
-        // Hata mesajını gizle (Yeni seçim yapınca hata silinsin)
-        const errorText = document.getElementById(`error-${category}`);
-        if(errorText) errorText.classList.add('hidden');
-
-        if (selectedId) {
-            // --- SEÇİM YAPILDI ---
-            
-            // 1. Veriyi Hafızaya Al
-            // Seçilen option'ın içindeki gizli data'yı alıyoruz
-            const selectedOption = event.target.options[event.target.selectedIndex];
-            if (selectedOption.dataset.fullData) {
-                selectedParts[category] = JSON.parse(selectedOption.dataset.fullData);
-            }
-
-            // 2. Görseli Güncelle (Aktif Kart)
-            if (card) {
-                card.classList.remove('border-dashed', 'border-gray-300', 'dark:border-gray-700');
-                card.classList.add('border-solid', 'border-primary', 'shadow-md');
-                // Arkaplanı hafif renklendir
-                card.classList.add('bg-blue-50/50', 'dark:bg-blue-900/10');
-            }
-
-        } else {
-            // --- SEÇİM İPTAL EDİLDİ ---
-            selectedParts[category] = null;
-
-            // Görseli Eski Haline Getir
-            if (card) {
-                card.classList.add('border-dashed', 'border-gray-300', 'dark:border-gray-700');
-                card.classList.remove('border-solid', 'border-primary', 'shadow-md');
-                card.classList.remove('bg-blue-50/50', 'dark:bg-blue-900/10');
-            }
-        }
-        
-        console.log("Mevcut Sistem:", selectedParts); // Konsoldan takip edebilirsin
-    }
-
-    // --- BAŞLATMA ---
-    // Sayfa yüklendiğinde çalışacaklar
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        // 1. Verileri Çek
-        initializeData();
-
-        // 2. Event Listener'ları Ekle (Her kutu değiştiğinde)
-        const dropdowns = document.querySelectorAll('select');
-        dropdowns.forEach(dropdown => {
-            // Sadece bizim parça kutularımız ise (id'si endpoints içinde varsa)
-            if (endpoints[dropdown.id]) {
-                dropdown.addEventListener('change', handleSelectionChange);
-            }
-        });
-    });
-
-    // ==========================================
-    // SEÇİM MOTORU BİTİŞ
-    // ==========================================
 </script>
 </body>
 </html>
