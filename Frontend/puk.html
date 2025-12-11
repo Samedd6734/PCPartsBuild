@@ -591,8 +591,10 @@
                 // Seçim Değişince
                 dropdown.addEventListener('change', handleSelectionChange);
             }
+    
         });
     }
+
 
     async function loadComponentData(category) {
         const selectElement = document.getElementById(category);
@@ -779,6 +781,363 @@
                 });
             });
         }
+    
+        // --- 6. UYUMLULUK KONTROL TETİKLEYİCİSİ (YENİ EKLENEN KISIM) ---
+        const checkBtn = document.getElementById('checkCompatibilityBtn');
+        if (checkBtn) {
+            checkBtn.addEventListener('click', (e) => {
+                e.preventDefault(); // Sayfanın yukarı zıplamasını engeller
+                checkCompatibility(); // Birazdan yazacağımız ana fonksiyonu çağırır
+            });
+        }
+
+    // ==========================================
+    // 7. UYUMLULUK MOTORU (LOGIC)
+    // ==========================================
+
+    // =============================
+// YENİ NESİL UYUMLULUK MOTORU (MODEL UYUMLU FINAL)
+// =============================
+
+function checkCompatibility() {
+
+    console.log("🛠️ Gelişmiş uyumluluk kontrolü başlatıldı...");
+
+    // =====================
+    // UI TEMİZLEME
+    // =====================
+    document.getElementById('result-info').classList.add('hidden');
+    document.getElementById('result-success').classList.add('hidden');
+    document.getElementById('result-fail').classList.add('hidden');
+    document.getElementById('fail-reasons').innerHTML = '';
+    document.querySelectorAll('[id^="error-"]').forEach(el => el.classList.add('hidden'));
+
+    // =====================
+    // KONTROL YARDIMCI FONKSİYONLARI
+    // =====================
+    const isFilled = obj => obj && typeof obj === 'object' && Object.keys(obj).length > 0;
+
+    const toNumber = (v, fallback = 0) => {
+        if (typeof v === "number") return v;
+        if (!v) return fallback;
+        const n = Number(String(v).replace(/[^\d.-]/g, ""));
+        return isNaN(n) ? fallback : n;
+    };
+
+    const toInt = (v, fallback = 0) => Math.round(toNumber(v, fallback));
+    
+    const toBoolean = v => {
+        if (typeof v === 'boolean') return v;
+        if (typeof v === 'string') return ['true', '1', 'yes'].includes(v.toLowerCase());
+        return false;
+    };
+
+    const normalizeString = v => v ? String(v).trim() : "";
+    
+    // String (virgüllü) veya Array gelebilecek verileri düzeltir
+    const normalizeStringArray = v => {
+        if (!v) return [];
+        if (Array.isArray(v)) return v.map(x => String(x).trim().toLowerCase());
+        return String(v).split(',').map(x => x.trim().toLowerCase()).filter(x => x.length > 0);
+    };
+
+    // Sayı dizisi veya virgüllü string gelebilecek verileri düzeltir
+    const normalizeNumberArray = v => {
+        if (!v) return [];
+        if (Array.isArray(v)) return v.map(x => toInt(x)).filter(n => !isNaN(n));
+        if (typeof v === 'string') return v.split(',').map(s => toInt(s)).filter(n => !isNaN(n));
+        return [];
+    };
+
+    const addIssue = (level, msg, cards = []) => {
+        issues.push({ level, msg });
+        cards.forEach(c => showErrorUnderCard(c, level === "critical" ? "Hata" : "Uyarı"));
+    };
+
+    const escapeHtml = str => String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    // =====================
+    // HATA / UYARI LİSTESİ
+    // =====================
+    const issues = [];
+
+    // =====================
+    // PARÇA AL (Veri Modelleriyle Eşleşme)
+    // =====================
+    const cpu = selectedParts.cpu;
+    const mobo = selectedParts.motherboard;
+    const ram = selectedParts.ram;
+    const gpu = selectedParts.gpu;
+    const psu = selectedParts.psu;
+    const pcCase = selectedParts.case; // 'case' keyword olduğu için pcCase dedik
+    const cooler = selectedParts.cpuCooler;
+    // Storage tekil veya çoğul gelebilir, diziye çeviriyoruz
+    const storages = Array.isArray(selectedParts.storage) ? selectedParts.storage : (selectedParts.storage ? [selectedParts.storage] : []);
+
+    // =====================
+    // 1) PARÇA SAYISI KONTROLÜ
+    // =====================
+    const filledParts = Object.values(selectedParts).filter(p => p !== null && !Array.isArray(p)) 
+                        .concat(storages.length > 0 ? ['storage'] : []).length;
+
+    // Not: filledParts mantığını basitleştirdik, en az 2 dolu obje var mı bakar.
+    const activeComponents = Object.values(selectedParts).filter(x => x !== null);
+    
+    if (activeComponents.length < 2) {
+        Swal.fire({
+            title: 'Yetersiz Parça',
+            text: 'Lütfen analiz için en az 2 parça seçin.',
+            icon: 'warning',
+            background: '#1f2937', color: '#fff', confirmButtonColor: '#16a3b2'
+        });
+        document.getElementById('result-info').classList.remove('hidden');
+        return;
+    }
+
+    // =============================
+    // 2) CPU ↔ MOTHERBOARD
+    // =============================
+    if (isFilled(cpu) && isFilled(mobo)) {
+        // Model: cpu.socket, mobo.socket
+        const cpuSocket = normalizeString(cpu.socket).toLowerCase();
+        const moboSocket = normalizeString(mobo.socket).toLowerCase();
+
+        if (cpuSocket && moboSocket && cpuSocket !== moboSocket) {
+            addIssue("critical", `CPU soketi (${cpu.socket}) ile Anakart soketi (${mobo.socket}) uyumsuz.`, ["cpu", "motherboard"]);
+        }
+
+        // Model: cpu.integratedGraphics (bool)
+        const hasIgpu = toBoolean(cpu.integratedGraphics);
+        const gpuExists = isFilled(gpu);
+
+        // Eğer harici GPU yoksa ve işlemcide grafik birimi yoksa görüntü gelmez
+        if (!gpuExists && !hasIgpu) {
+            addIssue("critical", `Seçilen işlemcide (${cpu.modelName}) dahili grafik birimi yok. Görüntü alabilmek için ekran kartı eklemelisiniz.`, ["cpu", "gpu"]);
+        }
+    }
+
+    // =============================
+    // 3) RAM ↔ MOTHERBOARD
+    // =============================
+    if (isFilled(ram) && isFilled(mobo)) {
+        // Model: ram.memoryType (DDR4), mobo.memoryType (DDR4)
+        const ramType = normalizeString(ram.memoryType).toLowerCase();
+        const moboMemType = normalizeString(mobo.memoryType).toLowerCase();
+
+        if (ramType && moboMemType && ramType !== moboMemType) {
+            addIssue("critical", `RAM tipi (${ram.memoryType}) ile Anakart (${mobo.memoryType}) uyumsuz.`, ["ram", "motherboard"]);
+        }
+
+        // Model: ram.moduleCount, mobo.memorySlots
+        const ramModules = toInt(ram.moduleCount || 1);
+        const moboSlots = toInt(mobo.memorySlots || 0);
+
+        if (moboSlots > 0 && ramModules > moboSlots) {
+            addIssue("critical", `Seçilen RAM kiti (${ramModules} modül), anakartın slot sayısını (${moboSlots}) aşıyor.`, ["ram", "motherboard"]);
+        }
+
+        // Model: ram.capacityPerModule, mobo.maxMemory
+        const capPerModule = toInt(ram.capacityPerModule || 0);
+        const totalRam = capPerModule * ramModules;
+        const maxMoboRam = toInt(mobo.maxMemory || 0);
+
+        if (maxMoboRam > 0 && totalRam > maxMoboRam) {
+            addIssue("critical", `Toplam RAM (${totalRam}GB), anakartın maksimum desteğini (${maxMoboRam}GB) aşıyor.`, ["ram", "motherboard"]);
+        }
+
+        // Model: ram.speed, mobo.supportedMemoryFrequencies (List<int>)
+        const ramSpeed = toInt(ram.speed || 0);
+        // Backend'den dizi veya string gelebilir, helper ile düzelt
+        const supportedSpeeds = normalizeNumberArray(mobo.supportedMemoryFrequencies);
+
+        if (ramSpeed > 0 && supportedSpeeds.length > 0) {
+            const maxSpeed = Math.max(...supportedSpeeds);
+            if (ramSpeed > maxSpeed) {
+                addIssue("warning", `RAM hızı (${ramSpeed}MHz), anakartın desteklediği maksimum hızdan (${maxSpeed}MHz) yüksek. RAM çalışır ancak hızı düşer (Downclock).`, ["ram", "motherboard"]);
+            }
+        }
+    }
+
+    // =============================
+    // 4) GPU ↔ KASA / PSU
+    // =============================
+    if (isFilled(gpu)) {
+        // ---- Kasa GPU Uzunluğu ----
+        if (isFilled(pcCase)) {
+            // Model: gpu.length, pcCase.maxGpuLength
+            const gpuLen = toInt(gpu.length); 
+            const maxGpu = toInt(pcCase.maxGpuLength);
+
+            if (gpuLen > 0 && maxGpu > 0 && gpuLen > maxGpu) {
+                addIssue("critical", `Ekran kartı uzunluğu (${gpuLen}mm), kasanın sınırını (${maxGpu}mm) aşıyor. Sığmayacaktır.`, ["gpu", "case"]);
+            }
+        }
+
+        // ---- PSU Yeterliliği ----
+        if (isFilled(psu)) {
+            // Model: gpu.tdp, cpu.tdp, psu.wattage
+            const gpuPower = toInt(gpu.tdp || 0);
+            const cpuPower = toInt(cpu?.tdp || 0);
+            const systemBase = 100; // Anakart, fanlar vs. için pay
+            const totalLoad = gpuPower + cpuPower + systemBase;
+            const psuWatt = toInt(psu.wattage);
+
+            // Kritik Güç Yetmezliği
+            if (psuWatt < totalLoad) {
+                addIssue("critical", `PSU gücü (${psuWatt}W) yetersiz. Sistem yük altında tahmini ${totalLoad}W çekecek.`, ["psu"]);
+            } 
+            // Güvenlik Payı (%20)
+            else if (psuWatt < Math.ceil(totalLoad * 1.20)) {
+                addIssue("warning", `PSU kapasitesi sınırda. Önerilen güvenli değer: ${Math.ceil(totalLoad * 1.20)}W ve üzeri.`, ["psu"]);
+            }
+
+            // Model: gpu.recommendedPsu (Üretici Tavsiyesi)
+            const recPsu = toInt(gpu.recommendedPsu);
+            if (recPsu > 0 && psuWatt < recPsu) {
+                addIssue("warning", `PSU gücü yeterli görünse de, ekran kartı üreticisi bu model için en az ${recPsu}W önermektedir (Anlık güç sıçramaları için).`, ["psu"]);
+            }
+
+            // ---- 12VHPWR Kablo Kontrolü (RTX 4000 Serisi) ----
+            // Model: gpu.powerConnectors (string), psu.has12VHPWR (bool)
+            const gpuConStr = normalizeString(gpu.powerConnectors).toLowerCase();
+            const psuHasNewPort = toBoolean(psu.has12VHPWR);
+
+            if ((gpuConStr.includes('16pin') || gpuConStr.includes('12vhpwr')) && !psuHasNewPort) {
+                addIssue("warning", `Ekran kartı yeni nesil 12VHPWR güç girişi istiyor, PSU'nuzda bu port yok. Dönüştürücü kullanmanız gerekecek.`, ["gpu", "psu"]);
+            }
+        }
+    }
+
+    // =============================
+    // 5) CPU COOLER ↔ KASA
+    // =============================
+    if (isFilled(cooler) && isFilled(pcCase)) {
+        // Model: cooler.coolerType ("Air"/"Liquid")
+        const type = normalizeString(cooler.coolerType).toLowerCase();
+
+        // Hava Soğutma
+        if (type === "air") {
+            // Model: cooler.height, pcCase.maxCpuCoolerHeight
+            const h = toInt(cooler.height);
+            const maxH = toInt(pcCase.maxCpuCoolerHeight);
+
+            if (h > maxH && maxH > 0) {
+                addIssue("critical", `Soğutucu yüksekliği (${h}mm), kasanın kapağına çarpıyor (Maks: ${maxH}mm).`, ["cpuCooler", "case"]);
+            }
+        } 
+        // Sıvı Soğutma
+        else if (type === "liquid") {
+            // Model: cooler.radiatorSize (int: 240), pcCase.radiatorSupportFront (string: "120, 240")
+            const radSize = toInt(cooler.radiatorSize);
+            
+            // Kasa verilerini parçala ve sayıya çevir
+            const frontSup = normalizeNumberArray(pcCase.radiatorSupportFront);
+            const topSup = normalizeNumberArray(pcCase.radiatorSupportTop);
+
+            const fitsFront = frontSup.includes(radSize);
+            const fitsTop = topSup.includes(radSize);
+
+            if (!fitsFront && !fitsTop) {
+                addIssue("critical", `Seçilen ${radSize}mm radyatör, kasanın ne ön ne de üst paneline uyuyor.`, ["cpuCooler", "case"]);
+            }
+        }
+    }
+
+    // =============================
+    // 6) PSU ↔ KASA (Boyut)
+    // =============================
+    if (isFilled(psu) && isFilled(pcCase)) {
+        // Model: psu.length, pcCase.maxPsuLength
+        const psuLen = toInt(psu.length);
+        const maxPsuLen = toInt(pcCase.maxPsuLength);
+
+        if (psuLen > 0 && maxPsuLen > 0 && psuLen > maxPsuLen) {
+            addIssue("critical", `PSU uzunluğu (${psuLen}mm), kasanın PSU bölmesine sığmıyor (Maks: ${maxPsuLen}mm).`, ["psu", "case"]);
+        }
+    }
+
+    // =============================
+    // 7) KASA ↔ ANAKART (Form Faktör)
+    // =============================
+    if (isFilled(pcCase) && isFilled(mobo)) {
+        // Model: pcCase.supportedMotherboards (String: "ATX, Micro-ATX"), mobo.formFactor (String: "ATX")
+        const supported = normalizeString(pcCase.supportedMotherboards).toLowerCase();
+        const moboForm = normalizeString(mobo.formFactor).toLowerCase();
+
+        if (supported && moboForm && !supported.includes(moboForm)) {
+             addIssue("critical", `Kasa, ${mobo.formFactor} boyutundaki anakartı desteklemiyor.`, ["case", "motherboard"]);
+        }
+    }
+
+    // =============================
+    // 8) STORAGE (M.2 Sayısı)
+    // =============================
+    if (storages.length > 0 && isFilled(mobo)) {
+        // Model: storage.formFactor ("M.2", "2.5 Inch")
+        // Model: mobo.m2SlotCount, mobo.sataPortCount
+        
+        let m2Count = 0;
+        let sataCount = 0;
+
+        storages.forEach(s => {
+            const ff = normalizeString(s.formFactor).toLowerCase();
+            if (ff.includes('m.2')) m2Count++;
+            else if (ff.includes('2.5') || ff.includes('3.5')) sataCount++;
+        });
+
+        const moboM2Slots = toInt(mobo.m2SlotCount);
+        const moboSataPorts = toInt(mobo.sataPortCount);
+
+        if (m2Count > moboM2Slots) {
+             addIssue("critical", `Anakartta ${moboM2Slots} adet M.2 yuvası var, ancak siz ${m2Count} adet M.2 disk seçtiniz.`, ["storage", "motherboard"]);
+        }
+        if (sataCount > moboSataPorts) {
+             addIssue("critical", `Anakartta ${moboSataPorts} adet SATA portu var, ancak siz ${sataCount} adet SATA disk seçtiniz.`, ["storage", "motherboard"]);
+        }
+    }
+
+    // =============================
+    // SONUÇLARI GÖSTER
+    // =============================
+    const failDiv = document.getElementById('result-fail');
+    const reasonList = document.getElementById('fail-reasons');
+    const successDiv = document.getElementById('result-success');
+    const successText = document.getElementById('success-text');
+
+    if (issues.length > 0) {
+        // Hataları listele
+        const critical = issues.filter(i => i.level === "critical");
+        const warning = issues.filter(i => i.level === "warning");
+
+        const html =
+            critical.map(i => `<li class="text-red-600 dark:text-red-400 font-semibold"><span class="material-symbols-outlined align-middle text-sm">error</span> ${escapeHtml(i.msg)}</li>`).join('') +
+            warning.map(i => `<li class="text-orange-600 dark:text-orange-400"><span class="material-symbols-outlined align-middle text-sm">warning</span> ${escapeHtml(i.msg)}</li>`).join('');
+
+        reasonList.innerHTML = html;
+        failDiv.classList.remove('hidden');
+        failDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    } else {
+        // Başarılı
+        successText.innerHTML = `Seçilen parçalar (${filledParts} adet) birbiriyle tam uyumlu görünüyor. İyi oyunlar! 🎮`;
+        successDiv.classList.remove('hidden');
+        successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// =============================
+// HATA GÖSTERME YARDIMCISI
+// =============================
+function showErrorUnderCard(category, message) {
+    const el = document.getElementById(`error-${category}`);
+    if (!el) return;
+
+    const text = el.querySelector(".error-text");
+    if (text) text.textContent = message;
+
+    el.classList.remove("hidden");
+}
+    
     });
 
 </script>
