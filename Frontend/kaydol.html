@@ -3,43 +3,25 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
     <title data-i18n="auth-signup-title">Kayıt Ol - PCPartsBuild</title>
+    
     <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#16a3b2",
-                        "background-dark": "#0d1117",
-                    },
-                    fontFamily: {
-                        display: ["Poppins", "sans-serif"],
-                    },
-                },
-            },
-        };
-    </script>
-    <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 }
-        .transition-default { transition: color 0.3s, background-color 0.3s, border-color 0.3s, box-shadow 0.3s; }
-        body { min-height: max(884px, 100dvh); }
-        #bg-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -100; object-fit: cover; opacity: 0.1; }
-        
-        /* SweetAlert Özelleştirmesi */
-        div:where(.swal2-container) div:where(.swal2-popup) {
-            background: #1f2937 !important;
-            color: #e5e7eb !important;
-            border: 1px solid #374151;
-        }
-    </style>
+
+    <link rel="stylesheet" href="./styles.css">
 </head>
 
-<body class="bg-background-dark font-display text-gray-300 transition-default overflow-hidden">
+<body class="font-auth bg-background-dark font-display text-gray-300 transition-default overflow-hidden">
     <video autoplay="" id="bg-video" loop="" muted="" playsinline="">
         <source src="Assets/Videos/Video1.webm" type="video/webm"/>
     </video>
@@ -77,11 +59,11 @@
                     <form class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-1" for="email" data-i18n="label-email">Email</label>
-                            <input class="w-full bg-gray-800 border-gray-700 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" id="email" name="email" placeholder="sen@example.com" type="email" required/>
+                            <input class="w-full bg-gray-800 border-gray-700 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" id="email" name="email" placeholder="Email" type="email" required/>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-1" for="username" data-i18n="label-username">Kulanıcı Adı</label>
-                            <input class="w-full bg-gray-800 border-gray-700 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" id="username" name="username" data-i18n-placeholder="placeholder-username" placeholder="Kulanıcı_Adın" type="text" required/>
+                            <label class="block text-sm font-medium text-gray-300 mb-1" for="username" data-i18n="label-username">Kullanıcı Adı</label>
+                            <input class="w-full bg-gray-800 border-gray-700 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" id="username" name="username" data-i18n-placeholder="placeholder-username" placeholder="Kullanıcı Adı" type="text" required/>
                         </div>
                         
                         <div>
@@ -112,7 +94,7 @@
                     </form>
                 </main>
                 <footer class="text-center mt-6">
-                    <p class="text-sm text-gray-400" data-i18n="link-has-account-container">
+                    <p class="text-sm text-gray-400">
                         <span data-i18n="link-has-account">Zaten bir hesabınız mı var?</span>
                         <a class="font-medium text-primary hover:underline" href="giris.html" data-i18n="link-login">Giriş</a>
                     </p>
@@ -150,8 +132,8 @@
             "auth-signup-subtitle": "Özel bilgisayar yolculuğunuza bugün başlayın.",
             "auth-welcome-subtitle": "Hayalinizdeki Bilgisayarı hassasiyet ve güvenle tasarlayın.",
             "label-email": "Email",
-            "label-username": "Kulanıcı Adı",
-            "placeholder-username": "Kulanıcı_Adın",
+            "label-username": "Kullanıcı Adı",
+            "placeholder-username": "Kullanıcı Adı",
             "label-password": "Şifre",
             "label-repeat-password": "Şifreyi Tekrarla",
             "action-signup": "Kayıt Ol",
@@ -166,7 +148,7 @@
             "auth-welcome-subtitle": "Design your dream PC with precision and confidence.",
             "label-email": "Email",
             "label-username": "Username",
-            "placeholder-username": "Your_Username",
+            "placeholder-username": "Username",
             "label-password": "Password",
             "label-repeat-password": "Repeat Password",
             "action-signup": "Sign Up",
@@ -176,27 +158,31 @@
     };
 
     const setLanguage = (lang) => {
+        // 1. Dili Hafızaya Al
         localStorage.setItem('lang', lang);
         document.documentElement.lang = lang;
+
+        // 2. Tüm Çevrilebilir Metinleri Gez
         document.querySelectorAll('[data-i18n]').forEach(element => {
             const key = element.getAttribute('data-i18n');
             const translation = translations[lang][key];
+
+            // Çeviri varsa uygula
             if (translation) {
-                if (key === 'link-has-account') {
-                    const container = document.querySelector('[data-i18n="link-has-account-container"]');
-                    if (container) {
-                        container.innerHTML = `${translation} <a class="font-medium text-primary hover:underline" href="giris.html" data-i18n="link-login">${translations[lang]['link-login']}</a>`;
-                    }
-                } else {
-                    element.textContent = translation;
-                }
+                // Burada eski "if key === link-has-account" bloğunu SİLDİK.
+                // Artık ayrım yapmadan hepsinin metnini güncelliyoruz.
+                element.textContent = translation;
             }
         });
+
+        // 3. Placeholder (Input içindeki silik yazılar) Çevirisi
         document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
             const key = element.getAttribute('data-i18n-placeholder');
             const translation = translations[lang][key];
             if (translation) element.placeholder = translation;
         });
+
+        // 4. Sayfa Başlığını Güncelle
         document.title = translations[lang]["auth-signup-title"];
     };
     

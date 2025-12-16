@@ -5,58 +5,19 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title data-i18n="app-title">PCPartsBuild - Build Your Dream PC</title>
     <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#13a4ec", // Senin ana rengin
-                        "background-light": "#f6f7f8", 
-                        "background-dark": "#111c22", 
-                    },
-                    fontFamily: {
-                        "display": ["Space Grotesk", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    keyframes: {
-                        "fade-in-down": {
-                            "0%": { opacity: "0", transform: "translateY(-10px)" },
-                            "100%": { opacity: "1", transform: "translateY(0)" },
-                        }
-                    },
-                    animation: {
-                        "fade-in-down": "fade-in-down 0.3s ease-out"
-                    }
-                },
-            },
-        }
-    </script>
-    <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 }
-        .transition-default { transition: color 0.3s, background-color 0.3s, border-color 0.3s, transform 0.3s, opacity 0.3s; }
-        
-        div:where(.swal2-container) div:where(.swal2-popup) {
-            background: #111c22 !important; 
-            color: #e5e7eb !important;
-            border: 1px solid #374151;
-        }
-    </style>
+
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="bg-background-dark font-display text-white transition-default">
     <div class="relative flex min-h-screen w-full flex-col">

@@ -3,48 +3,22 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
     <title data-i18n="app-title">PC Parça Uyumluluk Kontrolü</title>
+    
     <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#16a3b2",
-                        "background-light": "#e5e7eb",
-                        "background-dark": "#0d1117",
-                        "surface-light": "#ffffff",
-                        "surface-dark": "rgb(31, 41, 55)",
-                    },
-                    fontFamily: {
-                        display: ["Poppins", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "0.5rem",
-                    },
-                },
-            },
-        };
-    </script>
-    <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .transition-default { transition: color 0.3s, background-color 0.3s, border-color 0.3s, box-shadow 0.3s; }
-        .icon-transition { transition: opacity 0.3s, transform 0.3s; }
-        body { min-height: max(884px, 100dvh); }
-        
-        /* SweetAlert Karanlık Mod */
-        div:where(.swal2-container) div:where(.swal2-popup) {
-            background: #1f2937 !important; color: #e5e7eb !important; border: 1px solid #374151;
-        }
-    </style>
+
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-200 antialiased transition-default">
 <div class="flex flex-col min-h-screen">
@@ -90,9 +64,13 @@
                     </div>
                 </div>
                 
-                <button id="darkModeButton" class="relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
-                    <span id="moonIcon" class="material-symbols-outlined text-xl icon-transition absolute opacity-0 scale-75 dark:opacity-100 dark:scale-100">dark_mode</span>
-                    <span id="sunIcon" class="material-symbols-outlined text-xl icon-transition absolute opacity-100 scale-100 dark:opacity-0 dark:scale-75">light_mode</span>
+                <button id="darkModeButton" class="grid place-items-center rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700 cursor-pointer overflow-hidden">
+                    <span id="moonIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-0 scale-75 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">
+                        dark_mode
+                    </span>
+                    <span id="sunIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-75 dark:-rotate-90">
+                        light_mode
+                    </span>
                 </button>
             </div>
         </nav>
