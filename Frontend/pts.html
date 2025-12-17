@@ -1110,7 +1110,7 @@ async function initializeWizard() {
             case 'ram':
                 if (item.memoryType) details += `<li><strong>Tip:</strong> ${item.memoryType}</li>`;
                 if (item.speed) details += `<li><strong>Hız:</strong> ${item.speed} MHz</li>`;
-                if (item.moduleCount) details += `<li><strong>Kit:</strong> ${item.moduleCount} x ${item.capacityPerModule}GB</li>`;
+                if (item.moduleCount) details += `<li><strong>Kit:</strong> ${item.moduleCount} Adet</li>`;
                 break;
             case 'gpu':
                 if (item.length) details += `<li><strong>Uzunluk:</strong> ${item.length} mm</li>`;
@@ -1198,7 +1198,7 @@ async function initializeWizard() {
                 <img alt="${item.modelName}" class="w-24 h-24 object-contain rounded-md flex-shrink-0" src="${imageSrc}">
                 
                 <div class="flex-grow">
-                    <h4 class="font-semibold text-lg text-gray-900 dark:text-white">${item.modelName}</h4>
+                    <h4 class="font-semibold text-lg text-gray-900 dark:text-white">${item.brand} ${item.modelName}</h4>
                     ${details} </div>
                 <div class="flex flex-col items-start sm:items-end w-full sm:w-auto mt-2 sm:mt-0 flex-shrink-0" style="min-width: 100px;">
                     <p class="text-xl font-bold text-gray-900 dark:text-white mb-2">0.00TL</p>
