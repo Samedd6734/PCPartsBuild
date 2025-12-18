@@ -66,7 +66,12 @@ namespace PCPartsAPI.Controllers
                 return Unauthorized(new { Message = "Kullanıcı adı veya şifre hatalı." });
             }
 
-            return Ok(new { Message = "Giriş başarılı!", Username = user.UserName });
+            return Ok(new
+            {
+                Message = "Giriş başarılı!",
+                Username = user.UserName,
+                UserId = user.Id // <--- BURASI EKLENDİ (String formatında GUID döner)
+            });
         }
 
         // --- 3. ADIM: ŞİFRE SIFIRLAMA KODU GÖNDER ---

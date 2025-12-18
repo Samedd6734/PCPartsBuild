@@ -19,5 +19,7 @@ namespace PCPartsAPI.Data
         public DbSet<Psu> Psus { get; set; }
         public DbSet<Case> Cases { get; set; }
         public DbSet<CpuCooler> CpuCoolers { get; set; }
+        public DbSet<Favorites> Favorites { get; set; }
+        public DbSet<SavedBuilds> SavedBuilds { get; set; }
     }
 }
