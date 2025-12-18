@@ -233,6 +233,10 @@
                     if (response.ok) {
                         localStorage.setItem('loggedInUser', result.username);
                         
+                        if (result.userId) {
+                            localStorage.setItem('userId', result.userId);
+                        }
+                        
                         // --- BAŞARILI (SweetAlert) ---
                         Swal.fire({
                             title: 'Hoş Geldiniz!',

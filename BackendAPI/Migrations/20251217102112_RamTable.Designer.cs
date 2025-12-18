@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PCPartsAPI.Data;
@@ -12,9 +13,11 @@ using PCPartsAPI.Data;
 namespace PCPartsAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251217102112_RamTable")]
+    partial class RamTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -342,30 +345,6 @@ namespace PCPartsAPI.Migrations
                     b.ToTable("CpuCoolers");
                 });
 
-            modelBuilder.Entity("PCPartsAPI.Models.Favorites", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ComponentId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ComponentType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Favorites");
-                });
-
             modelBuilder.Entity("PCPartsAPI.Models.Gpu", b =>
                 {
                     b.Property<int>("Id")
@@ -664,57 +643,6 @@ namespace PCPartsAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Rams");
-                });
-
-            modelBuilder.Entity("PCPartsAPI.Models.SavedBuilds", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BuildName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("CaseId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("CpuCoolerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("CpuId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("GpuId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("MotherboardId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("PsuId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("RamId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("StorageId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SavedBuilds");
                 });
 
             modelBuilder.Entity("PCPartsAPI.Models.Storage", b =>
