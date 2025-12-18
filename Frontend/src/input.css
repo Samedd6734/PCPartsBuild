@@ -154,3 +154,41 @@ input:focus, textarea:focus {
 #moonIcon { opacity: 0; transform: rotate(90deg) scale(0.5); }
 :is(.dark #sunIcon) { opacity: 0; transform: rotate(-90deg) scale(0.5); }
 :is(.dark #moonIcon) { opacity: 1; transform: rotate(0deg) scale(1); }
+
+/* === KÜRESEL BİLEŞENLER VE RESETLER === */
+@layer components {
+    /* Tüm sayfalardaki şeffaf kart yapısı */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Kaydırma çubuklarını gizleme */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Inputlardaki siyah kutu sorununu çözen reset */
+    input[type='text'], input[type='email'], input[type='tel'], input[type='password'], textarea {
+        appearance: none;
+        background-color: transparent !important; /* HTML'deki bg-black/20 sınıflarının çalışmasını sağlar */
+        color: inherit;
+    }
+
+    /* Focus (Odaklanma) efekti */
+    input:focus, textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 1px var(--color-primary);
+    }
+
+    /* İkon geçişleri */
+    .icon-transition { 
+        transition: opacity 0.3s, transform 0.3s; 
+    }
+}
+
+/* Temel Arka Plan Ayarları */
+html { background-color: var(--color-background-light); }
+html.dark { background-color: var(--color-background-dark); }
+body { min-height: 100dvh; margin: 0; }

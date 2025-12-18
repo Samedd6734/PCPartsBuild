@@ -15,44 +15,15 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="/src/main.js"></script>
 
-    <link rel="stylesheet" href="./input.css">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#16a3b2', 
-                        'background-dark': '#0d1117',
-                        'background-light': '#e5e7eb',
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="./styles.css">
 
     <style>
-        /* React geçiş animasyonu */
+        /* Sadece React'e özel animasyonu burada bırakabilirsiniz */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Yatay scroll bar gizleme */
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Glass Panel (CSS'ten gelmezse diye yedek) */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        .icon-transition { transition: opacity 0.3s, transform 0.3s; }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-[#0d1117] font-sans text-gray-900 dark:text-white antialiased selection:bg-primary selection:text-white">
