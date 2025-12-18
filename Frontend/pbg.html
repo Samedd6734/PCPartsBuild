@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="app-title">PC Bileşenleri - PCPartsBuild</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-200 antialiased transition-default">
+    <div class="flex flex-col min-h-screen">
+
+        <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 transition-default">
+            <nav class="container mx-auto flex justify-between items-center">
+                <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+                    <img src="Assets/Images/logo.webp" alt="PCPartsBuild Logo" class="h-14 transition-all duration-300 filter dark:filter-none">
+                </a>
+                <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300">
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                    <a class="text-primary dark:text-primary text-sm font-medium leading-normal transition-colors" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+                </div>
+                <div class="flex items-center gap-2">
+                    
+                    <a id="signup-button" href="kaydol.html" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity" data-i18n="auth-signup">Kayıt Ol</a>
+                    <a id="login-button" href="giris.html" class="bg-gray-200 border border-gray-300 text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700" data-i18n="auth-login">Giriş Yap</a>
+
+                    <div id="languageSelector" class="relative">
+                        <button id="languageButton" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+                            <span class="material-symbols-outlined text-xl">language</span>
+                        </button>
+                        <div id="languageDropdown" class="absolute right-0 top-full pt-1 w-32 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+                            <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">Türkçe (TR)</a>
+                            <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">English (EN)</a>
+                        </div>
+                    </div>
+
+                    <div id="account-section" class="relative hidden"> 
+                        <button id="account_circle" class="flex material-icons-outlined items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+                            <span>account_circle</span>
+                        </button>
+                        
+                        <div id="profileDropdown" class="absolute right-0 top-full pt-1 w-48 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+                            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                                <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="auth-welcome">Hoş geldin,</p>
+                                <p id="welcome-username" class="text-sm font-medium text-gray-900 dark:text-white truncate">Kullanıcı</p>
+                            </div>
+                            <a href="hesabim.html" class="block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200" data-i18n="nav-profile">Hesabım</a>
+                            <a href="#" id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-red-600 font-medium hover:bg-red-500 hover:text-white transition-colors duration-150 dark:text-red-400 dark:hover:bg-red-500/50">
+                                <span data-i18n="auth-logout">Çıkış Yap</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <button id="darkModeButton" class="grid place-items-center rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700 cursor-pointer overflow-hidden">
+                        <span id="moonIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-0 scale-75 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">
+                            dark_mode
+                        </span>
+                        <span id="sunIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-75 dark:-rotate-90">
+                            light_mode
+                        </span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto px-4 py-12 md:py-20">
+            <div class="text-center max-w-4xl mx-auto mb-12 md:mb-16">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight" data-i18n="main-title">PC Bileşenleri Rehberi</h1>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400" data-i18n="main-subtitle">Her bir parçanın temel görevini ve sisteminizdeki önemini keşfedin.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="cpu image" class="w-auto h-40" src="Assets/Images/cpu.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="cpu-title">İşlemci (CPU)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="cpu-desc">Bilgisayarın beynidir. Tüm hesaplamaları yapar, komutları işler ve diğer bileşenleri yönetir.</p>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="ekrankartı image" class="w-auto h-32" src="Assets/Images/ekrankarti.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="gpu-title">Ekran Kartı (GPU)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="gpu-desc">Görüntüleri oluşturur ve monitöre gönderir. Özellikle oyunlar, video düzenleme ve 3D modelleme için kritiktir.</p>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="ram image" class="w-auto h-32" src="Assets/Images/ram.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="ram-title">Bellek (RAM)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="ram-desc">Bilgisayarın aktif olarak kullandığı verileri geçici olarak depolar. Hızlı erişim sağlar ve çoklu görev performansını etkiler.</p>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="ssd image" class="w-60 h-32" src="Assets/Images/ssd.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="ssd-title">Depolama (SSD)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="ssd-desc">İşletim sistemini, programları ve dosyaları kalıcı olarak saklar. SSD'ler, hızlı okuma/yazma hızlarıyla sistemi hızlandırır.</p>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="anakart image" class="w-auto h-40" src="Assets/Images/anakart.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="mobo-title">Anakart </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="mobo-desc">Tüm bileşenlerin bağlandığı ve birbiriyle iletişim kurduğu ana devre kartıdır. Parça uyumluluğunu belirler.</p>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="power image" class="w-auto h-40" src="Assets/Images/guc.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="psu-title">Güç Kaynağı (PSU)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="psu-desc">Şebekeden gelen elektriği, bileşenlerin ihtiyaç duyduğu doğru voltajlara dönüştürür ve sisteme güç sağlar.</p>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="kasa image" class="w-auto h-40" src="Assets/Images/kasa.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="case-title">Kasa</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="case-desc">Tüm hassas bileşenleri fiziksel olarak korur, bir arada tutar ve hava akışı sağlayarak soğumaya yardımcı olur.</p>
+                </div>
+
+                <div class="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700 transition-default shadow-md hover:shadow-lg hover:scale-[1.02]">
+                    <div class="component-placeholder">
+                       <img alt="soğutmasistemleri image" class="w-auto h-24" src="Assets/Images/sıvısogutma.webp" >
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" data-i18n="cooler-title">Soğutma Sistemleri</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="cooler-desc">Özellikle CPU ve GPU gibi çok ısınan bileşenlerin sıcaklıklarını düşürerek stabil performansı ve uzun ömrü garanti eder.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="w-full mt-20 py-8 border-t border-gray-200 dark:border-gray-800">
+            <div class="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
+                <p>© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın: <a class="text-primary hover:underline" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a></p>
+            </div>
+        </footer>
+    </div>
+
+<script>
+    // --- ÇEVİRİ SÖZLÜĞÜ (GÜNCEL) ---
+    const translations = {
+        tr: {
+            "app-title": "PC Bileşenleri - PCPartsBuild",
+            "nav-wizard": "PC Toplama Sihirbazı",
+            "nav-compatibility": "Parça Uyumluluk Kontrolü",
+            "nav-info": "PC Bileşenleri",
+            "auth-signup": "Kayıt Ol",
+            "auth-login": "Giriş Yap",
+            "auth-welcome": "Hoş geldin,",
+            "nav-profile": "Hesabım",
+            "auth-logout": "Çıkış Yap",
+            "main-title": "PC Bileşenleri Rehberi",
+            "main-subtitle": "Her bir parçanın temel görevini ve sisteminizdeki önemini keşfedin.",
+            "cpu-title": "İşlemci (CPU)",
+            "cpu-desc": "Bilgisayarın beynidir. Tüm hesaplamaları yapar, komutları işler ve diğer bileşenleri yönetir.",
+            "gpu-title": "Ekran Kartı (GPU)",
+            "gpu-desc": "Görüntüleri oluşturur ve monitöre gönderir. Özellikle oyunlar, video düzenleme ve 3D modelleme için kritiktir.",
+            "ram-title": "Bellek (RAM)",
+            "ram-desc": "Bilgisayarın aktif olarak kullandığı verileri geçici olarak depolar. Hızlı erişim sağlar ve çoklu görev performansını etkiler.",
+            "ssd-title": "Depolama (SSD)",
+            "ssd-desc": "İşletim sistemini, programları ve dosyaları kalıcı olarak saklar. SSD'ler, hızlı okuma/yazma hızlarıyla sistemi hızlandırır.",
+            "mobo-title": "Anakart",
+            "mobo-desc": "Tüm bileşenlerin bağlandığı ve birbiriyle iletişim kurduğu ana devre kartıdır. Parça uyumluluğunu belirler.",
+            "psu-title": "Güç Kaynağı (PSU)",
+            "psu-desc": "Şebekeden gelen elektriği, bileşenlerin ihtiyaç duyduğu doğru voltajlara dönüştürür ve sisteme güç sağlar.",
+            "case-title": "Kasa",
+            "case-desc": "Tüm hassas bileşenleri fiziksel olarak korur, bir arada tutar ve hava akışı sağlayarak soğumaya yardımcı olur.",
+            "cooler-title": "Soğutma Sistemleri",
+            "cooler-desc": "Özellikle CPU ve GPU gibi çok ısınan bileşenlerin sıcaklıklarını düşürerek stabil performansı ve uzun ömrü garanti eder."
+        },
+        en: {
+            "app-title": "PC Components - PCPartsBuild",
+            "nav-wizard": "PC Build Wizard",
+            "nav-compatibility": "Part Compatibility Check",
+            "nav-info": "PC Components",
+            "auth-signup": "Sign Up",
+            "auth-login": "Log In",
+            "auth-welcome": "Welcome,",
+            "nav-profile": "My Account",
+            "auth-logout": "Log Out",
+            "main-title": "PC Components Guide",
+            "main-subtitle": "Discover the fundamental role and importance of each part in your system.",
+            "cpu-title": "Processor (CPU)",
+            "cpu-desc": "The brain of the computer. It performs all calculations, processes commands, and manages other components.",
+            "gpu-title": "Graphics Card (GPU)",
+            "gpu-desc": "Renders images and sends them to the monitor. Critical for gaming, video editing, and 3D modeling.",
+            "ram-title": "Memory (RAM)",
+            "ram-desc": "Temporarily stores data the computer is actively using. Allows fast access and affects multitasking performance.",
+            "ssd-title": "Storage (SSD)",
+            "ssd-desc": "Permanently stores the operating system, programs, and files. SSDs speed up the system with fast read/write speeds.",
+            "mobo-title": "Motherboard",
+            "mobo-desc": "The main circuit board connecting all components and allowing them to communicate. It determines part compatibility.",
+            "psu-title": "Power Supply (PSU)",
+            "psu-desc": "Converts electricity from the wall outlet into the correct voltages needed by the components and supplies power to the system.",
+            "case-title": "Case",
+            "case-desc": "Physically protects all sensitive components, holds them together, and helps with cooling by providing airflow.",
+            "cooler-title": "Cooling Systems",
+            "cooler-desc": "Reduces the temperature of hot components like the CPU and GPU, ensuring stable performance and longevity."
+        }
+    };
+
+    const setLanguage = (lang) => {
+        localStorage.setItem('lang', lang); 
+        document.documentElement.lang = lang;
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = translations[lang][key];
+            if (translation) element.textContent = translation;
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            const translation = translations[lang][key];
+            if (translation) element.placeholder = translation;
+        });
+        document.title = translations[lang]["app-title"];
+    };
+    
+    // Tema Ayarları - DÜZELTİLMİŞ HALİ
+    const toggleDarkMode = () => {
+        const html = document.documentElement;
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
+        // Tailwind'in "dark:" sınıfları bu işi hallediyor.
+        
+        const isDarkMode = html.classList.contains('dark');
+        const newTheme = isDarkMode ? 'light' : 'dark';
+
+        if (isDarkMode) {
+            html.classList.remove('dark');
+        } else {
+            html.classList.add('dark');
+        }
+        localStorage.setItem('theme_builder', newTheme);
+        
+        if (sunIcon && moonIcon) {
+            if (newTheme === 'light') {
+                moonIcon.classList.remove('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+                sunIcon.classList.remove('opacity-0', 'scale-75');
+                sunIcon.classList.add('opacity-100', 'scale-100'); 
+            } else {
+                sunIcon.classList.remove('opacity-100', 'scale-100'); 
+                sunIcon.classList.add('opacity-0', 'scale-75'); 
+                moonIcon.classList.remove('opacity-0', 'scale-75');
+                moonIcon.classList.add('opacity-100', 'scale-100');
+            }
+        }
+    };
+
+    const initializeTheme = (key = 'theme_builder') => {
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem(key);
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
+
+        let isDark = false;
+        if (savedTheme === 'dark') {
+            html.classList.add('dark');
+            isDark = true;
+        } else if (savedTheme === 'light') {
+            html.classList.remove('dark');
+            isDark = false;
+        } else if (html.classList.contains('dark')) {
+            localStorage.setItem(key, 'dark');
+            isDark = true;
+        } else {
+            localStorage.setItem(key, 'light');
+            isDark = false;
+        }
+
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                moonIcon.classList.add('opacity-100', 'scale-100');
+                sunIcon.classList.add('opacity-0', 'scale-75');
+            } else {
+                sunIcon.classList.add('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+            }
+        }
+    };
+
+    const initializeLang = () => {
+        const savedLang = localStorage.getItem('lang');
+        let currentLang = savedLang || document.documentElement.lang || 'tr';
+        setLanguage(currentLang);
+    };
+
+    // --- DOM YÜKLENDİĞİNDE ---
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme('theme_builder');
+        initializeLang();
+        
+        // Dil Menüsü
+        const languageSelector = document.getElementById('languageSelector');
+        const languageButton = document.getElementById('languageButton');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageOptions = languageDropdown.querySelectorAll('.language-option');
+        const darkModeButton = document.getElementById('darkModeButton');
+        
+        const hideDropdown = () => languageDropdown.classList.add('hidden');
+        const showDropdown = () => languageDropdown.classList.remove('hidden');
+
+        languageButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            if (languageDropdown.classList.contains('hidden')) { showDropdown(); } else { hideDropdown(); }
+        });
+
+        languageSelector.addEventListener('mouseleave', hideDropdown);
+        document.addEventListener('click', function(event) {
+            if (!languageSelector.contains(event.target)) { hideDropdown(); }
+        });
+
+        languageOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                const selectedLang = this.getAttribute('data-lang');
+                setLanguage(selectedLang);
+                hideDropdown();
+            });
+        });
+
+        if (darkModeButton) {
+            darkModeButton.addEventListener('click', toggleDarkMode);
+        }
+
+        // --- GİRİŞ / ÇIKIŞ & PROFİL YÖNETİMİ ---
+        const loginButton = document.getElementById('login-button');
+        const signupButton = document.getElementById('signup-button');
+        const accountSection = document.getElementById('account-section');
+        const profileButton = document.getElementById('account_circle');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const welcomeUsername = document.getElementById('welcome-username');
+        const logoutButton = document.getElementById('logout-button');
+        
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        if (loggedInUser) {
+            if (loginButton) loginButton.style.display = 'none';
+            if (signupButton) signupButton.style.display = 'none';
+            if (accountSection) {
+                accountSection.classList.remove('hidden'); 
+                accountSection.classList.add('flex');
+            }
+            if (welcomeUsername) welcomeUsername.textContent = loggedInUser;
+        } else {
+            if (loginButton) loginButton.style.display = 'flex';
+            if (signupButton) signupButton.style.display = 'flex';
+            if (accountSection) accountSection.classList.add('hidden');
+        }
+
+        if (profileButton && profileDropdown) {
+            profileButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                profileDropdown.classList.toggle('hidden');
+            });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (profileDropdown && !profileDropdown.classList.contains('hidden') && !accountSection.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+
+        // --- MODERN ÇIKIŞ YAP (SWEETALERT) ---
+        if (logoutButton) {
+            logoutButton.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                
+                Swal.fire({
+                    title: 'Çıkış Yapılıyor...',
+                    text: 'Oturumunuz güvenli bir şekilde kapatılıyor. Tekrar bekleriz!',
+                    icon: 'success',
+                    background: '#1f2937', 
+                    color: '#fff',
+                    showConfirmButton: false,
+                    timer: 1000,
+                    timerProgressBar: true
+                }).then(() => {
+                    localStorage.removeItem('loggedInUser');
+                    window.location.reload(); 
+                });
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="page-title-favorites">PCPartsBuild - Favorilerim</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="./input.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#16a3b2', 
+                        'background-dark': '#0d1117',
+                        'background-light': '#e5e7eb',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* React geçiş animasyonu */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Yatay scroll bar gizleme */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Glass Panel (CSS'ten gelmezse diye yedek) */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-[#0d1117] font-sans text-gray-900 dark:text-white antialiased selection:bg-primary selection:text-white">
+    
+    <div class="relative flex min-h-screen flex-col">
+        
+        <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 bg-white dark:bg-background-dark transition-colors duration-300">
+            <nav class="container mx-auto flex justify-between items-center">
+                <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+                    <img src="Assets/Images/logo.webp" alt="PCPartsBuild" class="h-10 md:h-14">
+                </a>
+        
+                <nav class="hidden lg:flex items-center gap-9">
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <div id="languageSelector" class="relative">
+                        <button id="languageButton" class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-symbols-outlined text-xl">language</span>
+                        </button>
+                        <div id="languageDropdown" class="absolute right-0 top-full mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800 dark:border-gray-700">
+                            <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">Türkçe (TR)</a>
+                            <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">English (EN)</a>
+                        </div>
+                    </div>
+
+                    <div id="account-section" class="relative hidden">
+                        <button id="account_circle" class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-white/10 dark:border-transparent dark:text-white dark:hover:bg-white/20 transition-colors">
+                            <span class="material-icons-outlined">account_circle</span>
+                        </button>
+                    </div>
+        
+                    <button id="darkModeButton" class="relative flex items-center justify-center h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors overflow-hidden">
+                        <span id="moonIcon" class="material-symbols-outlined absolute icon-transition opacity-0 scale-50 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">dark_mode</span>
+                        <span id="sunIcon" class="material-symbols-outlined absolute icon-transition opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-50 dark:-rotate-90">light_mode</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-1 py-10 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-7xl">
+                
+                <div class="mb-8 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white" data-i18n="page-header-fav">Favorilerim</h1>
+                        <p class="text-gray-500 dark:text-white/60 mt-1" data-i18n="page-subtext-fav">Beğendiğiniz bileşenleri kategorilere göre filtreleyin.</p>
+                    </div>
+                    <button id="logout-btn-main" class="mt-4 md:mt-0 inline-flex items-center justify-center gap-2 rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-500 dark:hover:bg-red-500/20 transition-colors ring-1 ring-inset ring-red-500/20">
+                        <span class="material-icons-outlined text-lg">logout</span>
+                        <span data-i18n="auth-logout">Oturumu Kapat</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+                    
+                    <aside class="lg:col-span-3">
+                        <div class="sticky top-24 space-y-4">
+                            
+                            <div class="glass-panel rounded-2xl p-6 flex flex-col items-center text-center bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <div class="relative mb-4">
+                                    <img id="profile-img" src="https://ui-avatars.com/api/?name=User&background=16a3b2&color=fff" class="h-24 w-24 rounded-full border-4 border-gray-100 dark:border-[#0f171c] shadow-lg">
+
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="profile-name">Kullanıcı Adı</h2>
+                                <div class="mt-4 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400 ring-1 ring-inset ring-green-600/20">
+                                    <span data-i18n="status-active">Aktif Üye</span>
+                                </div>
+                            </div>
+
+                            <nav class="glass-panel rounded-xl overflow-hidden p-2 bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <a href="hesabim.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">person</span>
+                                    <span data-i18n="menu-profile">Profil Bilgileri</span>
+                                </a>
+                                <a href="kayitli_sistemler.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">computer</span>
+                                    <span data-i18n="menu-systems">Kayıtlı Sistemlerim</span>
+                                </a>
+                                <a href="favorilerim.html" class="flex items-center gap-3 rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition-colors">
+                                    <span class="material-icons-round">shopping_bag</span>
+                                    <span data-i18n="menu-favorites">Favoriler</span>
+                                </a>
+                                <a href="#" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">lock</span>
+                                    <span data-i18n="menu-password">Şifre Değiştir</span>
+                                </a>
+                            </nav>
+                        </div>
+                    </aside>
+
+                    <div class="lg:col-span-9" id="favorites-root">
+                        </div>
+
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto border-t border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#0d1317] py-8 text-center transition-colors duration-300">
+            <p class="text-white/60 text-sm font-normal leading-normal" data-i18n="footer-copyright-container">
+                <span data-i18n="footer-copyright">© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:</span> <a class="underline hover:text-primary" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a>
+            </p>
+        </footer>
+
+    </div>
+
+<script type="text/babel">
+    // İKONLAR GÜNCELLENDİ: mode_fan geri geldi, diğerleri Symbols uyumlu hale getirildi.
+    const categories = [
+        { id: 'cpu', key: 'cat-cpu', icon: 'memory' },
+        { id: 'mobo', key: 'cat-mobo', icon: 'developer_board' },
+        { id: 'ram', key: 'cat-ram', icon: 'straighten' },      // Symbols kütüphanesinde memory_alt çalışır
+        { id: 'gpu', key: 'cat-gpu', icon: 'videogame_asset' },
+        { id: 'storage', key: 'cat-storage', icon: 'save' }, // Symbols kütüphanesinde hard_drive çalışır
+        { id: 'case', key: 'cat-case', icon: 'computer' },
+        { id: 'psu', key: 'cat-psu', icon: 'power' },
+        { id: 'cooler', key: 'cat-cooler' , icon: 'mode_fan' },    // İSTEĞİNİZ ÜZERİNE: mode_fan eklendi
+    ];
+
+    const products = {
+        cpu: [
+            { id: 1, name: 'Intel Core i9-14900K', price: '22.500 TL', specs: ['3.2 GHz', '24 Çekirdek'], icon: 'memory' },
+            { id: 2, name: 'AMD Ryzen 7 7800X3D', price: '15.800 TL', specs: ['4.2 GHz', '8 Çekirdek'], icon: 'memory' },
+        ],
+        mobo: [
+            { id: 3, name: 'MSI MAG Z790 Tomahawk WiFi', price: '9.800 TL', specs: ['DDR5', 'ATX'], icon: 'developer_board' },
+        ],
+        ram: [
+            { id: 4, name: 'G.Skill Trident Z5 RGB 32GB', price: '5.200 TL', specs: ['6000MHz', 'CL30'], icon: 'straighten' },
+        ],
+        gpu: [
+            { id: 6, name: 'ASUS ROG Strix RTX 4090', price: '85.000 TL', specs: ['24GB', 'GDDR6X'], icon: 'videogame_asset' },
+        ],
+        storage: [
+            { id: 7, name: 'Samsung 990 Pro 2TB', price: '6.500 TL', specs: ['7450 MB/s', 'NVMe'], icon: 'save' },
+        ],
+        case: [
+            { id: 8, name: 'NZXT H9 Flow', price: '5.800 TL', specs: ['Dual Chamber', 'Temperli Cam'], icon: 'computer' },
+        ],
+        psu: [
+            { id: 9, name: 'Corsair RM1000x Shift', price: '6.200 TL', specs: ['1000W', '80+ Gold'], icon: 'power' },
+        ],
+        cooler: [
+            { id: 10, name: 'Arctic Liquid Freezer III 360', price: '4.500 TL', specs: ['360mm', 'A-RGB'], icon: 'mode_fan' }, // İkon güncellendi
+        ]
+    };
+
+    function FavoritesApp() {
+        const [activeTab, setActiveTab] = React.useState('cpu');
+        // Dil takibi için state ekledik
+        const [currentLang, setCurrentLang] = React.useState(localStorage.getItem('lang') || 'tr');
+        
+        // Dil değiştiğinde React'ı haberdar eden kod
+        React.useEffect(() => {
+            const handleLanguageChange = (e) => {
+                setCurrentLang(e.detail.language);
+            };
+            window.addEventListener('languageChanged', handleLanguageChange);
+            return () => window.removeEventListener('languageChanged', handleLanguageChange);
+        }, []);
+
+        // Çeviri fonksiyonu
+        const t = (key) => {
+            if (window.translations && window.translations[currentLang] && window.translations[currentLang][key]) {
+                return window.translations[currentLang][key];
+            }
+            return key;
+        };
+
+        const activeProducts = products[activeTab] || [];
+        // Başlık artık çeviriden geliyor
+        const activeCategoryLabel = t(categories.find(c => c.id === activeTab)?.key);
+
+        return (
+            <div className="space-y-6">
+                <div className="glass-panel rounded-2xl p-6 bg-white dark:bg-[#111c22] border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-300">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat.id}
+                                onClick={() => setActiveTab(cat.id)}
+                                className={`
+                                    flex flex-col items-center justify-center 
+                                    w-full aspect-square p-2
+                                    rounded-xl transition-all duration-300 border
+                                    ${activeTab === cat.id 
+                                        ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-[1.02]" 
+                                        : "bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-white/60 border-transparent hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white"
+                                    }
+                                `}
+                            >
+                                <span className="material-symbols-outlined text-3xl mb-1 leading-none pointer-events-none">{cat.icon}</span>
+                                {/* Burası t() fonksiyonu ile çevriliyor */}
+                                <span className="text-xs font-medium text-center leading-tight pointer-events-none">{t(cat.key)}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                    <div className="glass-panel rounded-2xl p-6 sm:p-8 bg-white dark:bg-[#111c22] border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-300 min-h-[300px]">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 border-b border-gray-200 dark:border-white/10 pb-4">
+                            {activeCategoryLabel} {t('text-favorites')}
+                        </h3>
+
+                    {activeProducts.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-white/40 fade-in">
+                            <span className="material-symbols-outlined text-5xl mb-2 opacity-50">sentiment_dissatisfied</span>
+                            <p>Listenizde henüz {activeCategoryLabel?.toLowerCase()} yok.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 fade-in">
+                            {activeProducts.map((product) => (
+                                <div key={product.id} className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-1 transition-all hover:border-primary/50 dark:hover:border-white/20">
+                                    <div className="flex items-center gap-4 p-4">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-white dark:bg-white/10 text-primary border border-gray-200 dark:border-transparent shrink-0">
+                                            <span className="material-symbols-outlined text-3xl leading-none">{product.icon}</span>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-bold text-gray-900 dark:text-white truncate">{product.name}</h4>
+                                            <div className="flex gap-2 mt-1 mb-2">
+                                                {product.specs.map((spec, i) => (
+                                                    <span key={i} className="text-[10px] whitespace-nowrap rounded bg-gray-200 dark:bg-white/10 px-2 py-1 text-gray-600 dark:text-white/60">
+                                                        {spec}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                            <div className="flex items-center justify-between mt-2">
+                                                <p className="font-mono text-lg font-bold text-green-600 dark:text-[#4ade80]">{product.price}</p>
+                                                <button className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-500/20 dark:hover:text-red-500 transition-colors" title="Favorilerden Kaldır">
+                                                    <span className="material-icons-round text-lg leading-none">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('favorites-root'));
+    root.render(<FavoritesApp />);
+</script>
+
+    <script>
+        // Çeviri Sözlüğü
+        window.translations = {
+        tr: { 
+            "page-title-favorites": "PCPartsBuild - Favorilerim", 
+            "nav-wizard": "PC Toplama Sihirbazı", 
+            "nav-compatibility": "Parça Uyumluluk Kontrolü", 
+            "nav-info": "PC Bileşenleri", 
+            "auth-logout": "Çıkış Yap", 
+            "page-header-fav": "Favorilerim", 
+            "page-subtext-fav": "Beğendiğiniz bileşenleri kategorilere göre filtreleyin.", 
+            "status-active": "Aktif Üye", 
+            "menu-profile": "Profil Bilgileri", 
+            "menu-systems": "Kayıtlı Sistemlerim", 
+            "menu-favorites": "Favoriler", 
+            "menu-password": "Şifre Değiştir", 
+            "footer-rights": "Tüm Hakları Saklıdır.",
+            // Kategori Çevirileri
+            "cat-cpu": "İşlemci",
+            "cat-mobo": "Anakart",
+            "cat-ram": "Bellek",
+            "cat-gpu": "Ekran Kartı",
+            "cat-storage": "Depolama",
+            "cat-case": "Kasa",
+            "cat-psu": "Güç Kaynağı",
+            "cat-cooler": "Soğutucu",
+            "text-favorites": "Favorileri"
+        },
+        en: { 
+            "page-title-favorites": "PCPartsBuild - Favorites", 
+            "nav-wizard": "PC Builder Wizard", 
+            "nav-compatibility": "Compatibility Check", 
+            "nav-info": "PC Components", 
+            "auth-logout": "Logout", 
+            "page-header-fav": "My Favorites", 
+            "page-subtext-fav": "Filter your favorite components by category.",
+            "status-active": "Active Member", 
+            "menu-profile": "Profile Info", 
+            "menu-systems": "Saved Builds", 
+            "menu-favorites": "Favorites", 
+            "menu-password": "Change Password", 
+            "footer-rights": "All Rights Reserved.",
+            // Kategori Çevirileri
+            "cat-cpu": "Processor",
+            "cat-mobo": "Motherboard",
+            "cat-ram": "Memory",
+            "cat-gpu": "Graphics Card",
+            "cat-storage": "Storage",
+            "cat-case": "Case",
+            "cat-psu": "Power Supply",
+            "cat-cooler": "Cooler",
+            "text-favorites": "Favorites"
+        }
+    };
+
+        // 4. setLanguage FONKSİYONUNU GÜNCELLEYİN (dispatch ekledik)
+    function setLanguage(lang) {
+        if (!window.translations[lang]) lang = 'tr';
+        localStorage.setItem('lang', lang);
+        document.documentElement.lang = lang;
+        
+        const elements = document.querySelectorAll('[data-i18n]');
+        elements.forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (window.translations[lang][key]) el.textContent = window.translations[lang][key];
+        });
+
+        // React bileşenine dilin değiştiğini haber veriyoruz
+        window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
+    }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Kullanıcı Kontrolü
+            let loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) loggedInUser = "Misafir";
+            document.getElementById('profile-name').textContent = loggedInUser;
+            const profileImg = document.getElementById('profile-img');
+            if(profileImg) profileImg.src = `https://ui-avatars.com/api/?name=${loggedInUser}&background=16a3b2&color=fff&size=128`;
+
+            // Tema Başlatma
+            const savedTheme = localStorage.getItem('theme_builder') || 'dark';
+            const html = document.documentElement;
+            if (savedTheme === 'dark') html.classList.add('dark');
+            else html.classList.remove('dark');
+
+            // Dil Başlatma
+            const savedLang = localStorage.getItem('lang') || 'tr';
+            setLanguage(savedLang);
+
+            // Dropdown Mantığı
+            const dropdowns = { 'languageButton': 'languageDropdown' };
+            Object.keys(dropdowns).forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                const menu = document.getElementById(dropdowns[btnId]);
+                if(btn && menu) {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        menu.classList.toggle('hidden');
+                    });
+                }
+            });
+            document.addEventListener('click', () => {
+                Object.values(dropdowns).forEach(id => document.getElementById(id).classList.add('hidden'));
+            });
+
+            // Dil Seçimi
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setLanguage(e.target.getAttribute('data-lang'));
+                    document.getElementById('languageDropdown').classList.add('hidden');
+                });
+            });
+
+            // Dark Mode Toggle
+            const darkModeBtn = document.getElementById('darkModeButton');
+            if(darkModeBtn) {
+                darkModeBtn.addEventListener('click', () => {
+                    html.classList.toggle('dark');
+                    const isDark = html.classList.contains('dark');
+                    localStorage.setItem('theme_builder', isDark ? 'dark' : 'light');
+                });
+            }
+
+            // Çıkış Yap
+            const logoutAction = (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Çıkış Yapılıyor',
+                    text: 'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+                    icon: 'warning',
+                    background: html.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                    color: html.classList.contains('dark') ? '#ffffff' : '#1f2937',
+                    showCancelButton: true,
+                    confirmButtonColor: '#16a3b2',
+                    cancelButtonColor: '#ef4444',
+                    confirmButtonText: 'Evet',
+                    cancelButtonText: 'İptal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.removeItem('loggedInUser');
+                        window.location.href = 'anasayfa.html';
+                    }
+                });
+            };
+            document.getElementById('logout-btn-main')?.addEventListener('click', logoutAction);
+        });
+    </script>
+</body>
+</html>

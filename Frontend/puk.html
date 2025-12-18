@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="app-title">PC Parça Uyumluluk Kontrolü</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-200 antialiased transition-default">
+<div class="flex flex-col min-h-screen">
+    <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 transition-default">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+                <img src="Assets/Images/logo.webp" alt="PCPartsBuild Logo" class="h-14 transition-all duration-300 filter dark:filter-none">
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300">
+                <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                <a class="text-primary dark:text-primary text-sm font-medium leading-normal transition-colors" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <a id="signup-button" href="kaydol.html" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity" data-i18n="auth-signup">Kayıt Ol</a>
+                <a id="login-button" href="giris.html" class="bg-gray-200 border border-gray-300 text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700" data-i18n="auth-login">Giriş Yap</a>
+
+                <div id="languageSelector" class="relative">
+                    <button id="languageButton" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+                        <span class="material-symbols-outlined text-xl">language</span>
+                    </button>
+                    <div id="languageDropdown" class="absolute right-0 top-full pt-1 w-32 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+                        <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">Türkçe (TR)</a>
+                        <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">English (EN)</a>
+                    </div>
+                </div>
+
+                <div id="account-section" class="relative hidden"> 
+                    <button id="account_circle" class="flex material-icons-outlined items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+                        <span>account_circle</span>
+                    </button>
+                    <div id="profileDropdown" class="absolute right-0 top-full pt-1 w-48 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="auth-welcome">Hoş geldin,</p>
+                            <p id="welcome-username" class="text-sm font-medium text-gray-900 dark:text-white truncate">Kullanıcı</p>
+                        </div>
+                        <a href="hesabim.html" class="block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200" data-i18n="nav-profile">Hesabım</a>
+                        <a href="#" id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-red-600 font-medium hover:bg-red-500 hover:text-white transition-colors duration-150 dark:text-red-400 dark:hover:bg-red-500/50">
+                            <span data-i18n="auth-logout">Çıkış Yap</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <button id="darkModeButton" class="grid place-items-center rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700 cursor-pointer overflow-hidden">
+                    <span id="moonIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-0 scale-75 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">
+                        dark_mode
+                    </span>
+                    <span id="sunIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-75 dark:-rotate-90">
+                        light_mode
+                    </span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8 md:py-12">
+    <div class="text-center max-w-3xl mx-auto mb-12">
+        <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight mb-4" data-i18n="main-title">
+            PC Uyumluluk Kontrolü
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400" data-i18n="main-subtitle">
+            Sisteminizi aşağıdaki slotlara yerleştirin. Yapay zeka ve algoritmalarımız parçalarınızın uyumunu anında denetlesin.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+        
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                    <span class="material-symbols-outlined text-2xl">memory</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-cpu">İşlemci</h3>
+            </div>
+            <select id="cpu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+                </select>
+            <p id="error-cpu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-indigo-600 dark:text-indigo-400">
+                    <span class="material-symbols-outlined text-2xl">developer_board</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-motherboard">Anakart</h3>
+            </div>
+            <select id="motherboard" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-motherboard" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-green-50 dark:bg-green-900/20 rounded-lg text-green-600 dark:text-green-400">
+                    <span class="material-symbols-outlined text-2xl">straighten</span> </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-ram">Bellek (RAM)</h3>
+            </div>
+            <select id="ram" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-ram" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                    <span class="material-symbols-outlined text-2xl">videogame_asset</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-gpu">Ekran Kartı</h3>
+            </div>
+            <select id="gpu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-gpu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-orange-50 dark:bg-orange-900/20 rounded-lg text-orange-600 dark:text-orange-400">
+                    <span class="material-symbols-outlined text-2xl">hard_drive</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-storage">Depolama</h3>
+            </div>
+            <select id="storage" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-storage" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-600 dark:text-gray-300">
+                    <span class="material-symbols-outlined text-2xl">computer</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="tab-case">Kasa</h3>
+            </div>
+            <select id="case" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-case" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg text-yellow-600 dark:text-yellow-400">
+                    <span class="material-symbols-outlined text-2xl">power</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-psu">Güç Kaynağı</h3>
+            </div>
+            <select id="psu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-psu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+        <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="p-2.5 bg-cyan-50 dark:bg-cyan-900/20 rounded-lg text-cyan-600 dark:text-cyan-400">
+                    <span class="material-symbols-outlined text-2xl">mode_fan</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-cooler">Soğutucu</h3>
+            </div>
+            <select id="cpuCooler" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
+                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            </select>
+            <p id="error-cpuCooler" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="text-center mb-12">
+        <button id="checkCompatibilityBtn" class="bg-primary text-white font-bold py-3.5 px-10 rounded-xl text-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-xl shadow-primary/25" data-i18n="action-check">
+            Uyumluluğu Kontrol Et
+        </button>
+        <button id="expertOpinionButton" class="bg-indigo-600 text-white font-bold py-3.5 px-10 rounded-xl text-lg hover:bg-indigo-700 hover:scale-105 transition-all shadow-xl shadow-indigo-600/30 disabled:opacity-50 disabled:hover:scale-100 mt-4 md:mt-0 md:ml-4" disabled data-i18n="action-expert">
+            Parça Uzman Görüşü Al ✨
+        </button>
+    </div>
+
+    <div class="max-w-5xl mx-auto">
+        <div id="results-container" class="bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-2xl border border-gray-200 dark:border-gray-800/80 shadow-2xl transition-default">
+            
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-800 pb-4" data-i18n="results-title">Kontrol Sonuçları</h2>
+
+            <div id="result-info" class="flex flex-col md:flex-row items-center gap-6 p-6 rounded-xl bg-sky-50 border border-sky-200 dark:bg-sky-900/20 dark:border-sky-800/50">
+                <div class="flex-shrink-0 p-3 bg-sky-100 dark:bg-sky-900/50 rounded-full">
+                    <span class="material-symbols-outlined text-3xl text-sky-600 dark:text-sky-400">info</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 class="text-lg font-bold text-sky-800 dark:text-sky-300" data-i18n="result-info-title">Sistem Hazır Bekliyor</h3>
+                    <p class="mt-1 text-sky-700 dark:text-sky-400 text-sm" data-i18n="result-info-text">
+                        Analize başlamak için yukarıdaki slotlara en az iki parça (Örn: İşlemci ve Anakart) yerleştirin.
+                    </p>
+                </div>
+            </div>
+
+            <div id="result-success" class="hidden flex-col md:flex-row items-center gap-6 p-6 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800/50">
+                <div class="flex-shrink-0 p-3 bg-emerald-100 dark:bg-emerald-900/50 rounded-full">
+                    <span class="material-symbols-outlined text-3xl text-emerald-600 dark:text-emerald-400">verified</span>
+                </div>
+                <div class="text-center md:text-left">
+                    <h3 class="text-lg font-bold text-emerald-800 dark:text-emerald-300" data-i18n="result-success-title">Mükemmel Uyum!</h3>
+                    <p id="success-text" class="mt-1 text-emerald-700 dark:text-emerald-400 text-sm"></p>
+                </div>
+            </div>
+            
+            <div id="result-fail" class="hidden flex-col md:flex-row items-start gap-6 p-6 rounded-xl bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800/50">
+                <div class="flex-shrink-0 p-3 bg-red-100 dark:bg-red-900/50 rounded-full">
+                    <span class="material-symbols-outlined text-3xl text-red-600 dark:text-red-400">warning</span>
+                </div>
+                <div class="w-full">
+                    <h3 class="text-lg font-bold text-red-800 dark:text-red-300" data-i18n="result-fail-title">Uyumsuzluk Tespit Edildi</h3>
+                    <ul id="fail-reasons" class="mt-3 space-y-2 text-sm text-red-700 dark:text-red-400"></ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+    <footer class="w-full mt-20 py-8 border-t border-gray-200 dark:border-gray-800">
+        <div class="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
+            <p>© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın: <a class="text-primary hover:underline" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a></p>
+        </div>
+    </footer>
+</div>
+
+<div id="geminiModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b pb-3 mb-4 border-gray-200 dark:border-gray-700">
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-900 dark:text-white" data-i18n="action-expert">Parça Uzman Görüşü Al</h3>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div id="modalContent" class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap"></div>
+    </div>
+</div>
+
+<script>
+    // Axios kütüphanesini dahil et
+    document.write('<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></' + 'script>');
+
+    // ==========================================
+    // 1. AYARLAR VE ÇEVİRİLER
+    // ==========================================
+    
+    // API Ayarları
+    const API_BASE_URL = "https://pcpartsbuild.com"; // Senin API adresin
+    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
+    const GEMINI_API_KEY = ""; // Buraya kendi API anahtarını gireceksin
+
+    // Endpoint Eşleşmeleri
+    const endpoints = {
+        cpu: 'processors',
+        motherboard: 'motherboards',
+        ram: 'rams',
+        gpu: 'gpus',
+        storage: 'storages',
+        case: 'cases',
+        psu: 'psus',
+        cpuCooler: 'cpuCoolers'
+    };
+
+    // Seçilen Parçalar (Global Hafıza)
+    let selectedParts = {
+        cpu: null, motherboard: null, ram: null, gpu: null,
+        storage: null, case: null, psu: null, cpuCooler: null
+    };
+
+    // Çeviri Sözlüğü
+    const translations = {
+        tr: {
+            "app-title": "PC Parça Uyumluluk Kontrolü",
+            "nav-wizard": "PC Toplama Sihirbazı",
+            "nav-compatibility": "Parça Uyumluluk Kontrolü",
+            "nav-info": "PC Bileşenleri",
+            "auth-signup": "Kayıt Ol",
+            "auth-login": "Giriş Yap",
+            "auth-welcome": "Hoş geldin,",
+            "nav-profile": "Hesabım",
+            "auth-logout": "Çıkış Yap",
+            "main-title": "PC Parça Uyumluluk Kontrolü",
+            "main-subtitle": "Sisteminizi aşağıdaki slotlara yerleştirin. Yapay zeka ve algoritmalarımız parçalarınızın uyumunu anında denetlesin.",
+            "label-cpu": "İşlemci",
+            "label-motherboard": "Anakart",
+            "label-ram": "Bellek (RAM)",
+            "label-psu": "Güç Kaynağı",
+            "type-gpu": "Ekran Kartı",
+            "type-storage": "Depolama",
+            "type-cooler": "Soğutucu",
+            "tab-case": "Kasa",
+            "select-default": "Seçim Yapınız...",
+            "action-check": "Uyumluluğu Kontrol Et",
+            "action-expert": "Parça Uzman Görüşü Al ✨",
+            "results-title": "Kontrol Sonuçları",
+            "result-info-title": "Sistem Hazır Bekliyor",
+            "result-info-text": "Analize başlamak için yukarıdaki slotlara en az iki parça (Örn: İşlemci ve Anakart) yerleştirin.",
+            "result-success-title": "Mükemmel Uyum!",
+            "result-fail-title": "Uyumsuzluk Tespit Edildi",
+            "error-selection": "Lütfen analiz için en az 2 parça seçin.",
+            "loading-text": "Analiz ediliyor...",
+            "error-api": "Analiz alınamadı. Lütfen daha sonra tekrar deneyin.",
+            "analysis-prompt-title": "Aşağıdaki seçili sistem parçalarını birbiriyle uyumluluk, darboğaz ve performans açısından teknik bir uzman diliyle analiz et. Markdown formatında yanıtla."
+        },
+        en: {
+            "app-title": "PC Part Compatibility Check",
+            "nav-wizard": "PC Build Wizard",
+            "nav-compatibility": "Part Compatibility Check",
+            "nav-info": "PC Components",
+            "auth-signup": "Sign Up",
+            "auth-login": "Log In",
+            "auth-welcome": "Welcome,",
+            "nav-profile": "My Account",
+            "auth-logout": "Log Out",
+            "main-title": "PC Part Compatibility Check",
+            "main-subtitle": "Place your system components in the slots below. Our AI and algorithms will instantly check for compatibility.",
+            "label-cpu": "Processor",
+            "label-motherboard": "Motherboard",
+            "label-ram": "Memory (RAM)",
+            "label-psu": "Power Supply",
+            "type-gpu": "Graphics Card",
+            "type-storage": "Storage",
+            "type-cooler": "Cooler",
+            "tab-case": "Case",
+            "select-default": "Select...",
+            "action-check": "Check Compatibility",
+            "action-expert": "Get Expert Opinion ✨",
+            "results-title": "Check Results",
+            "result-info-title": "System Ready",
+            "result-info-text": "To start analysis, place at least two components (e.g., CPU and Motherboard) into the slots above.",
+            "result-success-title": "Perfect Match!",
+            "result-fail-title": "Incompatibility Detected",
+            "error-selection": "Please select at least 2 parts for analysis.",
+            "loading-text": "Analyzing...",
+            "error-api": "Could not retrieve analysis. Please try again later.",
+            "analysis-prompt-title": "Analyze the selected system components below for compatibility, bottlenecks, and performance using technical expert language. Respond in Markdown format."
+        }
+    };
+
+    // ==========================================
+    // 2. TEMA VE DİL YÖNETİMİ
+    // ==========================================
+
+    const setLanguage = (lang) => {
+        localStorage.setItem('lang', lang);
+        document.documentElement.lang = lang;
+        
+        // Metinleri güncelle
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = translations[lang][key];
+            if (translation) element.textContent = translation;
+        });
+
+        // Placeholder'ları güncelle
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            const translation = translations[lang][key];
+            if (translation) element.placeholder = translation;
+        });
+
+        // Dropdown Varsayılan Yazılarını güncelle
+        const defaultText = translations[lang]['select-default'];
+        document.querySelectorAll('select').forEach(select => {
+            if (select.options.length > 0 && select.options[0].value === "") {
+                select.options[0].text = defaultText;
+            }
+        });
+
+        checkExpertButtonStatus(); // Buton durumunu kontrol et
+    };
+
+// Tema Ayarları - DÜZELTİLMİŞ HALİ
+    const toggleDarkMode = () => {
+        const html = document.documentElement;
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
+        // Tailwind'in "dark:" sınıfları bu işi hallediyor.
+        
+        const isDarkMode = html.classList.contains('dark');
+        const newTheme = isDarkMode ? 'light' : 'dark';
+
+        if (isDarkMode) {
+            html.classList.remove('dark');
+        } else {
+            html.classList.add('dark');
+        }
+        localStorage.setItem('theme_builder', newTheme);
+        
+        if (sunIcon && moonIcon) {
+            if (newTheme === 'light') {
+                moonIcon.classList.remove('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+                sunIcon.classList.remove('opacity-0', 'scale-75');
+                sunIcon.classList.add('opacity-100', 'scale-100'); 
+            } else {
+                sunIcon.classList.remove('opacity-100', 'scale-100'); 
+                sunIcon.classList.add('opacity-0', 'scale-75'); 
+                moonIcon.classList.remove('opacity-0', 'scale-75');
+                moonIcon.classList.add('opacity-100', 'scale-100');
+            }
+        }
+    };
+
+    const initializeTheme = (key = 'theme_builder') => {
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem(key);
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
+
+        let isDark = false;
+        if (savedTheme === 'dark') {
+            html.classList.add('dark');
+            isDark = true;
+        } else if (savedTheme === 'light') {
+            html.classList.remove('dark');
+            isDark = false;
+        } else if (html.classList.contains('dark')) {
+            localStorage.setItem(key, 'dark');
+            isDark = true;
+        } else {
+            localStorage.setItem(key, 'light');
+            isDark = false;
+        }
+
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                moonIcon.classList.add('opacity-100', 'scale-100');
+                sunIcon.classList.add('opacity-0', 'scale-75');
+            } else {
+                sunIcon.classList.add('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+            }
+        }
+    };
+
+    const initializeLang = () => {
+        const savedLang = localStorage.getItem('lang');
+        let currentLang = savedLang || document.documentElement.lang || 'tr';
+        setLanguage(currentLang);
+    };
+    // ==========================================
+    // 3. UZMAN GÖRÜŞÜ (GEMINI API)
+    // ==========================================
+
+    const getModalElements = () => ({
+        modal: document.getElementById('geminiModal'),
+        modalContent: document.getElementById('modalContent'),
+        modalTitle: document.getElementById('modalTitle')
+    });
+
+    // Modal Aç/Kapa
+    const openModal = (title, content, isLoading = false) => {
+        const { modal, modalTitle, modalContent } = getModalElements();
+        modalTitle.textContent = title;
+        modalContent.innerHTML = isLoading 
+            ? `<div class="flex items-center justify-center space-x-2 text-primary py-8">
+                   <svg class="animate-spin h-6 w-6 mr-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"></circle><path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                   <span class="text-lg animate-pulse">Yapay Zeka Analiz Ediyor...</span>
+                 </div>`
+            : content;
+        modal.classList.remove('hidden');
+    };
+
+    window.closeModal = () => {
+        document.getElementById('geminiModal').classList.add('hidden');
+    };
+
+    // API İsteği
+    const callGeminiAPI = async (prompt) => {
+        try {
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }]
+            };
+            const response = await fetch(GEMINI_API_URL + GEMINI_API_KEY, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const result = await response.json();
+            return result.candidates?.[0]?.content?.parts?.[0]?.text || "Yanıt alınamadı.";
+        } catch (error) {
+            console.error("Gemini API Error:", error);
+            return translations[localStorage.getItem('lang') || 'tr']['error-api'];
+        }
+    };
+
+    // Uzman Görüşü Al Butonu
+    const getExpertOpinion = async () => {
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        
+        // Seçili parçaları listele
+        const partsList = [];
+        for (const [key, value] of Object.entries(selectedParts)) {
+            if (value) {
+                const label = translations[currentLang][`label-${key}`] || translations[currentLang][`type-${key}`] || translations[currentLang][`tab-${key}`] || key;
+                partsList.push(`- **${label}:** ${value.brand} ${value.modelName}`);
+            }
+        }
+
+        if (partsList.length < 2) {
+            Swal.fire({
+                title: 'Eksik Bilgi',
+                text: translations[currentLang]['error-selection'],
+                icon: 'warning',
+                background: '#1f2937', color: '#fff', confirmButtonColor: '#16a3b2'
+            });
+            return;
+        }
+
+        const prompt = `${translations[currentLang]['analysis-prompt-title']}\n\n${partsList.join('\n')}`;
+        
+        openModal(translations[currentLang]['action-expert'], '', true);
+        const resultText = await callGeminiAPI(prompt);
+        
+        // Markdown benzeri formatı basit HTML'e çevir (Bold için)
+        const formattedText = resultText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        openModal(translations[currentLang]['action-expert'], formattedText);
+    };
+
+    // Buton Aktif/Pasif Kontrolü
+    const checkExpertButtonStatus = () => {
+        const expertButton = document.getElementById('expertOpinionButton');
+        if (!expertButton) return;
+
+        // En az 2 parça seçili mi kontrol et
+        const selectedCount = Object.values(selectedParts).filter(p => p !== null).length;
+        expertButton.disabled = selectedCount < 2;
+    };
+
+
+    // ==========================================
+    // 4. VERİ ÇEKME MOTORU (LAZY LOAD)
+    // ==========================================
+
+    function initializeData() {
+        console.log("⚡ Lazy Load Modu Aktif.");
+        
+        const dropdowns = document.querySelectorAll('select');
+        dropdowns.forEach(dropdown => {
+            if (endpoints[dropdown.id]) {
+                // Tıklayınca Veri Çek
+                dropdown.addEventListener('focus', function() {
+                    if (this.dataset.loaded !== "true") {
+                        loadComponentData(this.id);
+                    }
+                });
+
+                // Seçim Değişince
+                dropdown.addEventListener('change', handleSelectionChange);
+            }
+    
+        });
+    }
+
+
+    async function loadComponentData(category) {
+        const selectElement = document.getElementById(category);
+        if (!selectElement) return;
+
+        const defaultOption = selectElement.options[0];
+        const originalText = defaultOption.text;
+        defaultOption.text = "Veriler Yükleniyor... ⏳";
+        
+        const cacheKey = `puk_cache_${category}`;
+        const cachedData = localStorage.getItem(cacheKey);
+        const CACHE_DURATION = 5 * 60 * 1000;
+
+        try {
+            let data = null;
+            let isFresh = false;
+
+            if (cachedData) {
+                const parsed = JSON.parse(cachedData);
+                if (Date.now() - parsed.timestamp < CACHE_DURATION) {
+                    data = parsed.data;
+                    isFresh = true;
+                }
+            }
+
+            if (!isFresh) {
+                const response = await axios.get(`${API_BASE_URL}/api/${endpoints[category]}`);
+                data = response.data;
+                localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: data }));
+            }
+
+            populateDropdown(selectElement, data, category);
+            selectElement.dataset.loaded = "true";
+
+        } catch (error) {
+            console.error(`❌ ${category} yüklenemedi:`, error);
+            defaultOption.text = "Hata: Veri Alınamadı";
+        } finally {
+            if (selectElement.options.length > 0 && selectElement.options[0].text.includes("⏳")) {
+                 defaultOption.text = originalText;
+            }
+        }
+    }
+
+    function populateDropdown(selectElement, data, category) {
+        while (selectElement.options.length > 1) selectElement.remove(1);
+        if (!data || data.length === 0) return;
+
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            let displayName = `${item.brand || ''} ${item.modelName || ''}`.trim();
+            if (category === 'storage') displayName += ` (${item.capacity} GB)`;
+            if (category === 'psu') displayName += ` (${item.wattage}W)`;
+            option.text = displayName;
+            option.dataset.fullData = JSON.stringify(item);
+            selectElement.add(option);
+        });
+    }
+
+    function handleSelectionChange(event) {
+        const category = event.target.id;
+        const selectedId = event.target.value;
+        const card = event.target.closest('.component-card');
+        const errorText = document.getElementById(`error-${category}`);
+        
+        if(errorText) errorText.classList.add('hidden');
+
+        if (selectedId) {
+            const selectedOption = event.target.options[event.target.selectedIndex];
+            if (selectedOption.dataset.fullData) {
+                selectedParts[category] = JSON.parse(selectedOption.dataset.fullData);
+            }
+            if (card) {
+                card.classList.remove('border-dashed', 'border-gray-300', 'dark:border-gray-700');
+                card.classList.add('border-solid', 'border-primary', 'shadow-md', 'bg-blue-50/50', 'dark:bg-blue-900/10');
+            }
+        } else {
+            selectedParts[category] = null;
+            if (card) {
+                card.classList.add('border-dashed', 'border-gray-300', 'dark:border-gray-700');
+                card.classList.remove('border-solid', 'border-primary', 'shadow-md', 'bg-blue-50/50', 'dark:bg-blue-900/10');
+            }
+        }
+        
+        checkExpertButtonStatus(); // Her seçimde buton durumunu güncelle
+    }
+
+
+    // ==========================================
+    // 5. BAŞLATMA (INIT)
+    // ==========================================
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Temel Ayarlar
+        initializeTheme();
+        const savedLang = localStorage.getItem('lang') || 'tr';
+        setLanguage(savedLang);
+        initializeData(); // Veri motorunu hazırla
+
+        // Dil Menüsü Olayları
+        const languageButton = document.getElementById('languageButton');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const languageSelector = document.getElementById('languageSelector');
+
+        if (languageButton) {
+            languageButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('hidden');
+            });
+        }
+        if (languageSelector) {
+            languageSelector.addEventListener('mouseleave', () => languageDropdown.classList.add('hidden'));
+        }
+        document.querySelectorAll('.language-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.preventDefault();
+                setLanguage(e.target.getAttribute('data-lang'));
+                languageDropdown.classList.add('hidden');
+            });
+        });
+
+        // Karanlık Mod Butonu
+        const darkModeButton = document.getElementById('darkModeButton');
+        if (darkModeButton) {
+            darkModeButton.addEventListener('click', toggleDarkMode);
+        }
+
+        // Uzman Görüşü Butonu
+        const expertButton = document.getElementById('expertOpinionButton');
+        if (expertButton) {
+            expertButton.addEventListener('click', getExpertOpinion);
+        }
+
+        // Kullanıcı Giriş Kontrolleri
+        const loginButton = document.getElementById('login-button');
+        const signupButton = document.getElementById('signup-button');
+        const accountSection = document.getElementById('account-section');
+        const profileButton = document.getElementById('account_circle');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const welcomeUsername = document.getElementById('welcome-username');
+        const logoutButton = document.getElementById('logout-button');
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        if (loggedInUser) {
+            if(loginButton) loginButton.style.display = 'none';
+            if(signupButton) signupButton.style.display = 'none';
+            if(accountSection) {
+                accountSection.classList.remove('hidden');
+                accountSection.classList.add('flex');
+            }
+            if(welcomeUsername) welcomeUsername.textContent = loggedInUser;
+        }
+
+        if (profileButton) {
+            profileButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if(profileDropdown) profileDropdown.classList.toggle('hidden');
+            });
+        }
+
+        // Dışarı tıklayınca dropdownları kapat
+        document.addEventListener('click', (e) => {
+            if (profileDropdown && !profileDropdown.classList.contains('hidden') && !accountSection.contains(e.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+            if (languageDropdown && !languageDropdown.classList.contains('hidden') && !languageSelector.contains(e.target)) {
+                languageDropdown.classList.add('hidden');
+            }
+        });
+
+        if (logoutButton) {
+            logoutButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Çıkış Yapılıyor...',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1000,
+                    background: '#1f2937', color: '#fff'
+                }).then(() => {
+                    localStorage.removeItem('loggedInUser');
+                    window.location.reload();
+                });
+            });
+        }
+    
+        // --- 6. UYUMLULUK KONTROL TETİKLEYİCİSİ (YENİ EKLENEN KISIM) ---
+        const checkBtn = document.getElementById('checkCompatibilityBtn');
+        if (checkBtn) {
+            checkBtn.addEventListener('click', (e) => {
+                e.preventDefault(); // Sayfanın yukarı zıplamasını engeller
+                checkCompatibility(); // Birazdan yazacağımız ana fonksiyonu çağırır
+            });
+        }
+
+    // ==========================================
+    // 7. UYUMLULUK MOTORU (LOGIC)
+    // ==========================================
+
+    // =============================
+// YENİ NESİL UYUMLULUK MOTORU (MODEL UYUMLU FINAL)
+// =============================
+
+function checkCompatibility() {
+
+    console.log("🛠️ Gelişmiş uyumluluk kontrolü başlatıldı...");
+
+    // =====================
+    // UI TEMİZLEME
+    // =====================
+    document.getElementById('result-info').classList.add('hidden');
+    document.getElementById('result-success').classList.add('hidden');
+    document.getElementById('result-fail').classList.add('hidden');
+    document.getElementById('fail-reasons').innerHTML = '';
+    document.querySelectorAll('[id^="error-"]').forEach(el => el.classList.add('hidden'));
+
+    // =====================
+    // KONTROL YARDIMCI FONKSİYONLARI
+    // =====================
+    const isFilled = obj => obj && typeof obj === 'object' && Object.keys(obj).length > 0;
+
+    const toNumber = (v, fallback = 0) => {
+        if (typeof v === "number") return v;
+        if (!v) return fallback;
+        const n = Number(String(v).replace(/[^\d.-]/g, ""));
+        return isNaN(n) ? fallback : n;
+    };
+
+    const toInt = (v, fallback = 0) => Math.round(toNumber(v, fallback));
+    
+    const toBoolean = v => {
+        if (typeof v === 'boolean') return v;
+        if (typeof v === 'string') return ['true', '1', 'yes'].includes(v.toLowerCase());
+        return false;
+    };
+
+    const normalizeString = v => v ? String(v).trim() : "";
+    
+    // String (virgüllü) veya Array gelebilecek verileri düzeltir
+    const normalizeStringArray = v => {
+        if (!v) return [];
+        if (Array.isArray(v)) return v.map(x => String(x).trim().toLowerCase());
+        return String(v).split(',').map(x => x.trim().toLowerCase()).filter(x => x.length > 0);
+    };
+
+    // Sayı dizisi veya virgüllü string gelebilecek verileri düzeltir
+    const normalizeNumberArray = v => {
+        if (!v) return [];
+        if (Array.isArray(v)) return v.map(x => toInt(x)).filter(n => !isNaN(n));
+        if (typeof v === 'string') return v.split(',').map(s => toInt(s)).filter(n => !isNaN(n));
+        return [];
+    };
+
+    const addIssue = (level, msg, cards = []) => {
+        issues.push({ level, msg });
+        cards.forEach(c => showErrorUnderCard(c, level === "critical" ? "Hata" : "Uyarı"));
+    };
+
+    const escapeHtml = str => String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    // =====================
+    // HATA / UYARI LİSTESİ
+    // =====================
+    const issues = [];
+
+    // =====================
+    // PARÇA AL (Veri Modelleriyle Eşleşme)
+    // =====================
+    const cpu = selectedParts.cpu;
+    const mobo = selectedParts.motherboard;
+    const ram = selectedParts.ram;
+    const gpu = selectedParts.gpu;
+    const psu = selectedParts.psu;
+    const pcCase = selectedParts.case; // 'case' keyword olduğu için pcCase dedik
+    const cooler = selectedParts.cpuCooler;
+    // Storage tekil veya çoğul gelebilir, diziye çeviriyoruz
+    const storages = Array.isArray(selectedParts.storage) ? selectedParts.storage : (selectedParts.storage ? [selectedParts.storage] : []);
+
+    // =====================
+    // 1) PARÇA SAYISI KONTROLÜ
+    // =====================
+    const filledParts = Object.values(selectedParts).filter(p => p !== null && !Array.isArray(p)) 
+                        .concat(storages.length > 0 ? ['storage'] : []).length;
+
+    // Not: filledParts mantığını basitleştirdik, en az 2 dolu obje var mı bakar.
+    const activeComponents = Object.values(selectedParts).filter(x => x !== null);
+    
+    if (activeComponents.length < 2) {
+        Swal.fire({
+            title: 'Yetersiz Parça',
+            text: 'Lütfen analiz için en az 2 parça seçin.',
+            icon: 'warning',
+            background: '#1f2937', color: '#fff', confirmButtonColor: '#16a3b2'
+        });
+        document.getElementById('result-info').classList.remove('hidden');
+        return;
+    }
+
+    // =============================
+    // 2) CPU ↔ MOTHERBOARD
+    // =============================
+    if (isFilled(cpu) && isFilled(mobo)) {
+        // Model: cpu.socket, mobo.socket
+        const cpuSocket = normalizeString(cpu.socket).toLowerCase();
+        const moboSocket = normalizeString(mobo.socket).toLowerCase();
+
+        if (cpuSocket && moboSocket && cpuSocket !== moboSocket) {
+            addIssue("critical", `CPU soketi (${cpu.socket}) ile Anakart soketi (${mobo.socket}) uyumsuz.`, ["cpu", "motherboard"]);
+        }
+
+        // Model: cpu.integratedGraphics (bool)
+        const hasIgpu = toBoolean(cpu.integratedGraphics);
+        const gpuExists = isFilled(gpu);
+
+        // Eğer harici GPU yoksa ve işlemcide grafik birimi yoksa görüntü gelmez
+        if (!gpuExists && !hasIgpu) {
+            addIssue("critical", `Seçilen işlemcide (${cpu.modelName}) dahili grafik birimi yok. Görüntü alabilmek için ekran kartı eklemelisiniz.`, ["cpu", "gpu"]);
+        }
+    }
+
+    // =============================
+    // 3) RAM ↔ MOTHERBOARD
+    // =============================
+    if (isFilled(ram) && isFilled(mobo)) {
+        // Model: ram.memoryType (DDR4), mobo.memoryType (DDR4)
+        const ramType = normalizeString(ram.memoryType).toLowerCase();
+        const moboMemType = normalizeString(mobo.memoryType).toLowerCase();
+
+        if (ramType && moboMemType && ramType !== moboMemType) {
+            addIssue("critical", `RAM tipi (${ram.memoryType}) ile Anakart (${mobo.memoryType}) uyumsuz.`, ["ram", "motherboard"]);
+        }
+
+        // Model: ram.moduleCount, mobo.memorySlots
+        const ramModules = toInt(ram.moduleCount || 1);
+        const moboSlots = toInt(mobo.memorySlots || 0);
+
+        if (moboSlots > 0 && ramModules > moboSlots) {
+            addIssue("critical", `Seçilen RAM kiti (${ramModules} modül), anakartın slot sayısını (${moboSlots}) aşıyor.`, ["ram", "motherboard"]);
+        }
+
+        // Model: ram.capacityPerModule, mobo.maxMemory
+        const capPerModule = toInt(ram.capacityPerModule || 0);
+        const totalRam = capPerModule * ramModules;
+        const maxMoboRam = toInt(mobo.maxMemory || 0);
+
+        if (maxMoboRam > 0 && totalRam > maxMoboRam) {
+            addIssue("critical", `Toplam RAM (${totalRam}GB), anakartın maksimum desteğini (${maxMoboRam}GB) aşıyor.`, ["ram", "motherboard"]);
+        }
+
+        // Model: ram.speed, mobo.supportedMemoryFrequencies (List<int>)
+        const ramSpeed = toInt(ram.speed || 0);
+        // Backend'den dizi veya string gelebilir, helper ile düzelt
+        const supportedSpeeds = normalizeNumberArray(mobo.supportedMemoryFrequencies);
+
+        if (ramSpeed > 0 && supportedSpeeds.length > 0) {
+            const maxSpeed = Math.max(...supportedSpeeds);
+            if (ramSpeed > maxSpeed) {
+                addIssue("warning", `RAM hızı (${ramSpeed}MHz), anakartın desteklediği maksimum hızdan (${maxSpeed}MHz) yüksek. RAM çalışır ancak hızı düşer (Downclock).`, ["ram", "motherboard"]);
+            }
+        }
+    }
+
+    // =============================
+    // 4) GPU ↔ KASA / PSU
+    // =============================
+    if (isFilled(gpu)) {
+        // ---- Kasa GPU Uzunluğu ----
+        if (isFilled(pcCase)) {
+            // Model: gpu.length, pcCase.maxGpuLength
+            const gpuLen = toInt(gpu.length); 
+            const maxGpu = toInt(pcCase.maxGpuLength);
+
+            if (gpuLen > 0 && maxGpu > 0 && gpuLen > maxGpu) {
+                addIssue("critical", `Ekran kartı uzunluğu (${gpuLen}mm), kasanın sınırını (${maxGpu}mm) aşıyor. Sığmayacaktır.`, ["gpu", "case"]);
+            }
+        }
+
+        // ---- PSU Yeterliliği ----
+        if (isFilled(psu)) {
+            // Model: gpu.tdp, cpu.tdp, psu.wattage
+            const gpuPower = toInt(gpu.tdp || 0);
+            const cpuPower = toInt(cpu?.tdp || 0);
+            const systemBase = 100; // Anakart, fanlar vs. için pay
+            const totalLoad = gpuPower + cpuPower + systemBase;
+            const psuWatt = toInt(psu.wattage);
+
+            // Kritik Güç Yetmezliği
+            if (psuWatt < totalLoad) {
+                addIssue("critical", `PSU gücü (${psuWatt}W) yetersiz. Sistem yük altında tahmini ${totalLoad}W çekecek.`, ["psu"]);
+            } 
+            // Güvenlik Payı (%20)
+            else if (psuWatt < Math.ceil(totalLoad * 1.20)) {
+                addIssue("warning", `PSU kapasitesi sınırda. Önerilen güvenli değer: ${Math.ceil(totalLoad * 1.20)}W ve üzeri.`, ["psu"]);
+            }
+
+            // Model: gpu.recommendedPsu (Üretici Tavsiyesi)
+            const recPsu = toInt(gpu.recommendedPsu);
+            if (recPsu > 0 && psuWatt < recPsu) {
+                addIssue("warning", `PSU gücü yeterli görünse de, ekran kartı üreticisi bu model için en az ${recPsu}W önermektedir (Anlık güç sıçramaları için).`, ["psu"]);
+            }
+
+            // ---- 12VHPWR Kablo Kontrolü (RTX 4000 Serisi) ----
+            // Model: gpu.powerConnectors (string), psu.has12VHPWR (bool)
+            const gpuConStr = normalizeString(gpu.powerConnectors).toLowerCase();
+            const psuHasNewPort = toBoolean(psu.has12VHPWR);
+
+            if ((gpuConStr.includes('16pin') || gpuConStr.includes('12vhpwr')) && !psuHasNewPort) {
+                addIssue("warning", `Ekran kartı yeni nesil 12VHPWR güç girişi istiyor, PSU'nuzda bu port yok. Dönüştürücü kullanmanız gerekecek.`, ["gpu", "psu"]);
+            }
+        }
+    }
+
+    // =============================
+    // 5) CPU COOLER ↔ KASA
+    // =============================
+    if (isFilled(cooler) && isFilled(pcCase)) {
+        // Model: cooler.coolerType ("Air"/"Liquid")
+        const type = normalizeString(cooler.coolerType).toLowerCase();
+
+        // Hava Soğutma
+        if (type === "air") {
+            // Model: cooler.height, pcCase.maxCpuCoolerHeight
+            const h = toInt(cooler.height);
+            const maxH = toInt(pcCase.maxCpuCoolerHeight);
+
+            if (h > maxH && maxH > 0) {
+                addIssue("critical", `Soğutucu yüksekliği (${h}mm), kasanın kapağına çarpıyor (Maks: ${maxH}mm).`, ["cpuCooler", "case"]);
+            }
+        } 
+        // Sıvı Soğutma
+        else if (type === "liquid") {
+            // Model: cooler.radiatorSize (int: 240), pcCase.radiatorSupportFront (string: "120, 240")
+            const radSize = toInt(cooler.radiatorSize);
+            
+            // Kasa verilerini parçala ve sayıya çevir
+            const frontSup = normalizeNumberArray(pcCase.radiatorSupportFront);
+            const topSup = normalizeNumberArray(pcCase.radiatorSupportTop);
+
+            const fitsFront = frontSup.includes(radSize);
+            const fitsTop = topSup.includes(radSize);
+
+            if (!fitsFront && !fitsTop) {
+                addIssue("critical", `Seçilen ${radSize}mm radyatör, kasanın ne ön ne de üst paneline uyuyor.`, ["cpuCooler", "case"]);
+            }
+        }
+    }
+
+    // =============================
+    // 6) PSU ↔ KASA (Boyut)
+    // =============================
+    if (isFilled(psu) && isFilled(pcCase)) {
+        // Model: psu.length, pcCase.maxPsuLength
+        const psuLen = toInt(psu.length);
+        const maxPsuLen = toInt(pcCase.maxPsuLength);
+
+        if (psuLen > 0 && maxPsuLen > 0 && psuLen > maxPsuLen) {
+            addIssue("critical", `PSU uzunluğu (${psuLen}mm), kasanın PSU bölmesine sığmıyor (Maks: ${maxPsuLen}mm).`, ["psu", "case"]);
+        }
+    }
+
+    // =============================
+    // 7) KASA ↔ ANAKART (Form Faktör)
+    // =============================
+    if (isFilled(pcCase) && isFilled(mobo)) {
+        // Model: pcCase.supportedMotherboards (String: "ATX, Micro-ATX"), mobo.formFactor (String: "ATX")
+        const supported = normalizeString(pcCase.supportedMotherboards).toLowerCase();
+        const moboForm = normalizeString(mobo.formFactor).toLowerCase();
+
+        if (supported && moboForm && !supported.includes(moboForm)) {
+             addIssue("critical", `Kasa, ${mobo.formFactor} boyutundaki anakartı desteklemiyor.`, ["case", "motherboard"]);
+        }
+    }
+
+    // =============================
+    // 8) STORAGE (M.2 Sayısı)
+    // =============================
+    if (storages.length > 0 && isFilled(mobo)) {
+        // Model: storage.formFactor ("M.2", "2.5 Inch")
+        // Model: mobo.m2SlotCount, mobo.sataPortCount
+        
+        let m2Count = 0;
+        let sataCount = 0;
+
+        storages.forEach(s => {
+            const ff = normalizeString(s.formFactor).toLowerCase();
+            if (ff.includes('m.2')) m2Count++;
+            else if (ff.includes('2.5') || ff.includes('3.5')) sataCount++;
+        });
+
+        const moboM2Slots = toInt(mobo.m2SlotCount);
+        const moboSataPorts = toInt(mobo.sataPortCount);
+
+        if (m2Count > moboM2Slots) {
+             addIssue("critical", `Anakartta ${moboM2Slots} adet M.2 yuvası var, ancak siz ${m2Count} adet M.2 disk seçtiniz.`, ["storage", "motherboard"]);
+        }
+        if (sataCount > moboSataPorts) {
+             addIssue("critical", `Anakartta ${moboSataPorts} adet SATA portu var, ancak siz ${sataCount} adet SATA disk seçtiniz.`, ["storage", "motherboard"]);
+        }
+    }
+
+    // =============================
+    // SONUÇLARI GÖSTER
+    // =============================
+    const failDiv = document.getElementById('result-fail');
+    const reasonList = document.getElementById('fail-reasons');
+    const successDiv = document.getElementById('result-success');
+    const successText = document.getElementById('success-text');
+
+    if (issues.length > 0) {
+        // Hataları listele
+        const critical = issues.filter(i => i.level === "critical");
+        const warning = issues.filter(i => i.level === "warning");
+
+        const html =
+            critical.map(i => `<li class="text-red-600 dark:text-red-400 font-semibold"><span class="material-symbols-outlined align-middle text-sm">error</span> ${escapeHtml(i.msg)}</li>`).join('') +
+            warning.map(i => `<li class="text-orange-600 dark:text-orange-400"><span class="material-symbols-outlined align-middle text-sm">warning</span> ${escapeHtml(i.msg)}</li>`).join('');
+
+        reasonList.innerHTML = html;
+        failDiv.classList.remove('hidden');
+        failDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    } else {
+        // Başarılı
+        successText.innerHTML = `Seçilen parçalar (${filledParts} adet) birbiriyle tam uyumlu görünüyor. İyi oyunlar! 🎮`;
+        successDiv.classList.remove('hidden');
+        successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// =============================
+// HATA GÖSTERME YARDIMCISI
+// =============================
+function showErrorUnderCard(category, message) {
+    const el = document.getElementById(`error-${category}`);
+    if (!el) return;
+
+    const text = el.querySelector(".error-text");
+    if (text) text.textContent = message;
+
+    el.classList.remove("hidden");
+}
+    
+    });
+
+</script>
+</body>
+</html>

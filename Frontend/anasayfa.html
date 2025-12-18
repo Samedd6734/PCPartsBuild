@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="app-title">PCPartsBuild - Build Your Dream PC</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="/src/main.js"></script>
+
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-background-dark font-display text-white transition-default">
+    <div class="relative flex min-h-screen w-full flex-col">
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <video autoplay="" class="h-full w-full object-cover brightness-50" loop="" muted="" playsinline="">
+                <source src="Assets/Videos/Video2.webm" type="video/webm" onerror="this.onerror=null;this.parentElement.style.display='none';">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="relative z-10 flex h-full grow flex-col">
+            <div class="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
+                
+                <header class="relative w-full border-b border-white/10 z-50">
+                    <div class="h-20 flex items-center justify-between">
+                        
+                        <div class="flex items-center gap-4 text-white z-20">
+                                <img src="Assets/Images/logo.webp" alt="PCPartsBuild Logo" class="h-10 sm:h-14 w-auto object-contain">
+                        </div>
+
+                        <nav class="hidden lg:flex items-center gap-9">
+                            <a class="text-white/80 text-sm font-medium leading-normal transition-colors hover:text-white" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                            <a class="text-white/80 text-sm font-medium leading-normal transition-colors hover:text-white" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                            <a class="text-white/80 text-sm font-medium leading-normal transition-colors hover:text-white" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+                        </nav>
+
+                        <div class="flex items-center gap-2 sm:gap-4">
+                            
+                            <div id="mobile-auth-buttons" class="flex lg:hidden items-center gap-2">
+                                <a href="kaydol.html" class="px-3 py-2 bg-primary hover:bg-sky-600 text-white text-xs sm:text-sm font-bold rounded-lg transition-colors shadow-lg shadow-primary/20 whitespace-nowrap">
+                                    Kayıt Ol
+                                </a>
+                                <a href="giris.html" class="px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors whitespace-nowrap">
+                                    Giriş Yap
+                                </a>
+                            </div>
+
+                            <div id="desktop-auth-buttons" class="hidden lg:flex items-center gap-2">
+                                <a href="kaydol.html" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105">
+                                    <span class="truncate" data-i18n="auth-signup">Kayıt Ol</span>
+                                </a>
+                                <a href="giris.html" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-white/10 text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-white/20">
+                                    <span class="truncate" data-i18n="auth-login">Giriş Yap</span>
+                                </a>
+                            </div>
+
+                            <div id="languageSelector" class="relative hidden lg:block">
+                                <button id="languageButton" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-white/10 text-white text-sm font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-white/20">
+                                    <span class="material-symbols-outlined text-xl">language</span>
+                                </button>
+                                <div id="languageDropdown" class="absolute right-0 top-full pt-1 w-32 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden z-20 hidden">
+                                    <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-white/90 font-medium hover:bg-primary/50 hover:text-white transition-colors duration-150">Türkçe (TR)</a>
+                                    <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-white/90 font-medium hover:bg-primary/50 hover:text-white transition-colors duration-150">English (EN)</a>
+                                </div>
+                            </div>
+
+                            <div id="account-section" class="relative hidden">
+                                <button id="profileButton" class="flex material-icons-outlined cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-white/10 text-white text-xl font-bold leading-normal tracking-[0.015em] transition-colors hover:bg-white/20">
+                                    <span>account_circle</span>
+                                </button>
+                                <div id="profileDropdown" class="absolute right-0 top-full pt-1 w-48 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden z-20 hidden">
+                                    <div class="px-4 py-3 border-b border-white/10">
+                                        <p class="text-sm text-white/70" data-i18n="auth-welcome">Hoş geldin,</p>
+                                        <p id="welcome-username" class="text-sm font-medium text-white truncate">Kullanıcı</p>
+                                    </div>
+                                    <a href="hesabim.html" class="block px-4 py-2 text-sm text-white/90 font-medium hover:bg-primary/50 hover:text-white transition-colors duration-150" data-i18n="nav-profile">Hesabım</a>
+                                    <a href="#" id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-red-400 font-medium hover:bg-red-500/50 hover:text-white transition-colors duration-150" data-i18n="auth-logout">Çıkış Yap</a>
+                                </div>
+                            </div>
+
+                            <button id="mobile-menu-btn" class="lg:hidden p-2 text-white hover:text-primary focus:outline-none transition-colors ml-2">
+                                <span class="material-icons-round text-3xl">menu</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-[#111c22] border-b border-white/10 shadow-xl py-6 px-6 flex-col gap-4 lg:hidden origin-top animate-fade-in-down z-50">
+                        
+                        <a class="block py-2 text-lg font-medium text-white/90 hover:text-primary transition-colors" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                        <a class="block py-2 text-lg font-medium text-white/90 hover:text-primary transition-colors" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                        <a class="block py-2 text-lg font-medium text-white/90 hover:text-primary transition-colors" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+                        
+                        <div class="h-px bg-white/10 my-2"></div>
+
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-center justify-between mt-2 px-1">
+                                <button id="mobile-lang-toggle" class="flex items-center gap-2 text-white/60 hover:text-white transition-colors">
+                                    <span class="material-icons-round">language</span>
+                                    <span id="mobile-lang-text">Türkçe</span>
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <main class="flex flex-1 flex-col">
+                    <div class="flex flex-1 items-center justify-center py-20 text-center">
+                        <div class="flex flex-col items-center gap-6">
+                            <h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] md:text-6xl" data-i18n="hero-title">
+                                Uyumluluk sorunu yaşamadan sıfırdan sistemini inşaa et
+                            </h1>
+                            <h2 class="max-w-2xl text-white/80 text-base font-normal leading-normal md:text-lg" data-i18n="hero-subtitle">
+                                Araçlarımız, parça seçiminden son montaja kadar her adımda size yol gösterir.
+                            </h2>
+                            <a href="pts.html" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105">
+                                <span class="truncate" data-i18n="hero-button">Hemen Toplamaya Başla</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-10 py-16 @container">
+                        <div class="flex flex-col gap-4 text-center">
+                            <h1 class="text-white tracking-light text-3xl font-bold leading-tight @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]" data-i18n="features-main-title">
+                                İhtiyacınız Olan Her Şey Tek Bir Yerde
+                            </h1>
+                            <p class="text-white/80 text-base font-normal leading-normal max-w-3xl mx-auto" data-i18n="features-main-subtitle">
+                                PC toplama deneyiminizi sorunsuz ve eğlenceli hale getirmek için güçlü, kullanımı kolay araçlar sunuyoruz.
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div class="flex flex-1 flex-col gap-3 rounded-xl border border-white/10 bg-black/20 p-6 backdrop-blur-sm transition-transform hover:-translate-y-1">
+                                <div class="text-primary">
+                                    <span class="material-symbols-outlined text-3xl">verified</span>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <h2 class="text-white text-lg font-bold leading-tight" data-i18n="feature-1-title">Anında Uyumluluk Kontrolü</h2>
+                                    <p class="text-white/70 text-sm font-normal leading-normal" data-i18n="feature-1-desc">Seçtiğiniz parçaların satın almadan önce birbirleriyle mükemmel şekilde çalıştığından emin olun.</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-1 flex-col gap-3 rounded-xl border border-white/10 bg-black/20 p-6 backdrop-blur-sm transition-transform hover:-translate-y-1">
+                                <div class="text-primary">
+                                    <span class="material-symbols-outlined text-3xl">auto_fix_high</span>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <h2 class="text-white text-lg font-bold leading-tight" data-i18n="feature-2-title">Adım Adım Kurulum Sihirbazı</h2>
+                                    <p class="text-white/70 text-sm font-normal leading-normal" data-i18n="feature-2-desc">Sisteminizi sıfırdan monte etmek için sezgisel sihirbazımızı takip edin.</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-1 flex-col gap-3 rounded-xl border border-white/10 bg-black/20 p-6 backdrop-blur-sm transition-transform hover:-translate-y-1">
+                                <div class="text-primary">
+                                    <span class="material-symbols-outlined text-3xl">database</span>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <h2 class="text-white text-lg font-bold leading-tight" data-i18n="feature-3-title">Güncel Parça Bilgileri</h2>
+                                    <p class="text-white/70 text-sm font-normal leading-normal" data-i18n="feature-3-desc">Binlerce PC parçası hakkında detaylı bilgilere göz atın ve karşılaştırma yapın.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="flex flex-col items-center gap-6 py-10 text-center">
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a class="text-white/60 transition-colors hover:text-white" href="#"><svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg></a>
+                        <a class="text-white/60 transition-colors hover:text-white" href="#"><svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg></a>
+                        <a class="text-white/60 transition-colors hover:text-white" href="#"><svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 2.525c.636-.247 1.363-.416 2.427-.465C9.793 2.013 10.147 2 12.315 2zm0 1.623c-2.403 0-2.72.01-3.667.058-1.146.052-1.602.248-1.922.458-.426.28-.765.624-1.043 1.043-.28.426-.624.765-1.043 1.043-.21.32-.406.776-.458 1.922-.048.947-.058 1.264-.058 3.667s.01 2.72.058 3.667c.052 1.146.248 1.602.458 1.922.28.426.624.765 1.043 1.043.426.28.765.624 1.043 1.043.32.21.776.406 1.922.458.947.048 1.264.058 3.667.058s2.72-.01 3.667-.058c1.146-.052 1.602-.248 1.922-.458.426-.28.765-.624 1.043-1.043.28-.426.624-.765 1.043-1.043.32-.21.406-.776.458-1.922.048-.947.058-1.264.058-3.667s-.01-2.72-.058-3.667c-.052-1.146-.248-1.602-.458-1.922-.28-.426-.624-.765-1.043-1.043-.426-.28-.765-.624-1.043-1.043-.32-.21-.776-.406-1.922-.458-.947-.048-1.264-.058-3.667-.058zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 1.623a3.512 3.512 0 110 7.024 3.512 3.512 0 010-7.024zM16.536 6.808a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z" fill-rule="evenodd"></path></svg></a>
+                    </div>
+                    <p class="text-white/60 text-sm font-normal leading-normal" data-i18n="footer-copyright-container">
+                        <span data-i18n="footer-copyright">© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:</span> <a class="underline hover:text-primary" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a>
+                    </p>
+                    
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Çeviri Sözlüğü
+        const translations = {
+            tr: {
+                "app-title": "PCPartsBuild",
+                "nav-wizard": "PC Toplama Sihirbazı",
+                "nav-compatibility": "Parça Uyumluluk Kontrolü",
+                "nav-info": "PC Bileşenleri",
+                "auth-signup": "Kayıt Ol",
+                "auth-login": "Giriş Yap",
+                "auth-welcome": "Hoş geldin,",
+                "nav-profile": "Hesabım",
+                "auth-logout": "Çıkış Yap",
+                "hero-title": "Uyumluluk sorunu yaşamadan sıfırdan sistemini inşaa et",
+                "hero-subtitle": "Araçlarımız, parça seçiminden son montaja kadar her adımda size yol gösterir.",
+                "hero-button": "Hemen Toplamaya Başla",
+                "features-main-title": "İhtiyacınız Olan Her Şey Tek Bir Yerde",
+                "features-main-subtitle": "PC toplama deneyiminizi sorunsuz ve eğlenceli hale getirmek için güçlü, kullanımı kolay araçlar sunuyoruz.",
+                "feature-1-title": "Anında Uyumluluk Kontrolü",
+                "feature-1-desc": "Seçtiğiniz parçaların satın almadan önce birbirleriyle mükemmel şekilde çalıştığından emin olun.",
+                "feature-2-title": "Adım Adım Kurulum Sihirbazı",
+                "feature-2-desc": "Sisteminizi sıfırdan monte etmek için sezgisel sihirbazımızı takip edin.",
+                "feature-3-title": "Güncel Parça Bilgileri",
+                "feature-3-desc": "Binlerce PC parçası hakkında detaylı bilgilere göz atın ve karşılaştırma yapın.",
+                "footer-copyright": "© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:"
+            },
+            en: {
+                "app-title": "PCPartsBuild",
+                "nav-wizard": "PC Build Wizard",
+                "nav-compatibility": "Part Compatibility Check",
+                "nav-info": "PC Components ",
+                "auth-signup": "Sign Up",
+                "auth-login": "Log In",
+                "auth-welcome": "Welcome,",
+                "nav-profile": "My Account",
+                "auth-logout": "Log Out",
+                "hero-title": "Build your system from scratch without compatibility issues",
+                "hero-subtitle": "Our tools guide you through every step, from selecting parts to final assembly.",
+                "hero-button": "Start Building Now",
+                "features-main-title": "Everything You Need in One Place",
+                "features-main-subtitle": "We offer powerful, easy-to-use tools to make your PC building experience seamless and fun.",
+                "feature-1-title": "Instant Compatibility Check",
+                "feature-1-desc": "Ensure your selected parts work perfectly together before you buy.",
+                "feature-2-title": "Step-by-Step Installation Wizard",
+                "feature-2-desc": "Follow our intuitive wizard to assemble your system from the ground up.",
+                "feature-3-title": "Up-to-Date PC Components ",
+                "feature-3-desc": "Browse detailed information and compare thousands of PC components.",
+                "footer-copyright": "© 2025 PCPartsBuild. All Rights Reserved. Contact Us:"
+            }
+        };
+
+        const setLanguage = (lang) => {
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const translation = translations[lang][key];
+                if (!translation) return;
+                if (key === 'footer-copyright') {
+                    const parentP = element.closest('p');
+                    const emailLink = parentP.querySelector('a');
+                    const email = emailLink ? emailLink.textContent : 'pcpartsbuild@gmail.com';
+                    parentP.innerHTML = `${translation} <a class="underline hover:text-primary" href="mailto:${email}">${email}</a>`;
+                } else {
+                    element.textContent = translation;
+                }
+            });
+            // Mobildeki dil yazısını da güncelle
+            const mobileLangText = document.getElementById('mobile-lang-text');
+            if(mobileLangText) {
+                mobileLangText.textContent = lang === 'tr' ? 'Türkçe' : 'English';
+            }
+            
+            document.title = `${translations[lang]["app-title"]} - ${lang === 'tr' ? 'Hayalinizdeki PC’yi Toplayın' : 'Build Your Dream PC'}`;
+        };
+
+        const initializeLang = () => {
+            const savedLang = localStorage.getItem('lang');
+            let currentLang = savedLang || document.documentElement.lang || 'tr'; 
+            setLanguage(currentLang);
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLang();
+            const initializeTheme = () => {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark'); 
+            };
+            initializeTheme();
+            
+            // --- MOBİL MENÜ KONTROLÜ (GÜNCELLENDİ) ---
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    mobileMenu.classList.toggle('flex');
+                    
+                    const iconSpan = mobileMenuBtn.querySelector('span');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        iconSpan.textContent = 'menu';
+                        document.body.style.overflow = ''; 
+                    } else {
+                        iconSpan.textContent = 'close';
+                    }
+                });
+
+                // Mobil menüdeki dil değiştirme (Toggle mantığı)
+                const mobileLangToggle = document.getElementById('mobile-lang-toggle');
+                if(mobileLangToggle) {
+                    mobileLangToggle.addEventListener('click', () => {
+                        const current = document.documentElement.lang;
+                        const next = current === 'tr' ? 'en' : 'tr';
+                        setLanguage(next);
+                    });
+                }
+            }
+            
+            // Masaüstü Dil Menüsü İşlemleri
+            const languageSelector = document.getElementById('languageSelector');
+            const languageButton = document.getElementById('languageButton');
+            const languageDropdown = document.getElementById('languageDropdown');
+            const languageOptions = languageDropdown ? languageDropdown.querySelectorAll('.language-option') : null;
+            
+            if (languageSelector && languageButton && languageDropdown && languageOptions) {
+                const hideDropdown = () => { languageDropdown.classList.add('hidden'); };
+                const showDropdown = () => { languageDropdown.classList.remove('hidden'); };
+                languageButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    if (languageDropdown.classList.contains('hidden')) { showDropdown(); } else { hideDropdown(); }
+                });
+                languageSelector.addEventListener('mouseleave', hideDropdown);
+                document.addEventListener('click', function(event) {
+                    if (!languageSelector.contains(event.target)) { hideDropdown(); }
+                });
+                languageOptions.forEach(option => {
+                    option.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const selectedLang = this.getAttribute('data-lang');
+                        setLanguage(selectedLang);
+                        hideDropdown();
+                    });
+                });
+            }
+            
+            // --- KULLANICI GİRİŞ KONTROLÜ (GÜNCELLENDİ) ---
+            const loginButton = document.getElementById('login-button'); // Masaüstü için varsa (artık desktop-auth-buttons içindekiler önemli)
+            const accountSection = document.getElementById('account-section');
+            const profileButton = document.getElementById('profileButton');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const welcomeUsername = document.getElementById('welcome-username');
+            const logoutButton = document.getElementById('logout-button');
+            
+            // Yeni Yapıdaki Buton Grupları
+            const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
+            const desktopAuthButtons = document.getElementById('desktop-auth-buttons');
+            
+            const loggedInUser = localStorage.getItem('loggedInUser');
+
+            if (loggedInUser) {
+                // Giriş yapılmışsa:
+                if (mobileAuthButtons) mobileAuthButtons.style.display = 'none';  // Mobil butonları gizle
+                if (desktopAuthButtons) desktopAuthButtons.style.display = 'none'; // Masaüstü butonları gizle
+                
+                if (accountSection) {
+                    accountSection.classList.remove('hidden'); 
+                    // account-section'ın 'hidden' classı kalkınca mobilde görünüp görünmeyeceği CSS'e bağlı. 
+                    // Senin tasarımında 'hidden' kalkınca 'block' veya 'flex' oluyor ve görünüyor.
+                    // Profil ikonu hem mobil hem masaüstünde sağda görünecek.
+                }
+                if (welcomeUsername) welcomeUsername.textContent = loggedInUser;
+            } else {
+                // Giriş yapılmamışsa:
+                if (mobileAuthButtons) mobileAuthButtons.style.removeProperty('display'); // Mobil butonlar geri gelsin (CSS lg:hidden halleder)
+                if (desktopAuthButtons) desktopAuthButtons.style.removeProperty('display'); // Masaüstü butonlar geri gelsin (CSS hidden lg:flex halleder)
+                
+                if (accountSection) accountSection.classList.add('hidden');
+            }
+
+            // Profil Menüsü
+            if (profileButton && profileDropdown) {
+                profileButton.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    profileDropdown.classList.toggle('hidden');
+                });
+            }
+
+            document.addEventListener('click', function(event) {
+                if (profileDropdown && !profileDropdown.classList.contains('hidden') && !accountSection.contains(event.target)) {
+                    profileDropdown.classList.add('hidden');
+                }
+            });
+
+            // Çıkış Yap
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault(); 
+                    
+                    Swal.fire({
+                        title: 'Çıkış Yapılıyor...',
+                        text: 'Oturumunuz güvenli bir şekilde kapatılıyor. Tekrar bekleriz!',
+                        icon: 'success',
+                        background: '#111c22', 
+                        color: '#fff',
+                        showConfirmButton: false,
+                        timer: 1000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        localStorage.removeItem('loggedInUser');
+                        window.location.reload(); 
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

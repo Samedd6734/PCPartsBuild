@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="app-title">PC Toplama Sihirbazı</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-200 antialiased transition-default">
+<div class="flex flex-col min-h-screen">
+
+<header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 transition-default">
+<nav class="container mx-auto flex justify-between items-center">
+<a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+    <img src="Assets/Images/logo.webp" alt="PCPartsBuild" class="h-14 transition-all duration-300 dark:filter-none">
+</a>
+
+<div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300">
+    <a class="text-primary dark:text-primary text-sm font-medium leading-normal transition-colors" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+    <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+    <a class="text-gray-600 dark:text-white/80 text-sm font-medium leading-normal transition-colors hover:text-gray-900 dark:hover:text-white" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+</div>
+<div class="flex items-center gap-2">
+    <a id="signup-button" href="kaydol.html" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity" data-i18n="auth-signup">Kayıt Ol</a>
+    
+    <a id="login-button" href="giris.html" class="bg-gray-200 border border-gray-300 text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700" data-i18n="auth-login">Giriş Yap</a>
+
+    <div id="languageSelector" class="relative">
+        <button id="languageButton" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+            <span class="material-symbols-outlined text-xl">language</span>
+        </button>
+        <div id="languageDropdown" class="absolute right-0 top-full pt-1 w-32 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+            <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">Türkçe (TR)</a>
+            <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200">English (EN)</a>
+        </div>
+    </div>
+
+    <div id="account-section" class="relative hidden"> 
+        <button id="account_circle" class="flex material-icons-outlined items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700">
+            <span>account_circle</span>
+        </button>
+        <div id="profileDropdown" class="absolute right-0 top-full pt-1 w-48 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800/80 dark:border-gray-700">
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n="auth-welcome">Hoş geldin,</p>
+                <p id="welcome-username" class="text-sm font-medium text-gray-900 dark:text-white truncate">Kullanıcı</p>
+            </div>
+            <a href="hesabim.html" class="block px-4 py-2 text-sm text-gray-900 font-medium hover:bg-primary/80 hover:text-white transition-colors duration-150 dark:text-gray-200" data-i18n="nav-profile">Hesabım</a>
+            <a href="#" id="logout-button" class="block w-full text-left px-4 py-2 text-sm text-red-600 font-medium hover:bg-red-500 hover:text-white transition-colors duration-150 dark:text-red-400 dark:hover:bg-red-500/50">
+                <span data-i18n="auth-logout">Çıkış Yap</span>
+            </a>
+        </div>
+    </div>
+    
+    <button id="darkModeButton" class="grid place-items-center rounded-lg h-10 w-10 bg-gray-200 border border-gray-300 text-gray-900 transition-colors hover:bg-gray-300 dark:bg-gray-700/50 dark:border-gray-600/80 dark:text-white dark:hover:bg-gray-700 cursor-pointer overflow-hidden">
+        <span id="moonIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-0 scale-75 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">
+            dark_mode
+        </span>
+        <span id="sunIcon" class="material-symbols-outlined col-start-1 row-start-1 transition-all duration-300 opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-75 dark:-rotate-90">
+            light_mode
+        </span>
+    </button>
+</div>
+</nav>
+</header>
+<div class="w-full bg-card-light dark:bg-card-darker border-b border-gray-200 dark:border-gray-800/50 overflow-x-auto shadow-md">
+    <div class="container mx-auto flex items-center gap-2 px-4">
+        <button class="component-tab active flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="cpu">
+            <span class="material-symbols-outlined">memory</span>
+            <span class="text-sm font-medium" data-i18n="tab-cpu">İşlemci</span>
+        </button>
+        <button class="component-tab flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="motherboard">
+            <span class="material-symbols-outlined">developer_board</span>
+            <span class="text-sm font-medium" data-i18n="tab-mobo">Anakart</span>
+        </button>
+        <button class="component-tab flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="ram">
+            <span class="material-symbols-outlined">straighten</span>
+            <span class="text-sm font-medium" data-i18n="tab-ram">Bellek (RAM)</span>
+        </button>
+        <button class="component-tab flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="gpu">
+            <span class="material-symbols-outlined">videogame_asset</span>
+            <span class="text-sm font-medium" data-i18n="tab-gpu">Ekran Kartı</span>
+        </button>
+        <button class="component-tab flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="storage">
+            <span class="material-symbols-outlined">save</span>
+            <span class="text-sm font-medium" data-i18n="tab-storage">Depolama</span>
+        </button>
+        <button class="component-tab flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="case">
+            <span class="material-symbols-outlined">computer</span>
+            <span class="text-sm font-medium" data-i18n="tab-case">Kasa</span>
+        </button>
+        <button class="component-tab flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="psu">
+            <span class="material-symbols-outlined">power</span>
+            <span class="text-sm font-medium" data-i18n="tab-psu">Güç Kaynağı</span>
+        </button>
+        <button class="component-tab flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary" data-component="cpuCooler">
+            <span class="material-symbols-outlined">mode_fan</span>
+            <span class="text-sm font-medium" data-i18n="tab-cooler">Soğutucu</span>
+        </button>
+    </div>
+</div>
+<main class="flex-grow container mx-auto px-4 py-6">
+<div class="flex flex-col lg:flex-row lg:gap-8">
+    
+    <aside class="w-full lg:w-1/4 mb-6 lg:mb-0">
+    <div class="sticky top-6">
+        <div class="bg-card-light dark:bg-card-darker rounded-lg border border-gray-200 dark:border-gray-800/50 shadow-lg flex flex-col max-h-[calc(100vh-2rem)]">
+            
+            <div class="p-4 border-b border-gray-200 dark:border-gray-800/50 shrink-0 bg-card-light dark:bg-card-darker z-10 rounded-t-lg">
+                <h3 class="text-lg font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="filter-title">Filtre Seçenekleri</h3>
+                <div>
+                    <input type="text" id="search-box" 
+                           data-i18n-placeholder="search-placeholder" 
+                           placeholder="Model adı..." 
+                           class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-sm rounded-md focus:ring-primary focus:border-primary block p-2.5 text-gray-900 dark:text-white transition-colors">
+                </div>
+            </div>
+            
+            <div id="dynamic-filter-container" class="p-4 overflow-y-auto flex-grow custom-scrollbar space-y-2">
+                </div>
+
+            <div class="p-4 border-t border-gray-200 dark:border-gray-800/50 shrink-0 bg-card-light dark:bg-card-darker rounded-b-lg">
+                <button id="apply-filters-btn" class="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors shadow-lg" data-i18n="filter-apply">Filtreleri Uygula</button>
+            </div>
+        </div>
+    </div>
+</aside>
+
+    <div class="w-full lg:w-2/4 flex flex-col">
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h2 id="component-list-title" class="text-xl font-bold text-gray-900 dark:text-white" data-i18n="main-title">Bir CPU Seçin</h2>
+        </div>
+
+        <div id="component-list" class="grid grid-cols-1 gap-4 min-h-[600px] content-start">
+            <div class="text-center py-20">
+                <i class="fas fa-spinner fa-spin fa-2x text-primary mb-4"></i>
+                <p class="text-lg text-gray-500 dark:text-gray-400">Parçalar yükleniyor...</p>
+            </div>
+        </div>
+
+        <div id="pagination-controls" class="flex justify-center items-center gap-2 mt-8 mb-4 py-4 border-t border-gray-200 dark:border-gray-800">
+        </div>
+    </div>
+
+    <aside class="w-full lg:w-1/4 mb-6 lg:mb-0">
+    <div class="sticky top-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors shadow-sm">
+            
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white" data-i18n="System-summary">Sistem Özeti</h3>
+            </div>
+            
+            <div id="build-list-items" class="p-4 space-y-3 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+                <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4" data-i18n="msg-no-parts">Henüz parça seçilmedi.</p>
+            </div>
+            
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400" data-i18n="summary-estimated">Tahmini Tüketim:</span>
+                    <span id="estimated-wattage" class="text-base font-bold text-gray-900 dark:text-white">0 W</span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400" data-i18n="summary-recommended">Önerilen PSU:</span>
+                    <span id="recommended-psu" class="text-base font-bold text-green-600 dark:text-green-400">0 W</span>
+                </div>
+                
+                <div class="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <span class="text-lg font-medium text-gray-900 dark:text-white" data-i18n="summary-total">Toplam Fiyat:</span>
+                    <span id="total-price" class="text-2xl font-bold text-primary">0.00TL</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+</div>
+</main>
+<footer class="w-full mt-20 py-8 border-t border-gray-200 dark:border-gray-800">
+<div class="container mx-auto text-center text-gray-500 dark:text-gray-400 text-sm">
+<div class="flex justify-center items-center gap-4 mb-4">
+</div>
+<p>© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın: <a class="text-primary hover:underline" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a></p>
+</div>
+</footer>
+
+<script>
+    // === BÖLÜM 1: API VE SİHİRBAZ AYARLARI ===
+    const API_BASE_URL = "https://pcpartsbuild.com"; // Backend'inizin çalıştığı adres
+
+    // Tüm veritabanı verilerini burada saklayacağız
+    let allData = {
+        cpu: [],
+        motherboard: [],
+        ram: [],
+        gpu: [],
+        case: [],
+        psu: [],
+        storage: [],
+        cpuCooler: []
+    };
+
+    // Kullanıcının o anki seçimlerini burada saklayacağız
+    let currentBuild = {
+        cpu: null,
+        motherboard: null,
+        ram: null,
+        gpu: null,
+        case: null,
+        psu: null,
+        storage: null,
+        cpuCooler: null
+    };
+    
+    // O an gösterilen kategori
+    let currentCategory = 'cpu';
+
+    // --- BURAYI EKLE ---
+    const ITEMS_PER_PAGE = 24; // Her sayfada 24 ürün göster
+    let currentPage = 1;       // Başlangıç sayfası
+    // -------------------
+
+    // === BÖLÜM 2: ÇEVİRİ SÖZLÜĞÜ (YENİ FİLTRELER EKLENDİ) ===
+    const translations = {
+        tr: {
+            "System-summary": "Sistem Özeti",
+            "summary-estimated": "Tahmini Tüketim:",
+            "summary-recommended": "Önerilen PSU:",
+            "summary-total": "Toplam Fiyat:",
+            "msg-no-parts": "Henüz parça seçilmedi.",
+            "action-remove": "Kaldır",
+            "app-title": "PC Toplama Sihirbazı",
+            "nav-wizard": "PC Toplama Sihirbazı",
+            "nav-compatibility": "Parça Uyumluluk Kontrolü",
+            "nav-info": "PC Bileşenleri",
+            "auth-signup": "Kayıt Ol",
+            "auth-login": "Giriş Yap",
+            "auth-welcome": "Hoş geldin,",
+            "nav-profile": "Hesabım",
+            "auth-logout": "Çıkış Yap",
+            "filter-title": "Filtre Seçenekleri",
+            "filter-apply": "Filtreleri Uygula",
+            "main-title": "Bir CPU Seçin",
+            "status-incompatible": "Uyumsuz",
+            "action-add": "Ekle",
+            "action-selected": "Seçildi",
+            "action-remove": "Kaldır",
+            "total-wattage": "Önerilen Güç:",
+            "total-price": "Toplam Fiyat:",
+            "tab-cpu": "İşlemci",
+            "tab-mobo": "Anakart",
+            "tab-ram": "Bellek (RAM)",
+            "tab-gpu": "Ekran Kartı",
+            "tab-storage": "Depolama",
+            "tab-case": "Kasa",
+            "tab-psu": "Güç Kaynağı",
+            "tab-cooler": "Soğutucu",
+            "step-title-cpu": "Bir İşlemci Seçin",
+            "step-title-motherboard": "Bir Anakart Seçin",
+            "step-title-ram": "Bir RAM Seçin",
+            "step-title-gpu": "Bir Ekran Kartı Seçin",
+            "step-title-case": "Bir Kasa Seçin",
+            "step-title-psu": "Bir Güç Kaynağı Seçin",
+            "step-title-storage": "Bir Depolama Seçin",
+            "step-title-cpuCooler": "Bir Soğutucu Seçin",
+            // Yeni Dinamik Filtre Çevirileri
+            "search-placeholder": "Model adı...",
+            "action-show-all": "Tümünü Göster",
+            "action-show-less": "Daha Az Göster",
+            "filter-brand": "Marka",
+            "filter-socket": "Soket Tipi",
+            "filter-coreCount": "Çekirdek Sayısı",
+            "filter-chipset": "Yonga Seti",
+            "filter-formFactor": "Form Faktörü",
+            "filter-memoryType": "Bellek Tipi",
+            "filter-speed": "Hız (MHz)",
+            "filter-moduleCount": "Modül Sayısı",
+            "filter-capacityPerModule": "Modül Kapasitesi (GB)",
+            "filter-memorySize": "Bellek Boyutu (GB)",
+            "filter-storageType": "Depolama Tipi",
+            "filter-interface": "Arayüz",
+            "filter-capacity": "Kapasite (GB)",
+            "filter-caseType": "Kasa Tipi",
+            "filter-supportedMotherboardFormFactors": "Desteklenen Anakartlar",
+            "filter-wattage": "Güç (Watt)",
+            "filter-rating": "Verimlilik (Rating)",
+            "filter-isModular": "Modüler",
+            "filter-coolerType": "Soğutucu Tipi",
+            "filter-radiatorSize": "Radyatör Boyutu (mm)",
+            "filter-true": "Evet (Tam Modüler)",
+            "filter-false": "Hayır (Yarı/Modüler Değil)",
+            "filter-Air": "Hava Soğutma",
+            "filter-Liquid": "Sıvı Soğutma",
+            // Yeni Uyumsuzluk Mesajları
+            "incompatible-socket-cpu": "Seçili anakart ile (Soket) uyumsuz.",
+            "incompatible-socket-mobo": "Seçili işlemci ile (Soket) uyumsuz.",
+            "incompatible-socket-cooler": "Seçili işlemci ile (Soket) uyumsuz.",
+            "incompatible-ramType": "Seçili anakart ile (RAM Tipi) uyumsuz.",
+            "incompatible-moboFormFactor": "Seçili kasa bu anakart boyutunu desteklemiyor.",
+            "incompatible-gpuLength": "Seçili kasa için çok uzun (Maks: {maxGpuLength}mm).",
+            "incompatible-coolerHeight": "Seçili kasa için çok yüksek (Maks: {maxCpuCoolerHeight}mm).",
+            "incompatible-psuFormFactor": "Seçili kasa bu PSU form faktörünü desteklemiyor.",
+        },
+        en: {
+            "System-summary": "System Summary",
+            "summary-estimated": "Estimated Wattage:",
+            "summary-recommended": "Recommended PSU:",
+            "summary-total": "Total Price:",
+            "msg-no-parts": "No parts selected yet.",
+            "action-remove": "Remove",
+            "app-title": "PC Builder Wizard",
+            "nav-wizard": "PC Build Wizard",
+            "nav-compatibility": "Part Compatibility Check",
+            "nav-info": "PC Components",
+            "auth-signup": "Sign Up",
+            "auth-login": "Log In",
+            "auth-welcome": "Welcome,",
+            "nav-profile": "My Account",
+            "auth-logout": "Log Out",
+            "filter-title": "Filter Options",
+            "filter-apply": "Apply Filters",
+            "main-title": "Choose a CPU",
+            "status-incompatible": "Incompatible",
+            "action-add": "Add",
+            "action-selected": "Selected",
+            "action-remove": "Remove",
+            "total-wattage": "Recommended Wattage:",
+            "total-price": "Total Price:",
+            "tab-cpu": "CPU",
+            "tab-mobo": "Motherboard",
+            "tab-ram": "Memory",
+            "tab-gpu": "GPU",
+            "tab-storage": "Storage",
+            "tab-case": "Case",
+            "tab-psu": "PSU",
+            "tab-cooler": "Cooler",
+            "step-title-cpu": "Choose a CPU",
+            "step-title-motherboard": "Choose a Motherboard",
+            "step-title-ram": "Choose a RAM",
+            "step-title-gpu": "Choose a GPU",
+            "step-title-case": "Choose a Case",
+            "step-title-psu": "Choose a PSU",
+            "step-title-storage": "Choose a Storage",
+            "step-title-cpuCooler": "Choose a CPU Cooler",
+            // New Dynamic Filter Translations
+            "search-placeholder": "Model name...",
+            "action-show-all": "Show All",
+            "action-show-less": "Show Less",
+            "filter-brand": "Brand",
+            "filter-socket": "Socket",
+            "filter-coreCount": "Core Count",
+            "filter-chipset": "Chipset",
+            "filter-formFactor": "Form Factor",
+            "filter-memoryType": "Memory Type",
+            "filter-speed": "Speed (MHz)",
+            "filter-moduleCount": "Module Count",
+            "filter-capacityPerModule": "Capacity Per Module (GB)",
+            "filter-memorySize": "Memory Size (GB)",
+            "filter-storageType": "Storage Type",
+            "filter-interface": "Interface",
+            "filter-capacity": "Capacity (GB)",
+            "filter-caseType": "Case Type",
+            "filter-supportedMotherboardFormFactors": "Supported Motherboards",
+            "filter-wattage": "Wattage",
+            "filter-rating": "Rating",
+            "filter-isModular": "Modular",
+            "filter-coolerType": "Cooler Type",
+            "filter-radiatorSize": "Radiator Size (mm)",
+            "filter-true": "Yes (Fully Modular)",
+            "filter-false": "No (Semi/Non-Modular)",
+            "filter-Air": "Air Cooler",
+            "filter-Liquid": "Liquid Cooler",
+            // New Incompatibility Messages
+            "incompatible-socket-cpu": "Incompatible (Socket) with selected motherboard.",
+            "incompatible-socket-mobo": "Incompatible (Socket) with selected CPU.",
+            "incompatible-socket-cooler": "Incompatible (Socket) with selected CPU.",
+            "incompatible-ramType": "Incompatible (RAM Type) with selected motherboard.",
+            "incompatible-moboFormFactor": "Selected case does not support this motherboard size.",
+            "incompatible-gpuLength": "Too long for selected case (Max: {maxGpuLength}mm).",
+            "incompatible-coolerHeight": "Too tall for selected case (Max: {maxCpuCoolerHeight}mm).",
+            "incompatible-psuFormFactor": "Selected case does not support this PSU form factor.",
+        }
+    };
+
+    // === BÖLÜM 3: TEMA VE DİL FONKSİYONLARI (Değişiklik yok) ===
+    
+    // Dil güncelleme (GÜVENLİ VERSİYON)
+    const setLanguage = (lang) => {
+        localStorage.setItem('lang', lang); 
+        document.documentElement.lang = lang;
+        
+        // 1. Çevirileri Uygula
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            const translation = translations[lang][key];
+            if (translation) {
+                element.textContent = translation;
+            }
+        });
+        
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            const translation = translations[lang][key];
+            if (translation) {
+                element.placeholder = translation;
+            }
+        });
+        
+        document.title = translations[lang]["app-title"];
+        
+        // 2. LİSTEYİ YENİLEME (HATA ÇIKAN YER BURASIYDI)
+        // Eski kod direkt allData.cpu.length'e bakıyordu ve patlıyordu.
+        // Yeni kod: "allData var mı? currentCategory var mı?" diye kontrol ediyor.
+        if (allData && allData[currentCategory] && allData[currentCategory].length > 0) { 
+            renderFilterSidebar(currentCategory);
+            applyFiltersAndRenderList();
+            renderBuildList();
+        }
+    };
+// Tema Ayarları - DÜZELTİLMİŞ HALİ
+    const toggleDarkMode = () => {
+        const html = document.documentElement;
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
+        // Tailwind'in "dark:" sınıfları bu işi hallediyor.
+        
+        const isDarkMode = html.classList.contains('dark');
+        const newTheme = isDarkMode ? 'light' : 'dark';
+
+        if (isDarkMode) {
+            html.classList.remove('dark');
+        } else {
+            html.classList.add('dark');
+        }
+        localStorage.setItem('theme_builder', newTheme);
+        
+        if (sunIcon && moonIcon) {
+            if (newTheme === 'light') {
+                moonIcon.classList.remove('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+                sunIcon.classList.remove('opacity-0', 'scale-75');
+                sunIcon.classList.add('opacity-100', 'scale-100'); 
+            } else {
+                sunIcon.classList.remove('opacity-100', 'scale-100'); 
+                sunIcon.classList.add('opacity-0', 'scale-75'); 
+                moonIcon.classList.remove('opacity-0', 'scale-75');
+                moonIcon.classList.add('opacity-100', 'scale-100');
+            }
+        }
+    };
+
+    const initializeTheme = (key = 'theme_builder') => {
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem(key);
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
+
+        let isDark = false;
+        if (savedTheme === 'dark') {
+            html.classList.add('dark');
+            isDark = true;
+        } else if (savedTheme === 'light') {
+            html.classList.remove('dark');
+            isDark = false;
+        } else if (html.classList.contains('dark')) {
+            localStorage.setItem(key, 'dark');
+            isDark = true;
+        } else {
+            localStorage.setItem(key, 'light');
+            isDark = false;
+        }
+
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                moonIcon.classList.add('opacity-100', 'scale-100');
+                sunIcon.classList.add('opacity-0', 'scale-75');
+            } else {
+                sunIcon.classList.add('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+            }
+        }
+    };
+
+    const initializeLang = () => {
+        const savedLang = localStorage.getItem('lang');
+        let currentLang = savedLang || document.documentElement.lang || 'tr';
+        setLanguage(currentLang);
+    };
+    // === BÖLÜM 4: SİHİRBAZ ANA FONKSİYONLARI (GÜNCELLENDİ) ===
+
+    // ==========================================
+// GLOBAL TANIMLAMALAR
+// ==========================================
+
+// API uç noktaları haritası (Sabit kalacak)
+const componentEndpoints = {
+    cpu: 'processors',
+    motherboard: 'motherboards',
+    ram: 'rams',
+    gpu: 'gpus',
+    case: 'cases',
+    psu: 'psus',
+    storage: 'storages',
+    cpuCooler: 'cpuCoolers'
+};
+
+// Eğer kodunun başka bir yerinde 'allData' tanımlı değilse bu satırı aç:
+// let allData = {}; 
+
+/**
+ * YENİ ADIM 1: SİHİRBAZI BAŞLATMA
+ * Eskiden tüm verileri çekiyorduk, şimdi sadece ilk adımı (CPU) tetikliyoruz.
+ * Bu fonksiyonu sayfa yüklendiğinde (window.onload vb.) çağırmalısın.
+ */
+async function initializeWizard() {
+    console.log("Sihirbaz başlatılıyor...");
+    
+    // Doğrudan ilk kategoriyi göster diyoruz.
+    // Veri çekme işini showCategory fonksiyonu halledecek.
+    await showCategory('cpu');
+}
+
+/**
+     * DÜZELTİLMİŞ: showCategory (Bozuk Cache Korumalı)
+     */
+    async function showCategory(categoryKey) {
+        currentCategory = categoryKey;
+        currentPage = 1; 
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 Dakika
+
+        // Görsel Ayarlar
+        document.querySelectorAll('.component-tab').forEach(tab => tab.classList.remove('active'));
+        const activeTab = document.querySelector(`.component-tab[data-component="${categoryKey}"]`);
+        if(activeTab) activeTab.classList.add('active');
+
+        const titleElem = document.getElementById('component-list-title');
+        if (titleElem) titleElem.textContent = translations[currentLang][`step-title-${categoryKey}`] || "Parça Seçin";
+
+        // ÖNBELLEK KONTROLÜ
+        const cachedItem = localStorage.getItem(`cache_${categoryKey}`);
+        
+        if (cachedItem) {
+            try {
+                const parsedCache = JSON.parse(cachedItem);
+                
+                // KONTROL: Cache var ama içi boş mu? Boşsa sil ve yenisini çek.
+                if (!parsedCache.data || parsedCache.data.length === 0) {
+                    console.warn("🗑️ Bozuk/Boş önbellek tespit edildi, siliniyor...");
+                    localStorage.removeItem(`cache_${categoryKey}`);
+                    fetchDataFromServer(categoryKey);
+                    return;
+                }
+
+                const now = Date.now();
+                if (now - parsedCache.timestamp < CACHE_DURATION) {
+                    // Taze veri
+                    console.log(`🚀 ${categoryKey} önbellekten yüklendi.`);
+                    allData[categoryKey] = parsedCache.data;
+                    if (typeof renderFilterSidebar === 'function') renderFilterSidebar(categoryKey);
+                    if (typeof applyFiltersAndRenderList === 'function') applyFiltersAndRenderList();
+                    return;
+                } else {
+                    // Süresi dolmuş veri
+                    console.log(`⌛ ${categoryKey} süresi dolmuş, yenileniyor...`);
+                    allData[categoryKey] = parsedCache.data; // Eskiyi göster
+                    if (typeof renderFilterSidebar === 'function') renderFilterSidebar(categoryKey);
+                    if (typeof applyFiltersAndRenderList === 'function') applyFiltersAndRenderList();
+                    
+                    fetchDataFromServer(categoryKey); // Yenisini çek
+                    return;
+                }
+            } catch (e) {
+                // JSON parse hatası olursa cache'i sil
+                localStorage.removeItem(`cache_${categoryKey}`);
+            }
+        }
+
+        // Cache yoksa direkt çek
+        fetchDataFromServer(categoryKey);
+    }
+
+    /**
+     * DÜZELTİLMİŞ: Engel tanımayan veri çekme fonksiyonu
+     */
+    async function fetchDataFromServer(categoryKey) {
+        const listContainer = document.getElementById('component-list');
+        
+        // Eğer veri hiç yoksa spinner göster
+        if (!allData[categoryKey] || allData[categoryKey].length === 0) {
+            listContainer.innerHTML = `
+                <div class="col-span-full text-center py-20">
+                    <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+                    <p class="mt-4 text-gray-500">Veriler sunucudan alınıyor...</p>
+                </div>`;
+        }
+
+        try {
+            console.log(`📡 ${categoryKey} için API isteği gönderiliyor...`);
+            const endpoint = componentEndpoints[categoryKey];
+            
+            // API İsteği
+            const response = await fetch(`${API_BASE_URL}/api/${endpoint}`);
+
+            if (!response.ok) throw new Error(`API Hatası: ${response.status}`);
+
+            const data = await response.json();
+            
+            // Gelen veriyi kontrol et (Dizi mi? Dolu mu?)
+            if (Array.isArray(data) && data.length > 0) {
+                // Veriyi + Zamanı kaydet
+                const cacheObject = {
+                    data: data,
+                    timestamp: Date.now() 
+                };
+
+                allData[categoryKey] = data;
+                localStorage.setItem(`cache_${categoryKey}`, JSON.stringify(cacheObject)); 
+                console.log(`✅ ${categoryKey} yüklendi ve önbelleğe alındı. (${data.length} adet)`);
+
+                // Ekrana bas
+                if (typeof renderFilterSidebar === 'function') renderFilterSidebar(categoryKey);
+                if (typeof applyFiltersAndRenderList === 'function') applyFiltersAndRenderList();
+            } else {
+                console.warn(`⚠️ ${categoryKey} için sunucudan BOŞ veri döndü.`);
+                listContainer.innerHTML = `<p class="text-yellow-500 text-center col-span-full">Sunucuda bu kategoride ürün yok.</p>`;
+            }
+
+        } catch (error) {
+            console.error("❌ Veri çekme hatası:", error);
+            listContainer.innerHTML = `<div class="text-red-500 text-center col-span-full">
+                <p class="font-bold">Bağlantı Hatası</p>
+                <p class="text-sm">Sunucuya ulaşılamadı. (${error.message})</p>
+                <button onclick="fetchDataFromServer('${categoryKey}')" class="mt-2 bg-primary text-white px-4 py-2 rounded">Tekrar Dene</button>
+            </div>`;
+        }
+    }
+
+    /**
+     * ADIM 3: Profesyonel Akordiyon Filtre Sistemi (DİL HATASI DÜZELTİLDİ)
+     */
+    function renderFilterSidebar(categoryKey) {
+        const filterContainer = document.getElementById('dynamic-filter-container');
+        if (!filterContainer) return;
+
+        filterContainer.innerHTML = ''; // Temizle
+        const items = allData[categoryKey];
+        // Dil bilgisini al
+        const currentLang = localStorage.getItem('lang') || 'tr';
+
+        if (!items || items.length === 0) return;
+
+        // Filtre Sıralaması
+        const filterMap = {
+            cpu: ['socket', 'brand', 'coreCount'],
+            motherboard: ['socket', 'formFactor', 'chipset', 'brand', 'memoryType'],
+            ram: ['memoryType', 'capacityPerModule', 'moduleCount', 'speed', 'brand'],
+            gpu: ['brand', 'memorySize', 'vrammemorysize', 'chipset'], 
+            case: ['caseType', 'supportedMotherboards', 'brand'],
+            psu: ['wattage', 'isModular', 'rating', 'brand'],
+            storage: ['capacity', 'storageType', 'interface', 'brand'],
+            cpuCooler: ['coolerType', 'radiatorSize', 'brand']
+        };
+
+        const propertiesToFilter = filterMap[categoryKey];
+        if (!propertiesToFilter) return;
+
+        propertiesToFilter.forEach((property, index) => {
+            let uniqueValues = [];
+
+            // Verileri Topla
+            if (property === 'supportedMotherboards' || property === 'supportedMotherboardFormFactors') {
+                const allValues = items.flatMap(item => {
+                    const val = item[property] || item.SupportedMotherboards || "";
+                    return val ? val.split(',').map(s => s.trim()) : [];
+                });
+                uniqueValues = [...new Set(allValues)];
+            } else {
+                uniqueValues = [...new Set(items.map(item => item[property]))]
+                    .filter(val => val !== null && val !== undefined && val !== "");
+            }
+
+            // Sırala
+            uniqueValues.sort((a, b) => {
+                const numA = parseFloat(a);
+                const numB = parseFloat(b);
+                if (!isNaN(numA) && !isNaN(numB) && String(a).match(/\d/) && String(b).match(/\d/)) return numA - numB;
+                return String(a).localeCompare(String(b));
+            });
+
+            if (uniqueValues.length === 0) return;
+
+            // --- HTML OLUŞTURMA ---
+            const filterTitleKey = `filter-${property}`;
+            const filterTitle = translations[currentLang][filterTitleKey] || property;
+            
+            // İlk 2 kutu açık olsun, diğerleri kapalı
+            const isOpen = index === 0 || index === 1; 
+
+            // Değerleri HTML'e çevir
+            const createCheckboxHtml = (val) => {
+                const valKey = `filter-${val}`;
+                let displayVal = translations[currentLang][valKey] || val;
+                if (val === true || val === 'true') displayVal = translations[currentLang]['filter-true'] || "Evet";
+                if (val === false || val === 'false') displayVal = translations[currentLang]['filter-false'] || "Hayır";
+
+                return `
+                    <div class="flex items-center py-1">
+                        <input class="filter-checkbox h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer bg-gray-50 dark:bg-gray-700 dark:border-gray-600" 
+                               id="filter-${property}-${val}" 
+                               data-filter-type="${property}" 
+                               value="${val}" 
+                               type="checkbox"/>
+                        <label class="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none hover:text-primary transition-colors" for="filter-${property}-${val}">
+                            ${displayVal}
+                        </label>
+                    </div>`;
+            };
+
+            // Limit ve Gizleme Mantığı
+            const LIMIT = 5;
+            const visibleItems = uniqueValues.slice(0, LIMIT).map(createCheckboxHtml).join('');
+            let hiddenContent = '';
+            
+            if (uniqueValues.length > LIMIT) {
+                const hiddenItems = uniqueValues.slice(LIMIT).map(createCheckboxHtml).join('');
+                
+                // DÜZELTME BURADA: Metni sözlükten çekiyoruz
+                const showAllText = translations[currentLang]['action-show-all'] || "Tümünü Göster";
+
+                hiddenContent = `
+                    <div id="more-${property}" class="hidden space-y-0 pt-1">
+                        ${hiddenItems}
+                    </div>
+                    <button class="text-xs font-bold text-primary mt-2 hover:underline focus:outline-none flex items-center gap-1 transition-colors"
+                            onclick="toggleShowMore('more-${property}', this)">
+                        <span data-i18n="action-show-all">${showAllText}</span>
+                    </button>
+                `;
+            }
+
+            // AKORDİYON YAPISI
+            const blockHtml = `
+                <div class="border-b border-gray-200 dark:border-gray-800 last:border-0 py-2">
+                    <button class="w-full flex justify-between items-center py-2 text-left focus:outline-none group" onclick="toggleAccordion('acc-${property}')">
+                        <span class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">${filterTitle}</span>
+                        <span id="icon-acc-${property}" class="material-symbols-outlined text-gray-400 text-[20px] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}">expand_more</span>
+                    </button>
+                    
+                    <div id="acc-${property}" class="${isOpen ? '' : 'hidden'} pl-1 pb-2">
+                        ${visibleItems}
+                        ${hiddenContent}
+                    </div>
+                </div>
+            `;
+            filterContainer.innerHTML += blockHtml;
+        });
+    }
+
+    // --- YARDIMCI FONKSİYONLAR (Global Scope'a ekle) ---
+
+    // 1. Akordiyon Aç/Kapa
+    window.toggleAccordion = function(id) {
+        const content = document.getElementById(id);
+        const icon = document.getElementById(`icon-${id}`);
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            icon.classList.add('rotate-180');
+        } else {
+            content.classList.add('hidden');
+            icon.classList.remove('rotate-180');
+        }
+    }
+
+    // 2. Tümünü Göster/Gizle (GÜNCELLENDİ)
+    window.toggleShowMore = function(id, btn) {
+        const content = document.getElementById(id);
+        const span = btn.querySelector('span');
+        const currentLang = localStorage.getItem('lang') || 'tr'; // Anlık dili al
+        
+        if (content.classList.contains('hidden')) {
+            // GİZLİYDİ -> AÇILIYOR
+            content.classList.remove('hidden');
+            // Metni sözlükten alıp değiştir
+            span.textContent = translations[currentLang]['action-show-less'] || "Daha Az Göster";
+            // Dil değişimi için data attribute'unu da güncelle
+            span.setAttribute('data-i18n', 'action-show-less');
+        } else {
+            // AÇIKTI -> KAPANIYOR
+            content.classList.add('hidden');
+            // Metni sözlükten alıp değiştir
+            span.textContent = translations[currentLang]['action-show-all'] || "Tümünü Göster";
+            // Dil değişimi için data attribute'unu da güncelle
+            span.setAttribute('data-i18n', 'action-show-all');
+        }
+    }
+
+    /**
+     * ADIM 4: FİLTRE VE UYUMLULUK BEYNİ (TÜM KURALLAR GÜNCELLENDİ)
+     */
+    function applyFiltersAndRenderList() {
+        // Veri yoksa çık
+        if (!allData[currentCategory]) return;
+
+        let filteredItems = [...allData[currentCategory]]; 
+        let compatibilityMessages = {}; 
+        const currentLang = localStorage.getItem('lang') || 'tr';
+
+        // --- A. UYUMLULUK FİLTRELEMESİ (SIVI SOĞUTMA DÜZELTİLDİ) ---
+
+        // 1. İŞLEMCİ (CPU) FİLTRESİ
+        if (currentCategory === 'cpu') {
+            if (currentBuild.motherboard) {
+                filteredItems = filteredItems.filter(cpu => {
+                    const isCompatible = cpu.socket === currentBuild.motherboard.socket;
+                    if (!isCompatible) compatibilityMessages[cpu.id] = translations[currentLang]["incompatible-socket-cpu"];
+                    return isCompatible;
+                });
+            }
+            if (currentBuild.cpuCooler) {
+                filteredItems = filteredItems.filter(cpu => {
+                    const isCompatible = currentBuild.cpuCooler.supportedSockets?.includes(cpu.socket);
+                    if (!isCompatible) compatibilityMessages[cpu.id] = translations[currentLang]["incompatible-socket-cooler"];
+                    return isCompatible;
+                });
+            }
+        }
+
+        // 2. ANAKART (MOTHERBOARD) FİLTRESİ
+        if (currentCategory === 'motherboard') {
+            if (currentBuild.cpu) {
+                filteredItems = filteredItems.filter(mobo => {
+                    const isCompatible = mobo.socket === currentBuild.cpu.socket;
+                    if (!isCompatible) compatibilityMessages[mobo.id] = translations[currentLang]["incompatible-socket-mobo"];
+                    return isCompatible;
+                });
+            }
+            if (currentBuild.ram) {
+                filteredItems = filteredItems.filter(mobo => {
+                    const isCompatible = mobo.memoryType === currentBuild.ram.memoryType;
+                    if (!isCompatible) compatibilityMessages[mobo.id] = translations[currentLang]["incompatible-ramType"];
+                    return isCompatible;
+                });
+            }
+            if (currentBuild.case) {
+                filteredItems = filteredItems.filter(mobo => {
+                    const rawSupport = currentBuild.case.supportedMotherboards || currentBuild.case.SupportedMotherboards || "";
+                    const moboForm = mobo.formFactor ? mobo.formFactor.trim().toLowerCase() : "";
+                    let supportList = Array.isArray(rawSupport) ? rawSupport : rawSupport.split(',');
+                    const isCompatible = supportList.some(s => s.trim().toLowerCase() === moboForm);
+                    if (!isCompatible) compatibilityMessages[mobo.id] = translations[currentLang]["incompatible-moboFormFactor"];
+                    return isCompatible;
+                });
+            }
+        }
+
+        // 3. RAM FİLTRESİ
+        if (currentCategory === 'ram') {
+            if (currentBuild.motherboard) {
+                filteredItems = filteredItems.filter(ram => {
+                    const isCompatible = ram.memoryType === currentBuild.motherboard.memoryType;
+                    if (!isCompatible) compatibilityMessages[ram.id] = translations[currentLang]["incompatible-ramType"];
+                    return isCompatible;
+                });
+            }
+        }
+
+        // 4. EKRAN KARTI (GPU) FİLTRESİ
+        if (currentCategory === 'gpu') {
+            if (currentBuild.case) {
+                const maxLen = currentBuild.case.maxGpuLength || currentBuild.case.MaxGpuLength || 999;
+                filteredItems = filteredItems.filter(g => {
+                    const gpuLen = g.length || 0;
+                    const isCompatible = gpuLen <= maxLen;
+                    if (!isCompatible) compatibilityMessages[g.id] = translations[currentLang]["incompatible-gpuLength"].replace('{maxGpuLength}', maxLen);
+                    return isCompatible;
+                });
+            }
+        }
+
+        // 5. KASA (CASE) FİLTRESİ (RADYATÖR MANTIĞI EKLENDİ)
+        if (currentCategory === 'case') {
+             // Değişkenleri Hazırla
+             const moboFormRaw = currentBuild.motherboard?.formFactor || "";
+             const targetForm = moboFormRaw.trim().toLowerCase();
+             const gpuLen = currentBuild.gpu?.length || 0;
+             const psuLen = currentBuild.psu?.length || 0;
+             
+             // Soğutucu Bilgileri
+             const cooler = currentBuild.cpuCooler;
+
+             filteredItems = filteredItems.filter(c => {
+                let isCompatible = true;
+                let failReason = "";
+
+                // A. ANAKART UYUMU
+                if (targetForm) {
+                    const rawSupportData = c.supportedMotherboards || c.SupportedMotherboards || ""; 
+                    if (!rawSupportData) {
+                        isCompatible = false; failReason = translations[currentLang]["incompatible-moboFormFactor"];
+                    } else {
+                        let supportList = Array.isArray(rawSupportData) ? rawSupportData : rawSupportData.split(',');
+                        const formMatch = supportList.some(s => s.trim().toLowerCase() === targetForm);
+                        if (!formMatch) { isCompatible = false; failReason = translations[currentLang]["incompatible-moboFormFactor"]; }
+                    }
+                }
+
+                // B. EKRAN KARTI UZUNLUK
+                if (isCompatible && gpuLen > 0) {
+                    const maxGpu = c.maxGpuLength || c.MaxGpuLength || 999;
+                    if (gpuLen > maxGpu) {
+                        isCompatible = false;
+                        failReason = translations[currentLang]["incompatible-gpuLength"].replace('{maxGpuLength}', maxGpu);
+                    }
+                }
+
+                // C. SOĞUTUCU KONTROLÜ (SIVI vs HAVA AYRIMI)
+                if (isCompatible && cooler) {
+                    if (cooler.coolerType === 'Liquid') {
+                        // --- SIVI SOĞUTMA: Radyatör Kontrolü ---
+                        // Soğutucunun radyatör boyutu (örn: 240, 360)
+                        const radSize = String(cooler.radiatorSize || ""); 
+                        
+                        // Kasanın destekleri (Ön ve Üst)
+                        const frontSupportRaw = c.radiatorSupportFront || c.RadiatorSupportFront || "";
+                        const topSupportRaw = c.radiatorSupportTop || c.RadiatorSupportTop || "";
+
+                        // Stringleri diziye çevir (Virgülle ayrılmış veriler)
+                        const frontList = frontSupportRaw.split(',').map(s => s.trim());
+                        const topList = topSupportRaw.split(',').map(s => s.trim());
+
+                        // Radyatör boyutu ön veya üst listelerin birinde var mı?
+                        const fitsFront = frontList.includes(radSize);
+                        const fitsTop = topList.includes(radSize);
+
+                        if (!fitsFront && !fitsTop) {
+                            isCompatible = false;
+                            failReason = `Seçili ${radSize}mm sıvı soğutma bu kasanın ön veya üst paneline uymuyor.`;
+                        }
+
+                    } else {
+                        // --- HAVA SOĞUTMA: Yükseklik Kontrolü ---
+                        const coolerHeight = cooler.height || 0;
+                        const maxCooler = c.maxCpuCoolerHeight || c.MaxCpuCoolerHeight || 999;
+                        if (coolerHeight > maxCooler) {
+                            isCompatible = false;
+                            failReason = translations[currentLang]["incompatible-coolerHeight"].replace('{maxCpuCoolerHeight}', maxCooler);
+                        }
+                    }
+                }
+                
+                // D. PSU UZUNLUK
+                if (isCompatible && psuLen > 0) {
+                    const maxPsu = c.maxPsuLength || c.MaxPsuLength || 999;
+                    if (psuLen > maxPsu) {
+                        isCompatible = false; failReason = "Seçili PSU bu kasa için çok büyük.";
+                    }
+                }
+
+                if (!isCompatible) compatibilityMessages[c.id] = failReason;
+                return isCompatible;
+            });
+        }
+
+        // 6. SOĞUTUCU (COOLER) FİLTRESİ (RADYATÖR MANTIĞI EKLENDİ)
+        if (currentCategory === 'cpuCooler') {
+            // CPU Soket Uyumu
+            if (currentBuild.cpu) {
+                filteredItems = filteredItems.filter(cooler => {
+                    const isCompatible = cooler.supportedSockets?.includes(currentBuild.cpu.socket);
+                    if (!isCompatible) compatibilityMessages[cooler.id] = translations[currentLang]["incompatible-socket-cooler"];
+                    return isCompatible;
+                });
+            }
+            
+            // Kasa Uyumu
+            if (currentBuild.case) {
+                const c = currentBuild.case;
+                
+                filteredItems = filteredItems.filter(cooler => {
+                    let isCompatible = true;
+                    let failReason = "";
+
+                    if (cooler.coolerType === 'Liquid') {
+                        // --- SIVI SOĞUTMA ---
+                        const radSize = String(cooler.radiatorSize || "");
+                        
+                        // Kasa verilerini al
+                        const frontSupportRaw = c.radiatorSupportFront || c.RadiatorSupportFront || "";
+                        const topSupportRaw = c.radiatorSupportTop || c.RadiatorSupportTop || "";
+                        
+                        const frontList = frontSupportRaw.split(',').map(s => s.trim());
+                        const topList = topSupportRaw.split(',').map(s => s.trim());
+
+                        // Kontrol
+                        if (!frontList.includes(radSize) && !topList.includes(radSize)) {
+                            isCompatible = false;
+                            failReason = `Kasa ${radSize}mm radyatör desteklemiyor.`;
+                        }
+
+                    } else {
+                        // --- HAVA SOĞUTMA ---
+                        const maxCoolerHeight = c.maxCpuCoolerHeight || c.MaxCpuCoolerHeight || 999;
+                        const h = cooler.height || 0;
+                        
+                        if (h > maxCoolerHeight) {
+                            isCompatible = false;
+                            failReason = translations[currentLang]["incompatible-coolerHeight"].replace('{maxCpuCoolerHeight}', maxCoolerHeight);
+                        }
+                    }
+
+                    if (!isCompatible) compatibilityMessages[cooler.id] = failReason;
+                    return isCompatible;
+                });
+            }
+        }
+
+        // 7. PSU FİLTRESİ
+        if (currentCategory === 'psu') {
+            if (currentBuild.case) {
+                const maxPsuLen = currentBuild.case.maxPsuLength || currentBuild.case.MaxPsuLength || 999;
+                filteredItems = filteredItems.filter(psu => {
+                    const pLen = psu.length || 0;
+                    if (pLen === 0) return true; 
+                    const isCompatible = pLen <= maxPsuLen;
+                    if (!isCompatible) compatibilityMessages[psu.id] = "Kasa için çok uzun.";
+                    return isCompatible;
+                });
+            }
+        }
+
+        // --- B. YAN MENÜ FİLTRELERİ ---
+        const activeFilters = {};
+        document.querySelectorAll('#dynamic-filter-container .filter-checkbox:checked').forEach(cb => {
+            const type = cb.getAttribute('data-filter-type');
+            const value = cb.value;
+            if (!activeFilters[type]) activeFilters[type] = [];
+            activeFilters[type].push(value);
+        });
+
+        for (const [type, values] of Object.entries(activeFilters)) {
+            if (values.length > 0) {
+                filteredItems = filteredItems.filter(item => {
+                    if (type === 'supportedMotherboardFormFactors') {
+                        const supported = item[type]?.split(',').map(s => s.trim()) || [];
+                        return values.some(v => supported.includes(v));
+                    }
+                    if (typeof item[type] === 'boolean') return values.includes(String(item[type]));
+                    return values.includes(String(item[type]));
+                });
+            }
+        }
+
+        const searchTerm = document.getElementById('search-box').value.toLowerCase();
+        if (searchTerm) {
+            filteredItems = filteredItems.filter(item => (item.modelName || "").toLowerCase().includes(searchTerm));
+        }
+
+        // --- C. SAYFALAMA MANTIĞI (YENİ) ---
+        // 1. Toplam sayfa sayısını bul
+        const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+
+        // 2. Sayfa sınırlarını kontrol et (Filtre yapınca sayfa sayısı azalabilir)
+        if (currentPage > totalPages) currentPage = 1;
+        if (currentPage < 1) currentPage = 1;
+
+        // 3. Veriyi dilimle (Slice)
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const pageData = filteredItems.slice(startIndex, endIndex);
+
+        // --- D. EKRANA BASMA ---
+        // Sadece dilimlenmiş veriyi (pageData) gönderiyoruz
+        populateComponentList(pageData, compatibilityMessages);
+
+        // Sayfa butonlarını çiz
+        renderPaginationControls(totalPages);
+    }
+
+    /**
+     * YENİ FONKSİYON: Bileşen kartları için detaylı HTML listesi oluşturur
+     */
+    function getComponentDetailsHtml(item, categoryKey) {
+        let details = '<ul class="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-400">';
+        
+        // Veritabanından gelen tüm verileri burada göster
+        switch(categoryKey) {
+            case 'cpu':
+                if (item.socket) details += `<li><strong>Soket:</strong> ${item.socket}</li>`;
+                if (item.coreCount) details += `<li><strong>Çekirdek:</strong> ${item.coreCount}</li>`;
+                if (item.tdp) details += `<li><strong>TDP:</strong> ${item.tdp}W</li>`;
+                break;
+            case 'motherboard':
+                if (item.socket) details += `<li><strong>Soket:</strong> ${item.socket}</li>`;
+                if (item.chipset) details += `<li><strong>Yonga Seti:</strong> ${item.chipset}</li>`;
+                if (item.memoryType) details += `<li><strong>RAM Tipi:</strong> ${item.memoryType}</li>`;
+                
+                // --- GÜNCELLEME: SADECE MAX FREKANSI BUL ---
+                const rawFreqData = item.supportedMemoryFrequencies || item.SupportedMemoryFrequencies || "";
+                
+                if (rawFreqData) {
+                    // 1. Veriyi string'e çevir (Garantilemek için) ve virgüllerden böl
+                    // 2. Her parçayı sayıya (integer) çevir
+                    // 3. Sayı olmayanları (NaN) filtrele
+                    const freqArray = String(rawFreqData)
+                                        .split(',')
+                                        .map(f => parseInt(f.trim()))
+                                        .filter(n => !isNaN(n));
+
+                    if (freqArray.length > 0) {
+                        // Dizideki en büyük sayıyı bul
+                        const maxFreq = Math.max(...freqArray);
+                        // Ekrana yazdır (Maks. RAM Hızı olarak)
+                        details += `<li><strong>Maks. RAM Hızı:</strong> ${maxFreq} MHz</li>`;
+                    }
+                }
+                break;
+            case 'ram':
+                if (item.memoryType) details += `<li><strong>Tip:</strong> ${item.memoryType}</li>`;
+                if (item.speed) details += `<li><strong>Hız:</strong> ${item.speed} MHz</li>`;
+                if (item.moduleCount) details += `<li><strong>Kit:</strong> ${item.moduleCount} x ${item.capacityPerModule}GB</li>`;
+                break;
+            case 'gpu':
+                if (item.length) details += `<li><strong>Uzunluk:</strong> ${item.length} mm</li>`;
+                if (item.tdp) details += `<li><strong>Önerilen PSU:</strong> ${item.tdp}W</li>`;
+                if (item.vramMemorySize) details += `<li><strong>VRAM Boyutu:</strong> ${item.vramMemorySize}GB</li>`;
+                if (item.powerConnectors) details += `<li><strong>Bellek: </strong> ${item.powerConnectors}GB</li>`;
+
+                break;
+            case 'storage':
+                if (item.storageType) details += `<li><strong>Tip:</strong> ${item.storageType} (${item.formFactor})</li>`;
+                if (item.capacity) details += `<li><strong>Kapasite:</strong> ${item.capacity} GB</li>`;
+                if (item.interface) details += `<li><strong>Arayüz:</strong> ${item.interface}</li>`;
+                break;
+            case 'case':
+                if (item.caseType) details += `<li><strong>Tip:</strong> ${item.caseType}</li>`;
+                if (item.maxGpuLength) details += `<li><strong>Maks. GPU:</strong> ${item.maxGpuLength} mm</li>`;
+                if (item.maxCpuCoolerHeight) details += `<li><strong>Maks. Soğutucu:</strong> ${item.maxCpuCoolerHeight} mm</li>`;
+                if (item.supportedPsuFormFactor) details += `<li><strong>PSU Desteği:</strong> ${item.supportedPsuFormFactor}</li>`;
+                break;
+            case 'psu':
+                if (item.wattage) details += `<li><strong>Güç:</strong> ${item.wattage}W</li>`;
+                if (item.rating) details += `<li><strong>Verimlilik:</strong> ${item.rating}</li>`;
+                if (item.formFactor) details += `<li><strong>Form:</strong> ${item.formFactor}</li>`;
+                details += `<li><strong>Modüler:</strong> ${item.isModular ? 'Evet' : 'Hayır'}</li>`;
+                break;
+            case 'cpuCooler':
+                const typeText = translations[localStorage.getItem('lang') || 'tr'][`filter-${item.coolerType}`] || item.coolerType;
+                details += `<li><strong>Tip:</strong> ${typeText}</li>`;
+                if (item.coolerType === 'Liquid' && item.radiatorSize) {
+                    details += `<li><strong>Radyatör:</strong> ${item.radiatorSize} mm</li>`;
+                }
+                if (item.coolerType === 'Air' && item.height) {
+                    details += `<li><strong>Yükseklik:</strong> ${item.height} mm</li>`;
+                }
+                break;
+        }
+        
+        details += '</ul>';
+        return details;
+    }
+
+
+    /**
+     * ADIM 5: Parça listesini (orta sütun) HTML olarak oluşturur (GÜNCELLENDİ)
+     */
+    function populateComponentList(items, compatibilityMessages) {
+        const listContainer = document.getElementById('component-list');
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        listContainer.innerHTML = ''; // Listeyi temizle
+
+        if (items.length === 0) {
+            listContainer.innerHTML = `<p class="text-yellow-500 p-4">Bu filtrelere ve sisteminize uygun bir parça bulunamadı.</p>`;
+            return;
+        }
+
+        // Uyumlu parçaları önce göster
+        items.sort((a, b) => {
+            const isAIncompatible = !!compatibilityMessages[a.id];
+            const isBIncompatible = !!compatibilityMessages[b.id];
+            return isAIncompatible - isBIncompatible; // false (0) olanlar (uyumlular) öne gelir
+        });
+
+        items.forEach(item => {
+            const isSelected = currentBuild[currentCategory] && currentBuild[currentCategory].id === item.id;
+            const incompatibleReason = compatibilityMessages[item.id];
+            const isIncompatible = !!incompatibleReason && !isSelected; // Seçili olanı uyumsuz gösterme
+
+            // Parçaya özel detay metnini YENİ fonksiyondan al
+            let details = getComponentDetailsHtml(item, currentCategory);
+            
+            // --- 1. Resim Kaynağını Belirle (YENİ EKLENEN KISIM) ---
+        // Eğer veritabanında imageUrl varsa onu kullan, yoksa Placeholder (Marka ismi) kullan.
+        // Not: C# tarafında "ImageUrl" dedik ama JSON verisi genelde küçük harfle (imageUrl) gelir.
+        const imageSrc = (item.imageUrl && item.imageUrl.trim() !== "") 
+            ? item.imageUrl 
+            : `https://placehold.co/150x150?text=${encodeURIComponent(item.brand)}`;
+
+        // --- 2. Güncellenmiş HTML Kartı ---
+        const cardHtml = `
+            <div class="component-card bg-white dark:bg-card-dark p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start gap-4 transition-default shadow-lg 
+                        ${isSelected ? 'selected' : ''} 
+                        ${isIncompatible ? 'incompatible' : ''}"
+                 ${isIncompatible ? `data-incompatible-reason="${incompatibleReason}"` : ''}>
+                
+                <img alt="${item.modelName}" class="w-24 h-24 object-contain rounded-md flex-shrink-0" src="${imageSrc}">
+                
+                <div class="flex-grow">
+                    <h4 class="font-semibold text-lg text-gray-900 dark:text-white">${item.modelName}</h4>
+                    ${details} </div>
+                <div class="flex flex-col items-start sm:items-end w-full sm:w-auto mt-2 sm:mt-0 flex-shrink-0" style="min-width: 100px;">
+                    <p class="text-xl font-bold text-gray-900 dark:text-white mb-2">0.00TL</p>
+                    <button class="add-to-build-btn ${isSelected ? 'bg-green-600' : 'bg-primary'} text-white font-semibold py-2 px-4 rounded-lg text-sm w-full sm:w-auto" 
+                            data-type="${currentCategory}" 
+                            data-id="${item.id}" ${isSelected ? 'disabled' : ''}>
+                        <span data-i18n="${isSelected ? 'action-selected' : 'action-add'}">${translations[currentLang][isSelected ? 'action-selected' : 'action-add']}</span>
+                    </button>
+                </div>
+            </div>
+        `;
+            listContainer.innerHTML += cardHtml;
+        });
+
+        // Yeni eklenen "Ekle" butonlarına tıklama olaylarını ata
+        document.querySelectorAll('.add-to-build-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                const type = this.getAttribute('data-type');
+                addComponentToBuild(type, id);
+            });
+        });
+    }
+
+    /**
+     * YENİ: Sayfa numaralarını çizer (KOYU TEMA UYUMLU)
+     */
+    function renderPaginationControls(totalPages) {
+        const container = document.getElementById('pagination-controls');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        if (totalPages <= 1) return;
+
+        // Buton Oluşturucu Yardımcı Fonksiyon
+        const createBtn = (text, targetPage, isActive, isDisabled) => {
+            const btn = document.createElement('button');
+            btn.innerHTML = text;
+            
+            // TEMEL STİLLER
+            let classes = "flex items-center justify-center min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-all duration-200 border ";
+            
+            if (isActive) {
+                // AKTİF SAYFA (Mavi arka plan, parlama efekti)
+                classes += "bg-primary border-primary text-white shadow-lg shadow-primary/30";
+            } else if (isDisabled) {
+                // PASİF BUTON
+                classes += "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed";
+            } else {
+                // NORMAL BUTON (Koyu temada koyu gri arka plan, açık gri kenarlık)
+                classes += "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-primary dark:hover:text-primary";
+                btn.onclick = () => changePage(targetPage);
+            }
+            
+            btn.className = classes;
+            container.appendChild(btn);
+        };
+
+        // < Önceki Butonu
+        createBtn('<span class="material-symbols-outlined text-lg">chevron_left</span>', currentPage - 1, false, currentPage === 1);
+        
+        // Sayfa Numaraları
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                createBtn(i, i, i === currentPage, false);
+            } else if (i === currentPage - 3 || i === currentPage + 3) {
+                const dots = document.createElement('span');
+                dots.innerText = '...';
+                dots.className = 'px-2 text-gray-400 dark:text-gray-600';
+                container.appendChild(dots);
+            }
+        }
+
+        // > Sonraki Butonu
+        createBtn('<span class="material-symbols-outlined text-lg">chevron_right</span>', currentPage + 1, false, currentPage === totalPages);
+    }
+
+    /**
+     * YENİ: Sayfa değiştirme işlemi
+     */
+    function changePage(newPage, totalPages) {
+        if (newPage < 1 || newPage > totalPages) return;
+        currentPage = newPage;
+        
+        // Listeyi en tepeye kaydır (Yumuşak geçiş)
+        const listTitle = document.getElementById('component-list-title');
+        if(listTitle) listTitle.scrollIntoView({ behavior: 'smooth' });
+
+        // Listeyi yeniden render et
+        applyFiltersAndRenderList();
+    }
+
+    /**
+     * ADIM 6: Bir parçayı sağdaki "Sistem Özeti"ne ekler.
+     */
+    function addComponentToBuild(type, id) {
+        // Tıklanan öğeyi bul
+        const item = allData[type].find(i => i.id === id);
+        
+        // "Sistemim" (currentBuild) nesnesini güncelle
+        currentBuild[type] = item;
+        
+        console.log("Sistem Güncellendi:", currentBuild);
+        
+        // Sağdaki listeyi (Sistem Özeti) yeniden çiz
+        renderBuildList();
+        
+        // Ortadaki listeyi (Parça Listesi) yeniden çiz
+        applyFiltersAndRenderList();
+    }
+    
+   /**
+     * ADIM 7: Sağdaki "Sistem Özeti" listesini HTML olarak oluşturur (ÇEVİRİ HATASI DÜZELTİLDİ)
+     */
+    function renderBuildList() {
+        const buildListContainer = document.getElementById('build-list-items');
+        buildListContainer.innerHTML = ''; // Listeyi temizle
+        let hasItems = false;
+        
+        // Anlık dili al
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        
+        // Çeviri metinlerini hazırla
+        const removeTitle = translations[currentLang]['action-remove'] || "Kaldır";
+        const noPartsText = translations[currentLang]['msg-no-parts'] || "Henüz parça seçilmedi.";
+
+        // "Sistemim" (currentBuild) nesnesindeki her bir parça için döngü
+        for (const [type, item] of Object.entries(currentBuild)) {
+            if (item) { 
+                hasItems = true;
+                const typeText = translations[currentLang][`tab-${type}`] || type;
+                
+                // Resim URL kontrolü
+                const imgUrl = (item.imageUrl && item.imageUrl.trim() !== "") 
+                    ? item.imageUrl 
+                    : `https://via.placeholder.com/100?text=${type.toUpperCase().substring(0,3)}`;
+
+                const itemHtml = `
+                    <div class="group flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
+                        
+                        <div class="h-12 w-12 flex-shrink-0 rounded-md overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                            <img alt="${item.modelName}" class="h-full w-full object-contain p-1" src="${imgUrl}">
+                        </div>
+
+                        <div class="flex-grow min-w-0 flex flex-col justify-center"> 
+                            <span class="text-[10px] uppercase tracking-wider font-bold text-primary mb-0.5 leading-none">${typeText}</span>
+                            <span class="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-200 truncate leading-tight" title="${item.modelName}">
+                                ${item.modelName}
+                            </span>
+                        </div>
+
+                        <button class="remove-from-build-btn flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all" 
+                                data-type="${type}" title="${removeTitle}">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </div>
+                `;
+                buildListContainer.innerHTML += itemHtml;
+            }
+        }
+
+        // Eğer hiç parça yoksa gösterilecek mesaj (Artık Çevriliyor)
+        if (!hasItems) {
+            buildListContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-8 text-gray-400 opacity-60">
+                    <span class="material-symbols-outlined text-4xl mb-2">build</span>
+                    <p class="text-sm" data-i18n="msg-no-parts">${noPartsText}</p>
+                </div>`;
+        }
+        
+        // "Kaldır" butonlarına tıklama olaylarını ata
+        document.querySelectorAll('.remove-from-build-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                removeComponentFromBuild(type);
+            });
+        });
+
+        // Toplam Watt ve Fiyatı hesapla
+        calculateTotals();
+    }
+    
+    /**
+     * ADIM 8: Bir parçayı "Sistem Özeti"nden kaldırır.
+     */
+    function removeComponentFromBuild(type) {
+        // Parçayı "Sistemim"den (currentBuild) kaldır
+        currentBuild[type] = null;
+        console.log("Parça kaldırıldı, Sistem Güncellendi:", currentBuild);
+        
+        // Sağdaki listeyi (Sistem Özeti) yeniden çiz
+        renderBuildList();
+        
+        // Ortadaki listeyi (Parça Listesi) yeniden çiz
+        applyFiltersAndRenderList();
+    }
+    
+  /**
+ * ADIM 9: Toplam Watt ve Önerilen PSU Hesaplama (KESİN GPU VERİSİ)
+ */
+function calculateTotals() {
+    // 1. Temizlik
+    if (!currentBuild.cpu && !currentBuild.gpu) {
+        if(document.getElementById('estimated-wattage')) document.getElementById('estimated-wattage').textContent = '0 W';
+        if(document.getElementById('recommended-psu')) document.getElementById('recommended-psu').textContent = '0 W';
+        if(document.getElementById('total-price')) document.getElementById('total-price').textContent = '0.00TL';
+        return;
+    }
+
+    // 2. TAHMİNİ TÜKETİM (Saf TDP Toplamı)
+    const cpuTdp = currentBuild.cpu?.tdp || 0; 
+    const gpuTdp = currentBuild.gpu?.tdp || 0;
+    const displayWattage = cpuTdp + gpuTdp; // Ekrana basılacak tahmini tüketim
+
+    // 3. EKRAN KARTI VERİSİNİ ZORLA BUL (İsim uyuşmazlığını çözmek için hepsini dene)
+    let gpuDbPsu = 0;
+    if (currentBuild.gpu) {
+        // API'den gelen verinin isminin ne olduğunu bilmediğimiz için hepsini deniyoruz
+        gpuDbPsu = currentBuild.gpu.RecommendedPsu || 
+                   currentBuild.gpu.RecommendedPsu || 0;
+    }
+
+    // 4. SONUÇ BELİRLEME
+    let finalPsu = 0;
+
+    if (currentBuild.gpu && gpuDbPsu > 0) {
+        // --- SENARYO 1: GPU SEÇİLİ VE VERİTABANINDA DEĞER VAR ---
+        // HESAPLAMA YOK! Direkt veritabanındaki değeri al.
+        finalPsu = gpuDbPsu;
+        console.log(`GPU Veritabanı Değeri Kullanıldı: ${finalPsu} W`);
+    } 
+    else {
+        // --- SENARYO 2: GPU YOK VEYA VERİTABANINDA DEĞER 0 ---
+        // Mecburen hesapla (TDP + 100W sistem payı) * 1.25 güvenlik
+        finalPsu = (displayWattage + 100) * 1.25;
+        // 50'nin katına yuvarla
+        finalPsu = Math.ceil(finalPsu / 50) * 50;
+        // En az 300W olsun
+        if (finalPsu < 300) finalPsu = 300;
+        console.log(`Manuel Hesaplama Yapıldı (Veri yoktu): ${finalPsu} W`);
+    }
+
+    // 5. EKRANA YAZDIR
+    const estimatedEl = document.getElementById('estimated-wattage');
+    if (estimatedEl) estimatedEl.textContent = `${displayWattage} W`;
+
+    const recommendedEl = document.getElementById('recommended-psu');
+    if (recommendedEl) recommendedEl.textContent = `${finalPsu} W`;
+
+    // Fiyat
+    const priceEl = document.getElementById('total-price');
+    let totalPrice = 0; 
+    if (priceEl) priceEl.textContent = `$${totalPrice.toFixed(2)}`;
+}
+
+
+
+   // === BÖLÜM 6: SAYFA YÜKLENDİĞİNDE ÇALIŞAN KODLAR ===
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        
+        // ---------------------------------------------------------
+        // 1. EKSİK OLAN PARÇA: Sekme (Tab) Tıklama Olayları
+        // ---------------------------------------------------------
+        const tabs = document.querySelectorAll('.component-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                // Tıklanan butonu bul (içindeki ikon veya yazıya tıklansa bile)
+                const targetTab = e.target.closest('.component-tab');
+                if (!targetTab) return;
+
+                // Hangi kategoriye (cpu, gpu vs) tıklandığını al
+                const category = targetTab.getAttribute('data-component');
+                
+                // O kategoriyi yükle
+                if (typeof showCategory === 'function') {
+                    showCategory(category);
+                }
+            });
+        });
+
+        // ---------------------------------------------------------
+        // 2. EKSİK OLAN PARÇA: Sihirbazı Başlat (İlk Veriyi Çek)
+        // ---------------------------------------------------------
+        if (typeof initializeWizard === 'function') {
+            initializeWizard(); 
+        } else {
+            console.error("HATA: initializeWizard fonksiyonu bulunamadı!");
+        }
+
+        // ---------------------------------------------------------
+        // 3. Mevcut Ayarlar (Tema, Dil, Giriş vb.)
+        // ---------------------------------------------------------
+        if (typeof initializeTheme === 'function') initializeTheme('theme_builder'); 
+        if (typeof initializeLang === 'function') initializeLang();
+        
+        // --- DİL MENÜSÜ KODLARI ---
+        const languageSelector = document.getElementById('languageSelector');
+        const languageButton = document.getElementById('languageButton');
+        const languageDropdown = document.getElementById('languageDropdown');
+        
+        if (languageButton && languageDropdown) {
+            const hideDropdown = () => { languageDropdown.classList.add('hidden'); };
+            const showDropdown = () => { languageDropdown.classList.remove('hidden'); };
+
+            languageButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                if (languageDropdown.classList.contains('hidden')) { showDropdown(); } else { hideDropdown(); }
+            });
+
+            if (languageSelector) {
+                languageSelector.addEventListener('mouseleave', hideDropdown);
+            }
+            document.addEventListener('click', function(event) {
+                if (languageSelector && !languageSelector.contains(event.target)) { hideDropdown(); }
+            });
+
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const selectedLang = this.getAttribute('data-lang');
+                    if (typeof setLanguage === 'function') setLanguage(selectedLang);
+                    hideDropdown();
+                });
+            });
+        }
+
+        // --- KARANLIK MOD ---
+        const darkModeButton = document.getElementById('darkModeButton');
+        if (darkModeButton) {
+            darkModeButton.addEventListener('click', function() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme_builder', isDark ? 'dark' : 'light');
+            });
+        }
+        
+        // --- GİRİŞ KONTROLÜ ---
+        // --- 1. GİRİŞ KONTROLÜ VE BUTON GİZLEME ---
+    const loginButton = document.getElementById('login-button');
+    const signupButton = document.getElementById('signup-button');
+    const accountSection = document.getElementById('account-section');
+    const welcomeUsername = document.getElementById('welcome-username');
+    const loggedInUser = localStorage.getItem('loggedInUser');
+
+    // Eğer kullanıcı giriş yapmışsa...
+    if (loggedInUser) {
+        if (loginButton) loginButton.style.display = 'none';   // Giriş butonunu gizle
+        if (signupButton) signupButton.style.display = 'none'; // Kayıt butonunu gizle
+        
+        // Profil kısmını göster
+        if (accountSection) {
+            accountSection.classList.remove('hidden');
+            // Tailwind 'flex' sınıfını ekle ki düzgün görünsün
+            accountSection.style.display = 'flex'; 
+            accountSection.classList.add('flex');
+        }
+        
+        // Kullanıcı adını yaz
+        if (welcomeUsername) welcomeUsername.textContent = loggedInUser;
+    } else {
+        // Giriş yapmamışsa profil kısmını gizle
+        if (accountSection) accountSection.classList.add('hidden');
+    }
+
+    // --- 2. PROFİL MENÜSÜNÜ AÇMA/KAPAMA ---
+    const profileBtn = document.getElementById('account_circle'); // Senin kodunda buton ID'si bu
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    if (profileBtn && profileDropdown) {
+        profileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('hidden');
+        });
+
+        // Boşluğa tıklayınca menüyü kapat
+        document.addEventListener('click', function(e) {
+            if (!profileDropdown.classList.contains('hidden') && !accountSection.contains(e.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+        });
+    }
+
+    // --- 3. MODERN ÇIKIŞ YAPMA İŞLEMİ ---
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // SweetAlert ile şık çıkış mesajı
+            Swal.fire({
+                title: 'Çıkış Yapılıyor...',
+                text: 'Oturumunuz kapatılıyor. Tekrar bekleriz!',
+                icon: 'success',
+                background: '#1f2937', // Koyu tema rengi
+                color: '#fff', // Beyaz yazı
+                showConfirmButton: false,
+                timer: 1000, // 2 saniye bekle
+                timerProgressBar: true
+            }).then(() => {
+                // Hafızayı temizle ve sayfayı yenile
+                localStorage.removeItem('loggedInUser');
+                window.location.reload();
+            });
+        });
+    }
+        
+        // --- FİLTRELEME OLAYLARI ---
+        const applyBtn = document.getElementById('apply-filters-btn');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                if (typeof applyFiltersAndRenderList === 'function') applyFiltersAndRenderList();
+            });
+        }
+        
+        const searchBox = document.getElementById('search-box');
+        if (searchBox) {
+            searchBox.addEventListener('keyup', function() {
+                if (typeof applyFiltersAndRenderList === 'function') applyFiltersAndRenderList();
+            });
+        }
+        
+        const filterContainer = document.getElementById('dynamic-filter-container');
+        if (filterContainer) {
+            filterContainer.addEventListener('change', function(e) {
+                if (e.target.classList.contains('filter-checkbox')) {
+                    if (typeof applyFiltersAndRenderList === 'function') applyFiltersAndRenderList();
+                }
+            });
+        }
+        
+    });
+</script>
+</div>
+</body>
+</html>
