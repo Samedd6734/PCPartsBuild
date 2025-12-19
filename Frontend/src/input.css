@@ -154,3 +154,68 @@ input:focus, textarea:focus {
 #moonIcon { opacity: 0; transform: rotate(90deg) scale(0.5); }
 :is(.dark #sunIcon) { opacity: 0; transform: rotate(-90deg) scale(0.5); }
 :is(.dark #moonIcon) { opacity: 1; transform: rotate(0deg) scale(1); }
+
+
+/* === ÖZEL BİLEŞENLER === */
+@layer components {
+    /* Hesabım ve Kayıtlı Sistemler sayfalarındaki şeffaf kart yapısı */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Kaydırma çubuklarını gizleme */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* FORM DÜZELTME: Siyah kutu sorununu çözer */
+    input[type='text'], input[type='email'], input[type='password'], input[type='tel'], textarea {
+        appearance: none;
+        background-color: transparent !important; /* HTML'deki bg-black/20 sınıflarının çalışmasını sağlar */
+        border-radius: 0.375rem;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        width: 100%;
+        display: block;
+        margin-top: 0.25rem;
+    }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 1px var(--color-primary);
+        }
+}
+
+/* === TEMEL AYARLAR === */
+html {
+    background-color: var(--color-background-light);
+}
+
+    html.dark {
+        background-color: var(--color-background-dark);
+    }
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--color-background-light);
+    color: #1f2937;
+}
+
+html.dark body {
+    background-color: var(--color-background-dark);
+    color: #ffffff;
+}
+
+.icon-transition {
+    transition: opacity 0.3s, transform 0.3s;
+}
