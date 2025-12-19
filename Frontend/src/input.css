@@ -156,16 +156,16 @@ input:focus, textarea:focus {
 :is(.dark #moonIcon) { opacity: 1; transform: rotate(0deg) scale(1); }
 
 
-/* === ÖZEL BİLEŞENLER === */
+/* === ÖZEL BİLEŞENLER VE GLOBAL SINIFLAR === */
 @layer components {
-    /* Hesabım ve Kayıtlı Sistemler sayfalarındaki şeffaf kart yapısı */
+    /* Profil ve Sistem kartları için şeffaf panel yapısı */
     .glass-panel {
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* Kaydırma çubuklarını gizleme */
+    /* Kaydırma çubuklarını gizleme sınıfı */
     .scrollbar-hide::-webkit-scrollbar {
         display: none;
     }
@@ -175,7 +175,7 @@ input:focus, textarea:focus {
         scrollbar-width: none;
     }
 
-    /* FORM DÜZELTME: Siyah kutu sorununu çözer */
+    /* FORM ALANLARI: Siyah kutu problemini kökten çözen reset */
     input[type='text'], input[type='email'], input[type='password'], input[type='tel'], textarea {
         appearance: none;
         background-color: transparent !important; /* HTML'deki bg-black/20 sınıflarının çalışmasını sağlar */
@@ -193,9 +193,13 @@ input:focus, textarea:focus {
             border-color: var(--color-primary);
             box-shadow: 0 0 0 1px var(--color-primary);
         }
+
+    .icon-transition {
+        transition: opacity 0.3s, transform 0.3s;
+    }
 }
 
-/* === TEMEL AYARLAR === */
+/* === TEMEL ARKA PLAN VE BODY AYARLARI === */
 html {
     background-color: var(--color-background-light);
 }
@@ -214,8 +218,4 @@ body {
 html.dark body {
     background-color: var(--color-background-dark);
     color: #ffffff;
-}
-
-.icon-transition {
-    transition: opacity 0.3s, transform 0.3s;
 }

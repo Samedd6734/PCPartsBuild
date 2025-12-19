@@ -3016,6 +3016,9 @@ input:focus, textarea:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 1px var(--color-primary);
   }
+  .icon-transition {
+    transition: opacity 0.3s, transform 0.3s;
+  }
 }
 html {
   background-color: var(--color-background-light);
@@ -3032,9 +3035,6 @@ body {
 html.dark body {
   background-color: var(--color-background-dark);
   color: #ffffff;
-}
-.icon-transition {
-  transition: opacity 0.3s, transform 0.3s;
 }
 @property --tw-translate-x {
   syntax: "*";
