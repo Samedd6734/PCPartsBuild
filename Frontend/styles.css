@@ -3160,6 +3160,35 @@ html.dark body {
 .fav-btn.animating span {
   animation: heartBeat 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+div:where(.swal2-container) input:where(.swal2-input) {
+  background-color: #374151 !important;
+  color: #ffffff !important;
+  border: 1px solid #4b5563 !important;
+  box-shadow: none !important;
+  height: 3rem !important;
+  font-size: 1rem !important;
+  margin: 1rem auto !important;
+  width: 80% !important;
+}
+div:where(.swal2-container) input:where(.swal2-input):focus {
+  border-color: #16a3b2 !important;
+  box-shadow: 0 0 0 3px rgba(22, 163, 178, 0.2) !important;
+  outline: none !important;
+}
+div:where(.swal2-container) .swal2-title {
+  color: #ffffff !important;
+  font-size: 1.5rem !important;
+}
+div:where(.swal2-container) .swal2-html-container {
+  color: #9ca3af !important;
+}
+div:where(.swal2-container) .swal2-actions {
+  margin-top: 1.5rem !important;
+}
+div:where(.swal2-container) button.swal2-cancel {
+  background-color: #4b5563 !important;
+  color: #fff !important;
+}
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;
