@@ -23,7 +23,7 @@ namespace PCPartsAPI.Controllers
             if (string.IsNullOrEmpty(build.UserId))
                 return BadRequest("Kullanıcı girişi yapılmamış.");
 
-            build.CreatedAt = System.DateTime.Now;
+            build.CreatedAt = System.DateTime.UtcNow; // <-- "Utc" ekledik. PostgreSQL bunu kabul eder.
             _context.SavedBuilds.Add(build);
             _context.SaveChanges();
 
