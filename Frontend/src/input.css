@@ -269,3 +269,45 @@ html.dark body {
 .fav-btn.animating span {
     animation: heartBeat 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* --- SWEETALERT (POPUP) DÜZELTMELERİ --- */
+
+/* 1. Input Alanını Düzeltme */
+div:where(.swal2-container) input:where(.swal2-input) {
+    background-color: #374151 !important; /* Koyu gri zemin (gray-700) */
+    color: #ffffff !important; /* Beyaz yazı */
+    border: 1px solid #4b5563 !important; /* Kenarlık (gray-600) */
+    box-shadow: none !important; /* Varsayılan gölgeyi sil */
+    height: 3rem !important; /* Yükseklik ayarı */
+    font-size: 1rem !important;
+    margin: 1rem auto !important; /* Ortalama */
+    width: 80% !important; /* Genişlik */
+}
+
+    /* 2. Input'a Tıklayınca (Focus) Oluşan Efekt */
+    div:where(.swal2-container) input:where(.swal2-input):focus {
+        border-color: #16a3b2 !important; /* Senin Primary rengin */
+        box-shadow: 0 0 0 3px rgba(22, 163, 178, 0.2) !important; /* Hafif mavi parlama */
+        outline: none !important;
+    }
+
+/* 3. Başlık ve Metin Renkleri */
+div:where(.swal2-container) .swal2-title {
+    color: #ffffff !important;
+    font-size: 1.5rem !important;
+}
+
+div:where(.swal2-container) .swal2-html-container {
+    color: #9ca3af !important; /* Açık gri metin */
+}
+
+/* 4. Butonları Güzelleştirme */
+div:where(.swal2-container) .swal2-actions {
+    margin-top: 1.5rem !important;
+}
+
+/* Vazgeç Butonu Rengi */
+div:where(.swal2-container) button.swal2-cancel {
+    background-color: #4b5563 !important; /* Gri buton */
+    color: #fff !important;
+}
