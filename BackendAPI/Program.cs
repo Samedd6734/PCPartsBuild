@@ -3,6 +3,7 @@ using PCPartsAPI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services; // 1. EKLENDİ: Mail arayüzü
 using PCPartsAPI.Services; // 2. EKLENDİ: Senin EmailSender sınıfın
+using PCPartsAPI.Models; // AppUser için gerekli
 
 namespace PCPartsAPI
 {

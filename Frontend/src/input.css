@@ -32,28 +32,30 @@
   }
 }
 
-/* === TEMEL AYARLAR (GÜNCELLENDİ) === */
-/* Bu kısım beyaz patlamayı engeller */
-html {
-  background-color: var(--color-background-light);
-}
+/* === TEMEL AYARLAR (DÜZELTİLDİ) === */
+@layer base {
+  html {
+    /* Değişken kullanıyoruz ki Açık Mod'da beyaza dönsün */
+    background-color: var(--color-background-light);
+  }
 
-html.dark {
-  background-color: var(--color-background-dark);
-}
+  html.dark {
+    background-color: var(--color-background-dark);
+  }
 
-body {
-  margin: 0;
-  line-height: inherit;
-  min-height: 100dvh;
-  /* Body rengini de garantiye alalım */
-  background-color: var(--color-background-light);
-  color: #1f2937; /* Varsayılan koyu gri yazı */
-}
+  body {
+    margin: 0;
+    line-height: inherit;
+    min-height: 100dvh;
+    /* Varsayılan olarak sayfa rengini alır */
+    background-color: var(--color-background-light);
+    color: #1f2937;
+  }
 
-html.dark body {
-  background-color: var(--color-background-dark);
-  color: #ffffff;
+  html.dark body {
+    background-color: var(--color-background-dark);
+    color: #ffffff;
+  }
 }
 
 #bg-video {
@@ -62,9 +64,17 @@ html.dark body {
   bottom: 0;
   min-width: 100%;
   min-height: 100%;
-  z-index: -100;
+  
+  /* DEĞİŞİKLİK: -100 yerine 0 yapıyoruz. */
+  /* -100 yaparsan bazen siyah HTML katmanının arkasına düşer. */
+  z-index: 0; 
+  
   object-fit: cover;
-  opacity: 0.1;
+  
+  /* DEĞİŞİKLİK: 0.1 çok az. 0.4 veya 0.5 yapalım. */
+  opacity: 0.4;
+  
+  pointer-events: none;
 }
 
 .material-symbols-outlined {
@@ -94,9 +104,17 @@ input::placeholder, textarea::placeholder {
 }
 
 input:focus, textarea:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary);
+    outline: none;
+    border-color: var(--color-primary);
+    /* Çerçevenin kesilmemesi için öne taşıyoruz: */
+    box-shadow: 0 0 0 2px var(--color-primary); /* Kalınlığı 1px'den 2px'e çıkardım daha net olsun diye */
+    position: relative;
+    z-index: 10;
+}
+
+/* Şifre alanındaki göz ikonunun her zaman en üstte kalmasını sağlar */
+.relative button {
+    z-index: 20;
 }
 
 /* === ÖZEL SINIFLAR === */
@@ -199,26 +217,6 @@ input:focus, textarea:focus {
     }
 }
 
-/* === TEMEL ARKA PLAN VE BODY AYARLARI === */
-html {
-    background-color: var(--color-background-light);
-}
-
-    html.dark {
-        background-color: var(--color-background-dark);
-    }
-
-body {
-    margin: 0;
-    min-height: 100dvh;
-    background-color: var(--color-background-light);
-    color: #1f2937;
-}
-
-html.dark body {
-    background-color: var(--color-background-dark);
-    color: #ffffff;
-}
 
 /* --- FAVORİ (KALP) BUTONU STİLLERİ (OPTİK DÜZELTME EKLENDİ) --- */
 .fav-btn {

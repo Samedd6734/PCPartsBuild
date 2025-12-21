@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore; // <-- 1. BU SATIRI EKLE
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using PCPartsAPI.Models;
+using PCPartsAPI.Models; // AppUser burada olduğu için ekliyoruz
 
 namespace PCPartsAPI.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    // DİKKAT: Buraya <AppUser> ekledik
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
-        // Tüm PC Parçası tabloların
+        // Diğer tabloların aynen kalıyor
         public DbSet<Processor> Processors { get; set; }
         public DbSet<Motherboard> Motherboards { get; set; }
         public DbSet<Gpu> Gpus { get; set; }

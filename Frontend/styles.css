@@ -1016,6 +1016,9 @@
   .bg-surface-light {
     background-color: var(--color-surface-light);
   }
+  .bg-transparent {
+    background-color: transparent;
+  }
   .bg-white {
     background-color: var(--color-white);
   }
@@ -2900,22 +2903,24 @@
     }
   }
 }
-html {
-  background-color: var(--color-background-light);
-}
-html.dark {
-  background-color: var(--color-background-dark);
-}
-body {
-  margin: 0;
-  line-height: inherit;
-  min-height: 100dvh;
-  background-color: var(--color-background-light);
-  color: #1f2937;
-}
-html.dark body {
-  background-color: var(--color-background-dark);
-  color: #ffffff;
+@layer base {
+  html {
+    background-color: var(--color-background-light);
+  }
+  html.dark {
+    background-color: var(--color-background-dark);
+  }
+  body {
+    margin: 0;
+    line-height: inherit;
+    min-height: 100dvh;
+    background-color: var(--color-background-light);
+    color: #1f2937;
+  }
+  html.dark body {
+    background-color: var(--color-background-dark);
+    color: #ffffff;
+  }
 }
 #bg-video {
   position: fixed;
@@ -2923,9 +2928,10 @@ html.dark body {
   bottom: 0;
   min-width: 100%;
   min-height: 100%;
-  z-index: -100;
+  z-index: 0;
   object-fit: cover;
-  opacity: 0.1;
+  opacity: 0.4;
+  pointer-events: none;
 }
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -2951,7 +2957,12 @@ input::placeholder, textarea::placeholder {
 input:focus, textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary);
+  position: relative;
+  z-index: 10;
+}
+.relative button {
+  z-index: 20;
 }
 .icon-transition {
   transition: opacity 0.3s, transform 0.3s;
@@ -3050,22 +3061,6 @@ input:focus, textarea:focus {
   .icon-transition {
     transition: opacity 0.3s, transform 0.3s;
   }
-}
-html {
-  background-color: var(--color-background-light);
-}
-html.dark {
-  background-color: var(--color-background-dark);
-}
-body {
-  margin: 0;
-  min-height: 100dvh;
-  background-color: var(--color-background-light);
-  color: #1f2937;
-}
-html.dark body {
-  background-color: var(--color-background-dark);
-  color: #ffffff;
 }
 .fav-btn {
   margin-left: calc(var(--spacing) * 2);
