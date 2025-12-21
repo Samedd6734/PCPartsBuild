@@ -80,7 +80,7 @@
         </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
         
         <div class="component-card group relative bg-white dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
             <div class="flex items-center gap-3 mb-3">
@@ -89,9 +89,31 @@
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-cpu">İşlemci</h3>
             </div>
-            <select id="cpu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
+            
+            <div class="custom-select-wrapper" id="wrapper-cpu">
+                <select id="cpu" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
                 </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('cpu')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('cpu', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('cpu', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-cpu">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-cpu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -104,9 +126,31 @@
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-motherboard">Anakart</h3>
             </div>
-            <select id="motherboard" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
-            </select>
+            
+            <div class="custom-select-wrapper" id="wrapper-motherboard">
+                <select id="motherboard" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
+                </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('motherboard')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('motherboard', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('motherboard', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-motherboard">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-motherboard" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -118,9 +162,31 @@
                     <span class="material-symbols-outlined text-2xl">straighten</span> </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-ram">Bellek (RAM)</h3>
             </div>
-            <select id="ram" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
-            </select>
+            
+            <div class="custom-select-wrapper" id="wrapper-ram">
+                <select id="ram" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
+                </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('ram')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('ram', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('ram', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-ram">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-ram" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -133,9 +199,31 @@
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-gpu">Ekran Kartı</h3>
             </div>
-            <select id="gpu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
-            </select>
+            
+            <div class="custom-select-wrapper" id="wrapper-gpu">
+                <select id="gpu" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
+                </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('gpu')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('gpu', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('gpu', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-gpu">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-gpu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -148,9 +236,31 @@
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-storage">Depolama</h3>
             </div>
-            <select id="storage" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
-            </select>
+            
+            <div class="custom-select-wrapper" id="wrapper-storage">
+                <select id="storage" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
+                </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('storage')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('storage', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('storage', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-storage">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-storage" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -163,9 +273,31 @@
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="tab-case">Kasa</h3>
             </div>
-            <select id="case" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
-            </select>
+            
+            <div class="custom-select-wrapper" id="wrapper-case">
+                <select id="case" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
+                </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('case')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('case', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('case', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-case">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-case" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -178,9 +310,31 @@
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="label-psu">Güç Kaynağı</h3>
             </div>
-            <select id="psu" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
-            </select>
+            
+            <div class="custom-select-wrapper" id="wrapper-psu">
+                <select id="psu" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
+                </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('psu')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('psu', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('psu', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-psu">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-psu" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -193,9 +347,31 @@
                 </div>
                 <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="type-cooler">Soğutucu</h3>
             </div>
-            <select id="cpuCooler" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 transition-colors cursor-pointer">
-                <option value="" selected data-i18n="select-default">Seçim Yapınız...</option>
-            </select>
+            
+            <div class="custom-select-wrapper" id="wrapper-cpuCooler">
+                <select id="cpuCooler" class="hidden" onchange="handleSelectionChange(event)">
+                    <option value="">Seçim Yapınız...</option>
+                </select>
+
+                <div class="custom-select-trigger" onclick="toggleCustomDropdown('cpuCooler')">
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <div class="flex items-center">
+                        <button class="clear-btn" onclick="clearCustomSelection('cpuCooler', event)">
+                            <span class="material-symbols-outlined text-sm font-bold">close</span>
+                        </button>
+                        <span class="material-symbols-outlined text-gray-500 arrow-icon">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="custom-select-options">
+                    <div class="custom-search-box">
+                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('cpuCooler', this.value)" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="custom-options-list" id="list-cpuCooler">
+                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                    </div>
+                </div>
+            </div>
             <p id="error-cpuCooler" class="hidden mt-2 text-xs text-red-500 font-medium flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">error</span> <span class="error-text"></span>
             </p>
@@ -212,40 +388,48 @@
         </button>
     </div>
 
-    <div class="max-w-5xl mx-auto">
-        <div id="results-container" class="bg-surface-light dark:bg-surface-dark p-6 md:p-8 rounded-2xl border border-gray-200 dark:border-gray-800/80 shadow-2xl transition-default">
+    <div class="max-w-5xl mx-auto mt-8">
+        <div id="results-container" class="bg-white dark:bg-gray-800/80 backdrop-blur-xl p-6 md:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl transition-all duration-300">
             
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-800 pb-4" data-i18n="results-title">Kontrol Sonuçları</h2>
+            <div class="flex items-center gap-3 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
+                <div class="p-2 bg-primary/10 rounded-lg">
+                    <span class="material-symbols-outlined text-primary text-2xl">analytics</span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white" data-i18n="results-title">Kontrol Sonuçları</h2>
+            </div>
 
-            <div id="result-info" class="flex flex-col md:flex-row items-center gap-6 p-6 rounded-xl bg-sky-50 border border-sky-200 dark:bg-sky-900/20 dark:border-sky-800/50">
-                <div class="flex-shrink-0 p-3 bg-sky-100 dark:bg-sky-900/50 rounded-full">
-                    <span class="material-symbols-outlined text-3xl text-sky-600 dark:text-sky-400">info</span>
+            <div id="result-info" class="flex flex-col md:flex-row items-center gap-5 p-6 rounded-xl bg-blue-50 border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800/30 transition-all">
+                <div class="flex-shrink-0 p-4 bg-blue-100 dark:bg-blue-600/20 rounded-full shadow-sm">
+                    <span class="material-symbols-outlined text-3xl text-blue-600 dark:text-blue-400">info</span>
                 </div>
                 <div class="text-center md:text-left">
-                    <h3 class="text-lg font-bold text-sky-800 dark:text-sky-300" data-i18n="result-info-title">Sistem Hazır Bekliyor</h3>
-                    <p class="mt-1 text-sky-700 dark:text-sky-400 text-sm" data-i18n="result-info-text">
+                    <h3 class="text-lg font-bold text-blue-900 dark:text-blue-100" data-i18n="result-info-title">Sistem Hazır Bekliyor</h3>
+                    <p class="mt-1 text-blue-700 dark:text-blue-300/80 text-sm font-medium leading-relaxed" data-i18n="result-info-text">
                         Analize başlamak için yukarıdaki slotlara en az iki parça (Örn: İşlemci ve Anakart) yerleştirin.
                     </p>
                 </div>
             </div>
 
-            <div id="result-success" class="hidden flex-col md:flex-row items-center gap-6 p-6 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800/50">
-                <div class="flex-shrink-0 p-3 bg-emerald-100 dark:bg-emerald-900/50 rounded-full">
+            <div id="result-success" class="hidden flex-col md:flex-row items-center gap-5 p-6 rounded-xl bg-emerald-50 border border-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-800/30 transition-all shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                <div class="flex-shrink-0 p-4 bg-emerald-100 dark:bg-emerald-500/20 rounded-full shadow-sm">
                     <span class="material-symbols-outlined text-3xl text-emerald-600 dark:text-emerald-400">verified</span>
                 </div>
-                <div class="text-center md:text-left">
-                    <h3 class="text-lg font-bold text-emerald-800 dark:text-emerald-300" data-i18n="result-success-title">Mükemmel Uyum!</h3>
-                    <p id="success-text" class="mt-1 text-emerald-700 dark:text-emerald-400 text-sm"></p>
+                <div class="text-center md:text-left flex-grow">
+                    <h3 class="text-lg font-bold text-emerald-900 dark:text-emerald-100" data-i18n="result-success-title">Mükemmel Uyum!</h3>
+                    <p id="success-text" class="mt-1 text-emerald-700 dark:text-emerald-300 text-sm font-medium leading-relaxed"></p>
                 </div>
             </div>
             
-            <div id="result-fail" class="hidden flex-col md:flex-row items-start gap-6 p-6 rounded-xl bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800/50">
-                <div class="flex-shrink-0 p-3 bg-red-100 dark:bg-red-900/50 rounded-full">
+            <div id="result-fail" class="hidden flex-col md:flex-row items-start gap-5 p-6 rounded-xl bg-red-50 border border-red-100 dark:bg-red-900/10 dark:border-red-800/30 transition-all shadow-[0_0_20px_rgba(239,68,68,0.15)]">
+                <div class="flex-shrink-0 p-4 bg-red-100 dark:bg-red-500/20 rounded-full shadow-sm hidden md:block">
                     <span class="material-symbols-outlined text-3xl text-red-600 dark:text-red-400">warning</span>
                 </div>
                 <div class="w-full">
-                    <h3 class="text-lg font-bold text-red-800 dark:text-red-300" data-i18n="result-fail-title">Uyumsuzluk Tespit Edildi</h3>
-                    <ul id="fail-reasons" class="mt-3 space-y-2 text-sm text-red-700 dark:text-red-400"></ul>
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="material-symbols-outlined text-3xl text-red-600 dark:text-red-400 md:hidden">warning</span>
+                        <h3 class="text-lg font-bold text-red-900 dark:text-red-100" data-i18n="result-fail-title">Uyumsuzluk Tespit Edildi</h3>
+                    </div>
+                    <ul id="fail-reasons" class="space-y-3"></ul>
                 </div>
             </div>
 
@@ -684,6 +868,187 @@
 
 
     // ==========================================
+    // CUSTOM DROPDOWN FONKSİYONLARI (DÜZELTİLMİŞ)
+    // ==========================================
+
+    // 1. Dropdown Aç/Kapa (Z-Index Düzeltmesi ile)
+    function toggleCustomDropdown(category) {
+        const wrapper = document.getElementById(`wrapper-${category}`);
+        // Menünün olduğu KARTI buluyoruz
+        const card = wrapper.closest('.component-card'); 
+
+        // Açık olan diğer menüleri kapat
+        document.querySelectorAll('.custom-select-wrapper.active').forEach(el => {
+            if (el !== wrapper) {
+                el.classList.remove('active');
+                // Diğer kartların Z-Index'ini sıfırla
+                const otherCard = el.closest('.component-card');
+                if (otherCard) otherCard.style.zIndex = ''; 
+            }
+        });
+
+        // Toggle işlemi
+        const willOpen = !wrapper.classList.contains('active');
+        
+        if (willOpen) {
+            wrapper.classList.add('active');
+            // AÇILAN KARTI EN ÜSTE TAŞI (Kritik Nokta)
+            if (card) card.style.zIndex = '100'; 
+
+            // Input'a odaklan
+            setTimeout(() => {
+                const input = wrapper.querySelector('input');
+                if(input) input.focus();
+            }, 100);
+
+            // Veri yüklenmemişse yükle
+            const selectElement = document.getElementById(category);
+            if (selectElement && selectElement.dataset.loaded !== "true") {
+                loadComponentData(category);
+            }
+        } else {
+            wrapper.classList.remove('active');
+            // Menü kapandığında Z-index'i eski haline getir
+            // (Animasyon bitmesi için biraz bekle)
+            if (card) setTimeout(() => card.style.zIndex = '', 200);
+        }
+    }
+
+    // 2. Seçenek Seçme Logic'i
+    function selectCustomOption(category, value, text, fullData) {
+        const wrapper = document.getElementById(`wrapper-${category}`);
+        const selectElement = document.getElementById(category); // Gizli Select
+        const triggerText = wrapper.querySelector('.selection-text');
+        const card = wrapper.closest('.component-card');
+
+        // Gizli Select'i güncelle
+        selectElement.value = value;
+        
+        // Eğer select içinde bu option yoksa oluştur (Manuel veri tutarlılığı)
+        let optionExists = Array.from(selectElement.options).some(opt => opt.value == value);
+        if(!optionExists && value) {
+            const newOpt = new Option(text, value);
+            newOpt.dataset.fullData = JSON.stringify(fullData);
+            selectElement.add(newOpt);
+            selectElement.value = value;
+        }
+
+        // Görüntüyü Güncelle
+        triggerText.textContent = text;
+        triggerText.classList.remove('text-gray-500', 'dark:text-gray-400');
+        triggerText.classList.add('text-gray-900', 'dark:text-white', 'font-medium');
+        
+        // "Seçili" durumunu işaretle (X butonu için)
+        wrapper.classList.add('has-selection');
+        wrapper.classList.remove('active'); // Menüyü kapat
+        
+        if (card) card.style.zIndex = ''; // Z-Index sıfırla
+
+        // Orijinal Logic'i Tetikle
+        const event = new Event('change');
+        selectElement.dispatchEvent(event);
+    }
+
+    // 3. Seçimi Temizle (X Butonu)
+    function clearCustomSelection(category, event) {
+        if(event) event.stopPropagation(); // Menü açılmasın
+        
+        const wrapper = document.getElementById(`wrapper-${category}`);
+        const selectElement = document.getElementById(category);
+        const triggerText = wrapper.querySelector('.selection-text');
+
+        // Değerleri Sıfırla
+        selectElement.value = "";
+        triggerText.textContent = "Seçim Yapınız..."; 
+        triggerText.classList.add('text-gray-500', 'dark:text-gray-400');
+        triggerText.classList.remove('text-gray-900', 'dark:text-white', 'font-medium');
+        
+        wrapper.classList.remove('has-selection');
+
+        // Logic'i Tetikle
+        const evt = new Event('change');
+        selectElement.dispatchEvent(evt);
+    }
+
+    // 4. Arama Filtreleme
+    function filterCustomOptions(category, searchText) {
+        const filter = searchText.toLowerCase();
+        const listContainer = document.getElementById(`list-${category}`);
+        const items = listContainer.querySelectorAll('.custom-option');
+        let hasResult = false;
+
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(filter)) {
+                item.style.display = "block";
+                hasResult = true;
+            } else {
+                item.style.display = "none";
+            }
+        });
+
+        // Sonuç yok mesajı
+        let noMsg = listContainer.querySelector('.no-result-msg');
+        if (!hasResult) {
+            if(!noMsg) {
+                listContainer.insertAdjacentHTML('beforeend', '<div class="no-result-msg p-3 text-center text-gray-400 text-sm">Sonuç bulunamadı.</div>');
+            }
+        } else if(noMsg) {
+            noMsg.remove();
+        }
+    }
+
+    // 5. Dışarı Tıklayınca Kapatma
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-wrapper')) {
+            document.querySelectorAll('.custom-select-wrapper.active').forEach(el => {
+                el.classList.remove('active');
+                // Kart z-index düzeltme
+                const card = el.closest('.component-card');
+                if (card) card.style.zIndex = '';
+            });
+        }
+    });
+
+    // 6. Veri Doldurma Fonksiyonunu Güncelle (Custom Listeye Uyarlı)
+    function populateDropdown(selectElement, data, category) {
+        // Gizli Select'i Temizle (İlk option hariç)
+        while (selectElement.options.length > 1) selectElement.remove(1);
+        
+        // Custom Listeyi Temizle
+        const listContainer = document.getElementById(`list-${category}`);
+        if(listContainer) listContainer.innerHTML = '';
+
+        if (!data || data.length === 0) {
+            if(listContainer) listContainer.innerHTML = '<div class="p-3 text-center text-gray-400 text-sm">Parça bulunamadı.</div>';
+            return;
+        }
+
+        data.forEach(item => {
+            let displayName = `${item.brand || ''} ${item.modelName || ''}`.trim();
+            if (category === 'storage') displayName += ` (${item.capacity} GB)`;
+            if (category === 'psu') displayName += ` (${item.wattage}W)`;
+
+            // A) Gizli Select'e Ekle (Logic için)
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.text = displayName;
+            option.dataset.fullData = JSON.stringify(item);
+            selectElement.add(option);
+
+            // B) Custom Listeye Ekle (Görsel için)
+            if(listContainer) {
+                const div = document.createElement('div');
+                div.className = 'custom-option';
+                div.textContent = displayName;
+                // Tıklama olayını bağla
+                div.onclick = () => selectCustomOption(category, item.id, displayName, item);
+                listContainer.appendChild(div);
+            }
+        });
+    }
+
+    // ==========================================
     // 5. BAŞLATMA (INIT)
     // ==========================================
 
@@ -1096,30 +1461,55 @@ function checkCompatibility() {
     }
 
     // =============================
-    // SONUÇLARI GÖSTER
+    // SONUÇLARI GÖSTER (GÜNCELLENMİŞ TASARIM İÇİN)
     // =============================
     const failDiv = document.getElementById('result-fail');
     const reasonList = document.getElementById('fail-reasons');
     const successDiv = document.getElementById('result-success');
     const successText = document.getElementById('success-text');
+    const infoDiv = document.getElementById('result-info');
 
     if (issues.length > 0) {
-        // Hataları listele
+        // Hataları ŞIK KUTULAR olarak listele
         const critical = issues.filter(i => i.level === "critical");
         const warning = issues.filter(i => i.level === "warning");
 
         const html =
-            critical.map(i => `<li class="text-red-600 dark:text-red-400 font-semibold"><span class="material-symbols-outlined align-middle text-sm">error</span> ${escapeHtml(i.msg)}</li>`).join('') +
-            warning.map(i => `<li class="text-orange-600 dark:text-orange-400"><span class="material-symbols-outlined align-middle text-sm">warning</span> ${escapeHtml(i.msg)}</li>`).join('');
+            critical.map(i => `
+                <li class="flex items-start gap-3 bg-white dark:bg-red-950/30 p-4 rounded-lg border-l-4 border-l-red-500 border border-gray-100 dark:border-red-900/50 shadow-sm">
+                    <span class="material-symbols-outlined text-red-500 shrink-0 mt-0.5">error</span>
+                    <span class="text-gray-800 dark:text-red-100 text-sm font-medium leading-normal">${escapeHtml(i.msg)}</span>
+                </li>
+            `).join('') +
+            warning.map(i => `
+                <li class="flex items-start gap-3 bg-white dark:bg-orange-950/30 p-4 rounded-lg border-l-4 border-l-orange-500 border border-gray-100 dark:border-orange-900/50 shadow-sm">
+                    <span class="material-symbols-outlined text-orange-500 shrink-0 mt-0.5">warning</span>
+                    <span class="text-gray-800 dark:text-orange-100 text-sm font-medium leading-normal">${escapeHtml(i.msg)}</span>
+                </li>
+            `).join('');
 
         reasonList.innerHTML = html;
+        
+        infoDiv.classList.add('hidden');
+        successDiv.classList.add('hidden');
+        successDiv.classList.remove('flex'); // Flex'i kapat
+        
         failDiv.classList.remove('hidden');
+        failDiv.classList.add('flex'); // Flex'i aç
+        
         failDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     } else {
-        // Başarılı
-        successText.innerHTML = `Seçilen parçalar (${filledParts} adet) birbiriyle tam uyumlu görünüyor. İyi oyunlar! 🎮`;
+        // Başarılı Durumu
+        successText.innerHTML = `Seçilen parçalar (<b>${filledParts} adet</b>) birbiriyle tam uyumlu görünüyor.<br>Herhangi bir teknik çakışma tespit edilmedi. İyi oyunlar! 🎮`;
+        
+        infoDiv.classList.add('hidden');
+        failDiv.classList.add('hidden');
+        failDiv.classList.remove('flex'); // Flex'i kapat
+
         successDiv.classList.remove('hidden');
+        successDiv.classList.add('flex'); // Flex'i aç
+        
         successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }

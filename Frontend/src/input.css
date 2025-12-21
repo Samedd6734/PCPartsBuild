@@ -176,6 +176,88 @@ input:focus, textarea:focus {
 
 /* === ÖZEL BİLEŞENLER VE GLOBAL SINIFLAR === */
 @layer components {
+/* === CUSTOM DROPDOWN GÜVENLİ STİLLER === */
+    .custom-select-wrapper {
+        position: relative; /* Menü buna göre hizalanır */
+        width: 100%;
+    }
+
+    /* Tetikleyici (Görünen Kutu) */
+    .custom-select-trigger {
+        @apply w-full flex items-center justify-between bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-sm rounded-lg px-3 py-3 cursor-pointer transition-colors duration-200;
+        min-height: 50px;
+    }
+
+    .custom-select-trigger:hover {
+        @apply border-primary/60;
+    }
+
+    /* Menü Açıkken Tetikleyici Rengi */
+    .custom-select-wrapper.active .custom-select-trigger {
+        @apply border-primary ring-2 ring-primary/20 rounded-b-none border-b-0;
+    }
+
+    /* Açılır Menü Kutusu (HAVADA DURACAK) */
+    .custom-select-options {
+        @apply absolute left-0 right-0 top-full bg-white dark:bg-gray-900 border border-primary border-t-0 rounded-b-lg shadow-2xl z-50 hidden flex-col overflow-hidden;
+        /* absolute ve z-50, kutunun diğerlerinin üstüne çıkmasını sağlar */
+        margin-top: -1px; 
+    }
+
+    /* Menü Açılınca Göster */
+    .custom-select-wrapper.active .custom-select-options {
+        display: flex; /* flex yapıyoruz ki içindekiler düzgün sıralansın */
+        animation: fadeInDown 0.2s ease-out;
+    }
+
+    /* Arama Kutusu (Sabit Üstte) */
+    .custom-search-box {
+        @apply p-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10;
+    }
+
+    .custom-search-box input {
+        /* @apply satırında !important KULLANILMAZ. Sadece sınıflar yazılır. */
+        @apply w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary;
+        
+        /* !important içeren kurallar normal CSS olarak alta yazılır */
+        outline: none !important;
+    }
+
+    .custom-options-list {
+        max-height: 250px;
+        overflow-y: auto;
+        
+        /* "@apply scrollbar-hide" YERİNE kodları buraya direkt yazıyoruz: */
+        -ms-overflow-style: none;  /* IE ve Edge için */
+        scrollbar-width: none;  /* Firefox için */
+    }
+    
+    /* Chrome, Safari ve Opera için scrollbar gizleme */
+    .custom-options-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .custom-option {
+        @apply px-4 py-3 text-sm text-gray-700 dark:text-gray-300 cursor-pointer border-b border-gray-100 dark:border-gray-800 last:border-0 hover:bg-primary/10 hover:text-primary transition-colors;
+    }
+
+    /* Temizleme Butonu (X) */
+    .clear-btn {
+        @apply hidden text-gray-400 hover:text-red-500 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-1 transition-colors;
+    }
+
+    .custom-select-wrapper.has-selection .clear-btn {
+        display: block; /* Sadece seçim varsa göster */
+    }
+
+    /* Ok İkonu Animasyonu */
+    .arrow-icon {
+        transition: transform 0.2s ease;
+    }
+    .custom-select-wrapper.active .arrow-icon {
+        transform: rotate(180deg);
+    }
+
     /* Profil ve Sistem kartları için şeffaf panel yapısı */
     .glass-panel {
         background: rgba(255, 255, 255, 0.03);
