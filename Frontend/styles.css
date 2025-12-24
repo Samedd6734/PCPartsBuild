@@ -335,6 +335,9 @@
   .top-6 {
     top: calc(var(--spacing) * 6);
   }
+  .top-16 {
+    top: calc(var(--spacing) * 16);
+  }
   .top-24 {
     top: calc(var(--spacing) * 24);
   }
@@ -379,6 +382,9 @@
   }
   .z-50 {
     z-index: 50;
+  }
+  .col-span-2 {
+    grid-column: span 2 / span 2;
   }
   .col-span-full {
     grid-column: 1 / -1;
@@ -584,6 +590,9 @@
   .min-h-\[300px\] {
     min-height: 300px;
   }
+  .min-h-\[400px\] {
+    min-height: 400px;
+  }
   .min-h-\[600px\] {
     min-height: 600px;
   }
@@ -661,6 +670,9 @@
   }
   .max-w-102 {
     max-width: calc(var(--spacing) * 102);
+  }
+  .max-w-\[\%\] {
+    max-width: %;
   }
   .max-w-\[1px\] {
     max-width: 1px;
@@ -740,6 +752,9 @@
   .max-w-\[95\%\] {
     max-width: 95%;
   }
+  .max-w-\[99\%\] {
+    max-width: 99%;
+  }
   .max-w-\[100\%\] {
     max-width: 100%;
   }
@@ -787,6 +802,9 @@
   }
   .max-w-\[1000px\] {
     max-width: 1000px;
+  }
+  .max-w-\[3000px\] {
+    max-width: 3000px;
   }
   .max-w-\[px\] {
     max-width: px;
@@ -958,6 +976,30 @@
   .gap-10 {
     gap: calc(var(--spacing) * 10);
   }
+  .gap-12 {
+    gap: calc(var(--spacing) * 12);
+  }
+  .gap-16 {
+    gap: calc(var(--spacing) * 16);
+  }
+  .gap-20 {
+    gap: calc(var(--spacing) * 20);
+  }
+  .gap-25 {
+    gap: calc(var(--spacing) * 25);
+  }
+  .gap-26 {
+    gap: calc(var(--spacing) * 26);
+  }
+  .gap-30 {
+    gap: calc(var(--spacing) * 30);
+  }
+  .gap-35 {
+    gap: calc(var(--spacing) * 35);
+  }
+  .gap-300 {
+    gap: calc(var(--spacing) * 300);
+  }
   .space-y-0 {
     :where(& > :not(:last-child)) {
       --tw-space-y-reverse: 0;
@@ -993,6 +1035,13 @@
       margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
+  .space-y-5 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 5) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 5) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
   .space-y-6 {
     :where(& > :not(:last-child)) {
       --tw-space-y-reverse: 0;
@@ -1012,6 +1061,13 @@
       --tw-space-y-reverse: 0;
       margin-block-start: calc(calc(var(--spacing) * 20) * var(--tw-space-y-reverse));
       margin-block-end: calc(calc(var(--spacing) * 20) * calc(1 - var(--tw-space-y-reverse)));
+    }
+  }
+  .space-y-90 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 90) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 90) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
   .gap-x-2 {
@@ -1505,6 +1561,9 @@
   .text-xs {
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+  .text-\[1px\] {
+    font-size: 1px;
   }
   .text-\[9px\] {
     font-size: 9px;
@@ -2654,6 +2713,11 @@
       line-height: var(--tw-leading, var(--text-lg--line-height));
     }
   }
+  .lg\:col-span-2 {
+    @media (width >= 64rem) {
+      grid-column: span 2 / span 2;
+    }
+  }
   .lg\:col-span-3 {
     @media (width >= 64rem) {
       grid-column: span 3 / span 3;
@@ -2667,6 +2731,11 @@
   .lg\:col-span-9 {
     @media (width >= 64rem) {
       grid-column: span 9 / span 9;
+    }
+  }
+  .lg\:col-span-18 {
+    @media (width >= 64rem) {
+      grid-column: span 18 / span 18;
     }
   }
   .lg\:mb-0 {
@@ -2729,6 +2798,16 @@
       grid-template-columns: repeat(12, minmax(0, 1fr));
     }
   }
+  .lg\:grid-cols-16 {
+    @media (width >= 64rem) {
+      grid-template-columns: repeat(16, minmax(0, 1fr));
+    }
+  }
+  .lg\:grid-cols-18 {
+    @media (width >= 64rem) {
+      grid-template-columns: repeat(18, minmax(0, 1fr));
+    }
+  }
   .lg\:grid-cols-120 {
     @media (width >= 64rem) {
       grid-template-columns: repeat(120, minmax(0, 1fr));
@@ -2754,6 +2833,16 @@
       padding-inline: calc(var(--spacing) * 8);
     }
   }
+  .lg\:px-10 {
+    @media (width >= 64rem) {
+      padding-inline: calc(var(--spacing) * 10);
+    }
+  }
+  .lg\:px-18 {
+    @media (width >= 64rem) {
+      padding-inline: calc(var(--spacing) * 18);
+    }
+  }
   .lg\:text-left {
     @media (width >= 64rem) {
       text-align: left;
@@ -2772,6 +2861,11 @@
   .xl\:col-span-4 {
     @media (width >= 80rem) {
       grid-column: span 4 / span 4;
+    }
+  }
+  .xl\:col-span-8 {
+    @media (width >= 80rem) {
+      grid-column: span 8 / span 8;
     }
   }
   .xl\:col-span-9 {
