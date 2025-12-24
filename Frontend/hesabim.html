@@ -392,17 +392,26 @@ const inputPhone = document.getElementById('input-phone');
 const inputUsername = document.getElementById('input-username');
 const inputEmail = document.getElementById('input-email');
 
+// --- YENİ EKLENEN DEĞİŞKEN: ESKİ VERİLERİ TUTACAK ---
+let originalValues = {}; 
+
 // Düzenle Butonuna Tıklanınca
 editBtn.addEventListener('click', () => {
     // Kilidi Aç / Kapat (Toggle)
     const isLocked = inputFullname.disabled;
 
     if (isLocked) {
+        // --- 1. DÜZENLEME BAŞLADI: MEVCUT VERİLERİ YEDEKLE ---
+        originalValues = {
+            fullname: inputFullname.value,
+            username: inputUsername.value,
+            email: inputEmail.value,
+            phone: inputPhone.value
+        };
+
         // Düzenleme Modunu AÇ (Kilitleri Kaldır)
         inputFullname.disabled = false;
         inputPhone.disabled = false;
-        
-        // EKLENEN SATIRLAR:
         inputUsername.disabled = false;
         inputEmail.disabled = false;
         
@@ -413,12 +422,17 @@ editBtn.addEventListener('click', () => {
         // Buton görünümünü değiştir
         editBtn.innerText = "İptal";
         editBtn.classList.replace('text-primary', 'text-red-500');
+
     } else {
+        // --- 2. İPTAL EDİLDİ: YEDEKTEN GERİ YÜKLE ---
+        inputFullname.value = originalValues.fullname;
+        inputUsername.value = originalValues.username;
+        inputEmail.value = originalValues.email;
+        inputPhone.value = originalValues.phone;
+
         // Düzenleme Modunu KAPAT (Tekrar Kilitle)
         inputFullname.disabled = true;
         inputPhone.disabled = true;
-        
-        // EKLENEN SATIRLAR:
         inputUsername.disabled = true;
         inputEmail.disabled = true;
         
@@ -429,9 +443,6 @@ editBtn.addEventListener('click', () => {
         // Buton görünümünü eski haline getir
         editBtn.innerText = "Düzenle"; 
         editBtn.classList.replace('text-red-500', 'text-primary');
-        
-        // İptal edildiği için değerleri eski haline döndürmek istersen:
-        // fetchUserData(localStorage.getItem('userId')); 
     }
 });
 
@@ -499,13 +510,30 @@ saveBtn.addEventListener('click', async () => {
             editBtn.classList.replace('text-red-500', 'text-primary');
 
         } else {
-            // Backend'den gelen özel hata mesajını göster (Örn: "Bu kullanıcı adı zaten alınıyor")
+            // Backend'den gelen hatayı yakala
+            let errorMessage = "Güncelleme sırasında bir hata oluştu.";
+
+            // 1. Durum: Bizim gönderdiğimiz özel "Message" alanı varsa (Örn: "Bu email kullanımda")
+            if (resultData.Message) {
+                errorMessage = resultData.Message;
+            }
+            // 2. Durum: Identity'den gelen liste şeklindeki hatalar varsa
+            else if (Array.isArray(resultData)) {
+                errorMessage = resultData.map(err => err.description).join('<br>');
+            }
+            // 3. Durum: Küçük harfli "message" gelirse (Bazı framework durumları için yedek)
+            else if (resultData.message) {
+                errorMessage = resultData.message;
+            }
+
+            // Hata mesajını kullanıcıya göster
             Swal.fire({
                 title: 'Güncelleme Başarısız',
-                text: resultData.Message || 'Bir hata oluştu.',
+                html: errorMessage, // 'html' özelliği sayesinde alt alta yazılan hataları destekler
                 icon: 'error',
                 background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
-                color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                color: document.documentElement.classList.contains('dark') ? '#fff' : '#000',
+                confirmButtonColor: '#d33'
             });
         }
     } catch (error) {
