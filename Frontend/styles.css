@@ -692,6 +692,9 @@
   .max-w-\[7\%\] {
     max-width: 7%;
   }
+  .max-w-\[9\%\] {
+    max-width: 9%;
+  }
   .max-w-\[20px\] {
     max-width: 20px;
   }
@@ -1570,6 +1573,9 @@
   }
   .text-\[10px\] {
     font-size: 10px;
+  }
+  .text-\[11px\] {
+    font-size: 11px;
   }
   .text-\[13px\] {
     font-size: 13px;
