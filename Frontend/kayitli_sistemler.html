@@ -18,7 +18,7 @@
     <div class="relative flex min-h-screen flex-col">
         
         <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 bg-white dark:bg-background-dark transition-colors duration-300">
-            <nav class="container mx-auto flex justify-between items-center">
+            <nav class="container mx-auto max-w-[95%] flex justify-between items-center">
                 <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
                     <img src="Assets/Images/logo.webp" alt="PCPartsBuild" class="h-10 md:h-14">
                 </a>
@@ -49,7 +49,7 @@
         </header>
 
         <main class="flex-1 py-10 px-4 sm:px-6 lg:px-8">
-            <div class="mx-auto max-w-7xl">
+            <div class="mx-auto max-w-[95%] w-full">
                 
                 <div class="mb-8 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div>
@@ -198,133 +198,113 @@
         }
     }
 
-    // --- YENİ KART TASARIMI ---
-    function createBuildCard(build) {
-        const date = new Date(build.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
-        const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(build.totalPrice);
+    // --- KART OLUŞTURUCU (8 BİLEŞENLİ) ---
+        function createBuildCard(build) {
+            const date = new Date(build.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+            const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(build.totalPrice);
 
-        // Ana Resim (Kasa > GPU > CPU önceliği)
-        // Eğer hiçbir resim yoksa varsayılan PC ikonu
-        let mainImageHtml = `<div class="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-600">
-                                <span class="material-icons-round text-5xl">computer</span>
-                             </div>`;
-                             
-        const imgUrl = build.caseImage || build.gpuImage || build.cpuImage;
-        if (imgUrl) {
-            mainImageHtml = `<img src="${imgUrl}" class="h-full w-full object-contain p-2 hover:scale-105 transition-transform duration-500">`;
-        }
+            // Ana Resim Mantığı
+            let mainImageHtml = `<div class="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-600"><span class="material-icons-round text-6xl">computer</span></div>`;
+            const imgUrl = build.caseImage || build.gpuImage || build.cpuImage;
+            if (imgUrl) {
+                mainImageHtml = `<img src="${imgUrl}" class="h-full w-full object-contain p-4 hover:scale-105 transition-transform duration-500">`;
+            }
 
-        // Bileşen Satırı Oluşturucu (Tekrar eden koddan kurtulmak için)
-        const createComponentRow = (icon, colorClass, bgClass, name) => {
-            // Eğer "Seçilmedi" ise rengi gri yap
-            const isMissing = name.includes("Seçilmedi");
-            const finalColor = isMissing ? "text-gray-400 dark:text-gray-600" : colorClass;
-            const finalBg = isMissing ? "bg-gray-100 dark:bg-white/5" : bgClass;
-            
-            return `
-                <div class="flex items-center gap-3 p-2 rounded-lg ${finalBg} bg-opacity-50 border border-transparent hover:border-white/10 transition-all">
-                    <div class="${finalColor} flex items-center justify-center">
-                        <span class="material-icons-round text-lg">${icon}</span>
+            // Bileşen Satırı Oluşturucu
+            const row = (icon, color, name) => {
+                const missing = name.includes("Seçilmedi") || name.includes("Bulunamadı");
+                const textColor = missing ? "text-gray-400 dark:text-gray-600" : "text-gray-700 dark:text-gray-300";
+                const iconColor = missing ? "text-gray-300 dark:text-gray-700" : color;
+                const boxBg = missing ? "bg-gray-100 dark:bg-white/5" : "bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10";
+                
+                return `
+                    <div class="flex items-center gap-2 p-2 rounded-lg ${boxBg} transition-all">
+                        <div class="${iconColor} flex items-center justify-center shrink-0">
+                            <span class="material-icons-round text-lg">${icon}</span>
+                        </div>
+                        <span class="text-xs font-medium ${textColor} truncate w-full" title="${name}">
+                            ${name}
+                        </span>
                     </div>
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate w-full" title="${name}">
-                        ${name}
-                    </span>
+                `;
+            };
+
+            return `
+                <div class="group relative flex flex-col md:flex-row overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#161b22] shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300">
+                    
+                    <div class="w-full md:w-64 h-64 md:h-auto shrink-0 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 relative bg-white dark:bg-transparent">
+                        ${mainImageHtml}
+                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-1 rounded-md font-medium border border-white/10">
+                            ${date}
+                        </div>
+                    </div>
+
+                    <div class="flex-1 p-5 flex flex-col justify-between gap-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                                ${build.buildName || 'İsimsiz Sistem'}
+                            </h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                            ${row('memory', 'text-blue-500', build.cpuName)}
+                            ${row('hub', 'text-indigo-500', build.motherboardName)}
+                            ${row('videogame_asset', 'text-green-500', build.gpuName)}
+                            ${row('dns', 'text-purple-500', build.ramName)}
+                            ${row('storage', 'text-cyan-500', build.storageName)}
+                            ${row('desktop_windows', 'text-orange-500', build.caseName)}
+                            ${row('power', 'text-yellow-500', build.psuName)}
+                            ${row('mode_fan_off', 'text-teal-500', build.coolerName)}
+                        </div>
+                    </div>
+
+                    <div class="w-full md:w-40 bg-gray-50 dark:bg-white/[0.02] border-t md:border-t-0 md:border-l border-gray-100 dark:border-white/5 p-4 flex flex-row md:flex-col items-center justify-between md:justify-center gap-3">
+                        <div class="text-center md:mb-2">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">TOPLAM</p>
+                            <p class="text-lg font-bold text-gray-900 dark:text-white font-mono">${price}</p>
+                        </div>
+                        <div class="flex md:flex-col gap-2 w-full">
+                            <button onclick="viewDetails(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-primary hover:text-white dark:hover:bg-primary border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all">
+                                <span class="material-icons-round text-lg">visibility</span>
+                            </button>
+                            <button onclick="deleteBuild(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-red-500 hover:text-white border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all">
+                                <span class="material-icons-round text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `;
-        };
+        }
 
-        return `
-            <div class="group relative flex flex-col md:flex-row overflow-hidden rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#161b22] shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-300">
-                
-                <div class="w-full md:w-48 h-48 md:h-auto shrink-0 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 relative bg-white dark:bg-transparent">
-                    ${mainImageHtml}
-                    <div class="absolute top-3 left-3 bg-black/70 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full font-medium">
-                        ${date}
+        // --- DETAY POPUP (8 BİLEŞENLİ) ---
+        function viewDetails(id) {
+            const build = allBuilds.find(b => b.id === id);
+            if (!build) return;
+            
+            const r = (lbl, val) => `<tr class="border-b border-gray-200 dark:border-white/10 last:border-0"><td class="py-3 text-gray-500 dark:text-white/60 w-1/3">${lbl}</td><td class="py-3 text-right font-medium text-gray-900 dark:text-white">${val}</td></tr>`;
+
+            Swal.fire({
+                title: `<span class="text-lg font-bold text-gray-900 dark:text-white">${build.buildName}</span>`,
+                html: `
+                    <div class="overflow-x-auto text-sm mt-4">
+                        <table class="w-full text-left">
+                            ${r('İşlemci', build.cpuName)}
+                            ${r('Anakart', build.motherboardName)}
+                            ${r('Ekran Kartı', build.gpuName)}
+                            ${r('RAM', build.ramName)}
+                            ${r('Depolama', build.storageName)}
+                            ${r('Kasa', build.caseName)}
+                            ${r('Güç Kaynağı', build.psuName)}
+                            ${r('Soğutucu', build.coolerName)}
+                        </table>
                     </div>
-                </div>
-
-                <div class="flex-1 p-5 flex flex-col justify-between gap-4">
-                    
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
-                            ${build.buildName || 'İsimsiz Sistem'}
-                        </h3>
-                        <div class="h-0.5 w-12 bg-primary/50 mt-2 rounded-full"></div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        ${createComponentRow('memory', 'text-blue-500', 'dark:bg-blue-500/10 bg-blue-50', build.cpuName)}
-                        ${createComponentRow('videogame_asset', 'text-green-500', 'dark:bg-green-500/10 bg-green-50', build.gpuName)}
-                        ${createComponentRow('dns', 'text-purple-500', 'dark:bg-purple-500/10 bg-purple-50', build.ramName)}
-                        ${createComponentRow('desktop_windows', 'text-orange-500', 'dark:bg-orange-500/10 bg-orange-50', build.caseName)}
-                    </div>
-                </div>
-
-                <div class="w-full md:w-40 bg-gray-50 dark:bg-white/[0.02] border-t md:border-t-0 md:border-l border-gray-100 dark:border-white/5 p-5 flex flex-row md:flex-col items-center justify-between md:justify-center gap-4">
-                    
-                    <div class="text-center">
-                        <p class="text-xs text-gray-500 uppercase font-semibold tracking-wider mb-1">Toplam</p>
-                        <p class="text-xl font-bold text-gray-900 dark:text-white font-mono">${price}</p>
-                    </div>
-
-                    <div class="flex md:flex-col gap-2 w-full">
-                        <button onclick="viewDetails(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-primary hover:text-white dark:hover:bg-primary border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all text-sm font-medium">
-                            <span class="material-icons-round text-base">visibility</span>
-                            <span class="md:hidden">İncele</span>
-                        </button>
-                        
-                        <button onclick="deleteBuild(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-red-500 hover:text-white border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all text-sm font-medium">
-                            <span class="material-icons-round text-base">delete</span>
-                            <span class="md:hidden">Sil</span>
-                        </button>
-                    </div>
-
-                </div>
-
-            </div>
-        `;
-    }
-
-    // --- GÖZ BUTONU FONKSİYONU (Detay Popup) ---
-    function viewDetails(id) {
-        // ID'ye göre sistemi bul
-        const build = allBuilds.find(b => b.id === id);
-        if (!build) return;
-
-        const row = (label, val) => `
-            <tr class="border-b border-gray-200 dark:border-gray-700">
-                <td class="py-2 px-4 font-medium text-gray-600 dark:text-gray-300 text-left">${label}</td>
-                <td class="py-2 px-4 text-gray-900 dark:text-white text-right">${val || '-'}</td>
-            </tr>
-        `;
-
-        Swal.fire({
-            title: `<span class="text-xl font-bold text-gray-900 dark:text-white">${build.buildName || 'Sistem Detayları'}</span>`,
-            html: `
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <tbody>
-                            ${row('İşlemci', build.cpuName)}
-                            ${row('Ekran Kartı', build.gpuName)}
-                            ${row('RAM', build.ramName)}
-                            ${row('Kasa', build.caseName)}
-                            <tr class="bg-gray-50 dark:bg-white/5">
-                                <td class="py-3 px-4 font-bold text-gray-800 dark:text-white text-left">TOPLAM</td>
-                                <td class="py-3 px-4 font-bold text-green-600 dark:text-[#4ade80] text-right">
-                                    ${new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(build.totalPrice)}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            `,
-            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
-            showConfirmButton: true,
-            confirmButtonText: 'Kapat',
-            confirmButtonColor: '#374151',
-            width: '600px'
-        });
-    }
+                `,
+                background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                confirmButtonColor: '#374151',
+                confirmButtonText: 'Kapat',
+                width: '600px'
+            });
+        }
 
     // --- SİLME İŞLEMİ (Aynı kaldı ama fonksiyon adları çakışmasın diye ekledim) ---
     async function deleteBuild(id) {
