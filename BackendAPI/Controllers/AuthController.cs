@@ -136,5 +136,25 @@ namespace PCPartsAPI.Controllers
 
             return BadRequest(result.Errors);
         }
+        // AuthController.cs içine, diğer metodların altına ekle:
+
+        [HttpGet("get-user/{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new { Message = "Kullanıcı bulunamadı." });
+            }
+
+            return Ok(new
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                FullName = user.FullName, // Ad Soyad buradan gidecek
+                PhoneNumber = user.PhoneNumber
+            });
+        }
     }
 }

@@ -279,6 +279,7 @@ input:focus, textarea:focus {
     input[type='text'], input[type='email'], input[type='password'], input[type='tel'], textarea {
         appearance: none;
         background-color: transparent !important; /* HTML'deki bg-black/20 sınıflarının çalışmasını sağlar */
+        border: 1px solid #4b5563; /* Tailwind gray-600 rengi */
         border-radius: 0.375rem;
         padding: 0.75rem 1rem;
         font-size: 1rem;

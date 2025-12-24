@@ -59,6 +59,10 @@
                             <label class="block text-sm font-medium text-gray-300 mb-1" for="username" data-i18n="label-username">Kullanıcı Adı</label>
                             <input class="w-full bg-gray-800 border-gray-700 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" id="username" name="username" data-i18n-placeholder="placeholder-username" placeholder="Kullanıcı Adı" type="text" required/>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1" for="fullname" data-i18n="label-fullname">Ad Soyad</label>
+                            <input class="w-full bg-gray-800 border-gray-600 rounded-md focus:ring-primary focus:border-primary text-white placeholder:text-gray-500 transition-default" id="fullname" name="fullname" data-i18n-placeholder="label-fullname" placeholder="Ad Soyad" type="text" required/>
+                        </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-1" for="password" data-i18n="label-password">Şifre</label>
@@ -131,6 +135,7 @@
             "label-password": "Şifre",
             "label-repeat-password": "Şifreyi Tekrarla",
             "action-signup": "Kayıt Ol",
+            "label-fullname": "Ad Soyad",
             "link-has-account": "Zaten bir hesabınız mı var?",
             "link-login": "Giriş",
         },
@@ -146,6 +151,7 @@
             "label-password": "Password",
             "label-repeat-password": "Repeat Password",
             "action-signup": "Sign Up",
+            "label-fullname": "Full Name",
             "link-has-account": "Already have an account?",
             "link-login": "Log In",
         }
@@ -228,6 +234,7 @@
             registerForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
+                const fullName = document.getElementById('fullname').value;
                 const email = document.getElementById('email').value;
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
@@ -252,6 +259,7 @@
                 submitBtn.innerText = "İşleniyor...";
 
                 const userData = {
+                    fullName: fullName,
                     username: username,
                     email: email,
                     password: password
