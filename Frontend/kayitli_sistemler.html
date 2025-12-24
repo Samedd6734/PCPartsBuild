@@ -18,7 +18,7 @@
     <div class="relative flex min-h-screen flex-col">
         
         <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 bg-white dark:bg-background-dark transition-colors duration-300">
-            <nav class="container mx-auto flex justify-between items-center">
+            <nav class="container mx-auto max-w-[74,5%] flex justify-between items-center">
                 <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
                     <img src="Assets/Images/logo.webp" alt="PCPartsBuild" class="h-10 md:h-14">
                 </a>
@@ -64,7 +64,7 @@
 
                 <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
                     
-                    <aside class="lg:col-span-3 xl:col-span-2 w-auto max-w-[600px]">
+                    <aside class="lg:col-span-3 xl:col-span-2 w-full max-w-[280px]">
                         <div class="sticky top-24 space-y-4">
                             
                             <div class="glass-panel rounded-2xl p-6 flex flex-col items-center text-center bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
@@ -199,18 +199,19 @@
     }
 
     // --- KART OLUŞTURUCU (FİNAL TASARIM & DOĞRU İKONLAR) ---
+        // --- KART OLUŞTURUCU (HİZALI, SIKI TASARIM & DOĞRU İKONLAR) ---
         function createBuildCard(build) {
             const date = new Date(build.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
             const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(build.totalPrice);
 
-            // Ana Resim Mantığı
+            // Ana Resim
             let mainImageHtml = `<div class="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-600"><span class="material-symbols-outlined text-6xl">computer</span></div>`;
             const imgUrl = build.caseImage || build.gpuImage || build.cpuImage;
             if (imgUrl) {
                 mainImageHtml = `<img src="${imgUrl}" class="h-full w-full object-contain p-4 hover:scale-105 transition-transform duration-500">`;
             }
 
-            // Bileşen Satırı (Senin istediğin ikonlar ve artırılmış dikey boşluk)
+            // Bileşen Satırı (Senin istediğin ikonlar ve sıkılaştırılmış boşluklar)
             const row = (icon, color, name) => {
                 const missing = name.includes("Seçilmedi") || name.includes("Bulunamadı");
                 const textColor = missing ? "text-gray-400 dark:text-gray-600" : "text-gray-700 dark:text-gray-300";
@@ -218,7 +219,7 @@
                 const boxBg = missing ? "bg-gray-100 dark:bg-white/5" : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10";
                 
                 return `
-                    <div class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg ${boxBg} transition-all">
+                    <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg ${boxBg} transition-all">
                         <div class="${iconColor} flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined text-[20px]">${icon}</span>
                         </div>
@@ -232,36 +233,36 @@
             return `
                 <div class="group relative flex flex-col md:flex-row overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#161b22] shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300">
                     
-                    <div class="w-full md:w-45 h-auto md:h-auto shrink-0 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 relative bg-white dark:bg-transparent">
+                    <div class="w-full md:w-45 h-45 md:h-auto shrink-0 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 relative bg-white dark:bg-transparent">
                         ${mainImageHtml}
-                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[15px] px-2 py-1 rounded-md font-medium border border-white/10">
+                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[13px] px-2 py-1 rounded-md font-medium border border-white/10">
                             ${date}
                         </div>
                     </div>
 
-                    <div class="flex-1 p-5 flex flex-col justify-center gap-4">
+                    <div class="flex-1 p-4 flex flex-col justify-center gap-3">
                         
                         <div class="flex flex-col gap-1">
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
                                 ${build.buildName || 'İsimsiz Sistem'}
                             </h3>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                             ${row('memory', 'text-blue-500', build.cpuName)}            ${row('developer_board', 'text-indigo-500', build.motherboardName)} ${row('straighten', 'text-purple-500', build.ramName)}      ${row('videogame_asset', 'text-green-500', build.gpuName)}  ${row('save', 'text-cyan-500', build.storageName)}          ${row('computer', 'text-orange-500', build.caseName)}       ${row('power', 'text-yellow-500', build.psuName)}           ${row('mode_fan', 'text-teal-500', build.coolerName)}       </div>
                     </div>
 
-                    <div class="w-full md:w-40 bg-gray-50 dark:bg-white/[0.02] border-t md:border-t-0 md:border-l border-gray-100 dark:border-white/5 p-4 flex flex-row md:flex-col items-center justify-between md:justify-center gap-3">
+                    <div class="w-full md:w-36 bg-gray-50 dark:bg-white/[0.02] border-t md:border-t-0 md:border-l border-gray-100 dark:border-white/5 p-4 flex flex-row md:flex-col items-center justify-between md:justify-center gap-2">
                         <div class="text-center md:mb-1">
                             <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">TOPLAM</p>
                             <p class="text-lg font-bold text-gray-900 dark:text-white font-mono">${price}</p>
                         </div>
                         <div class="flex md:flex-col gap-2 w-full">
                             <button onclick="viewDetails(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-primary hover:text-white dark:hover:bg-primary border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all">
-                                <span class="material-icons-round text-lg">visibility</span>
+                                <span class="material-symbols-outlined text-lg">visibility</span>
                             </button>
                             <button onclick="deleteBuild(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-red-500 hover:text-white border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all">
-                                <span class="material-icons-round text-lg">delete</span>
+                                <span class="material-symbols-outlined text-lg">delete</span>
                             </button>
                         </div>
                     </div>
