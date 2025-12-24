@@ -211,14 +211,56 @@ namespace PCPartsAPI.Controllers
                 // D) Onay Linki Oluştur (Frontend sayfasına yönlendirecek)
                 // Kullanıcı bu linke tıkladığında token ile birlikte siteye gidecek.
                 string callbackUrl = $"https://pcpartsbuild.com/hesabim.html?emailToken={token}";
+               
+                // --- GÜNCELLENMİŞ MODERN E-POSTA TASARIMI ---
+                string emailTemplate = $@"
+                <div style='font-family:Segoe UI, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f3f4f6; padding: 40px 20px;'>
+                    <div style='background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden;'>
+                
+                        <div style='background-color: #1f2937; padding: 30px; text-align: center;'>
+                            <h1 style='color: #16a3b2; margin: 0; font-size: 24px; letter-spacing: 1px;'>PCPartsBuild</h1>
+                            <p style='color: #9ca3af; margin: 5px 0 0 0; font-size: 14px;'>Bilgisayar Toplama Sihirbazı</p>
+                        </div>
+
+                        <div style='padding: 40px 30px;'>
+                            <h2 style='color: #111827; margin-top: 0; font-size: 20px; text-align: center;'>E-Posta Değişikliği Talebi</h2>
+                    
+                            <p style='color: #4b5563; font-size: 16px; line-height: 1.6; margin-top: 20px;'>
+                                Merhaba,
+                            </p>
+                            <p style='color: #4b5563; font-size: 16px; line-height: 1.6;'>
+                                PCPartsBuild hesabınızın e-posta adresini <strong style='color: #16a3b2;'>{model.Email}</strong> olarak değiştirmek üzere bir talep aldık.
+                            </p>
+                            <p style='color: #4b5563; font-size: 16px; line-height: 1.6;'>
+                                Hesabınızın güvenliğini sağlamak için bu işlemi onaylamanız gerekmektedir. Aşağıdaki butona tıklayarak değişikliği tamamlayabilirsiniz.
+                            </p>
+
+                            <div style='text-align: center; margin: 35px 0;'>
+                                <a href='{callbackUrl}' style='background-color: #16a3b2; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px rgba(22, 163, 178, 0.25);'>
+                                    Değişikliği Onayla
+                                </a>
+                            </div>
+
+                            <div style='background-color: #fff1f2; border-left: 4px solid #e11d48; padding: 15px; border-radius: 4px; margin-top: 30px;'>
+                                <p style='color: #9f1239; font-size: 13px; margin: 0; line-height: 1.5;'>
+                                    <strong>Dikkat:</strong> Eğer bu değişikliği siz talep etmediyseniz, lütfen bu e-postayı dikkate almayın ve hesabınızın güvenliği için şifrenizi değiştirin. Linke tıklamadığınız sürece e-posta adresiniz değişmeyecektir.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style='background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;'>
+                            <p style='color: #6b7280; font-size: 12px; margin: 0;'>
+                                © 2025 PCPartsBuild. Tüm Hakları Saklıdır.
+                            </p>
+                            <p style='color: #9ca3af; font-size: 11px; margin-top: 5px;'>
+                                Bu e-posta otomatik olarak gönderilmiştir, lütfen yanıtlamayınız.
+                            </p>
+                        </div>
+                    </div>
+                </div>";
 
                 // E) ESKİ (Mevcut) Maile Link Gönder
-                await _emailSender.SendEmailAsync(user.Email, "E-Posta Değişikliği Onayı",
-                    $"<h3>E-Posta Değişikliği Talebi</h3>" +
-                    $"<p>Hesabınızın e-posta adresini <b>{model.Email}</b> olarak değiştirmek istediniz.</p>" +
-                    $"<p>Bu işlemi onaylamak için lütfen aşağıdaki linke tıklayın:</p>" +
-                    $"<p><a href='{callbackUrl}' style='background-color:#16a3b2; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;'>Değişikliği Onayla</a></p>" +
-                    $"<p>Eğer bu işlemi siz yapmadıysanız, bu maili görmezden gelin.</p>");
+                await _emailSender.SendEmailAsync(user.Email, "PCPartsBuild - E-Posta Değişikliği Onayı", emailTemplate);
             }
 
             // Veritabanını güncelle (İsim, Telefon, Username değiştiyse işlenir)
