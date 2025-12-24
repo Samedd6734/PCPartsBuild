@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory; // Cache için gerekli
+using Microsoft.Extensions.Caching.Memory;
 using PCPartsAPI.DTOs;
+using PCPartsAPI.Models; // AppUser için gerekli
 using System;
 using System.Threading.Tasks;
 
@@ -12,13 +13,14 @@ namespace PCPartsAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        // ARTIK IdentityUser DEĞİL, AppUser KULLANIYORUZ
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
-        private readonly IMemoryCache _memoryCache; // Kodları geçici tutmak için
+        private readonly IMemoryCache _memoryCache;
 
-        public AuthController(UserManager<IdentityUser> userManager,
-                              SignInManager<IdentityUser> signInManager,
+        public AuthController(UserManager<AppUser> userManager,
+                              SignInManager<AppUser> signInManager,
                               IEmailSender emailSender,
                               IMemoryCache memoryCache)
         {
@@ -31,10 +33,12 @@ namespace PCPartsAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            var user = new IdentityUser
+            // BURASI DEĞİŞTİ: AppUser oluşturuyoruz ve FullName'i aktarıyoruz
+            var user = new AppUser
             {
                 UserName = registerDto.Username,
-                Email = registerDto.Email
+                Email = registerDto.Email,
+                FullName = registerDto.FullName // <-- Yeni eklediğin alan
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
@@ -47,7 +51,6 @@ namespace PCPartsAPI.Controllers
             return Ok(new { Message = "Kayıt başarılı! Giriş yapabilirsiniz." });
         }
 
-        // --- 2. GİRİŞ YAPMA ---
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
@@ -70,30 +73,24 @@ namespace PCPartsAPI.Controllers
             {
                 Message = "Giriş başarılı!",
                 Username = user.UserName,
-                UserId = user.Id // <--- BURASI EKLENDİ (String formatında GUID döner)
+                UserId = user.Id,
+                FullName = user.FullName // İstersen girişte ismini de dönebilirsin
             });
         }
 
-        // --- 3. ADIM: ŞİFRE SIFIRLAMA KODU GÖNDER ---
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            // Kullanıcı yoksa bile güvenlik gereği "Gönderildi" diyoruz.
             if (user == null)
             {
                 return Ok(new { Message = "Doğrulama kodu e-posta adresinize gönderildi." });
             }
 
-            // 6 Haneli Rastgele Kod Üret
             var verificationCode = new Random().Next(100000, 999999).ToString();
-
-            // Kodu MemoryCache'e kaydet (15 dakika geçerli olsun)
-            // Anahtar: "ResetCode_user@email.com", Değer: "123456"
             _memoryCache.Set($"ResetCode_{model.Email}", verificationCode, TimeSpan.FromMinutes(15));
 
-            // Mail Gönder
             await _emailSender.SendEmailAsync(model.Email, "Şifre Sıfırlama Kodu",
                 $"<h3>Şifre Sıfırlama Talebi</h3>" +
                 $"<p>Hesabınızın şifresini sıfırlamak için aşağıdaki kodu kullanın:</p>" +
@@ -103,11 +100,9 @@ namespace PCPartsAPI.Controllers
             return Ok(new { Message = "Doğrulama kodu e-posta adresinize gönderildi." });
         }
 
-        // --- 4. ADIM: KODU DOĞRULA VE TOKEN AL ---
         [HttpPost("verify-code")]
         public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeDto model)
         {
-            // Cache'den kodu kontrol et
             if (!_memoryCache.TryGetValue($"ResetCode_{model.Email}", out string storedCode))
             {
                 return BadRequest(new { Message = "Kodun süresi dolmuş veya hatalı." });
@@ -118,18 +113,14 @@ namespace PCPartsAPI.Controllers
                 return BadRequest(new { Message = "Girilen kod hatalı." });
             }
 
-            // Kod doğruysa, şimdi gerçek şifre sıfırlama token'ını üretiyoruz
             var user = await _userManager.FindByEmailAsync(model.Email);
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // İşlem tamamlandığı için kodu silebiliriz (tek kullanımlık olsun)
             _memoryCache.Remove($"ResetCode_{model.Email}");
 
-            // Token'ı frontend'e dönüyoruz ki diğer sayfaya geçebilsin
             return Ok(new { Message = "Kod doğrulandı.", Token = token, Email = model.Email });
         }
 
-        // --- 5. ADIM: ŞİFREYİ GÜNCELLE ---
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {

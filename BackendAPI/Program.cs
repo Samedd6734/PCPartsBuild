@@ -36,7 +36,7 @@ namespace PCPartsAPI
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // --- IDENTITY (KULLANICI) AYARLARI ---
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 // Şifre Kuralları (Senin ayarların)
                 options.Password.RequireDigit = false;
