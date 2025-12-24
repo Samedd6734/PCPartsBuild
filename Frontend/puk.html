@@ -467,7 +467,7 @@
     // API Ayarları
     const API_BASE_URL = "https://pcpartsbuild.com"; // Senin API adresin
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
-    const GEMINI_API_KEY = ""; // Buraya kendi API anahtarını gireceksin
+    const GEMINI_API_KEY = "AIzaSyBkenPyKXPU2fzjwskLIPH2Oyqn7-qWbDM"; // Buraya kendi API anahtarını gireceksin
 
     // Endpoint Eşleşmeleri
     const endpoints = {
@@ -733,13 +733,48 @@
             return;
         }
 
-        const prompt = `${translations[currentLang]['analysis-prompt-title']}\n\n${partsList.join('\n')}`;
+        // --- GÜNCELLEME BURADA BAŞLIYOR ---
         
+        // Daha sıkı ve net talimatlar içeren ek prompt
+        let strictInstructions = "";
+        
+        if (currentLang === 'tr') {
+            strictInstructions = `
+            YUKARIDAKİ PARÇALAR İÇİN ANALİZ TALİMATLARI:
+            1. Yanıtı çok KISA, ÖZ ve NET tut. Uzun paragraflardan kaçın.
+            2. Teknik jargon kullan ama amatör bir kullanıcının anlayacağı dilde olsun.
+            3. Yanıtı sadece şu 3 kısa madde başlığı altında topla:
+               - 🟢 **Genel Uyum:** (Uyumlu olup olmadığını tek cümleyle belirt)
+               - ⚠️ **Darboğaz/Risk:** (Varsa darboğazı veya PSU yetersizliğini belirt, yoksa 'Sorun yok' de)
+               - 🚀 **Performans Tahmini:** (Hangi çözünürlükte/ayarlarda oyun oynatacağını 1-2 cümleyle özetle)
+            4. Toplam yanıt 150 kelimeyi geçmesin.
+            `;
+        } else {
+            strictInstructions = `
+            ANALYSIS INSTRUCTIONS:
+            1. Keep the response VERY SHORT, CONCISE, and CLEAR. Avoid long paragraphs.
+            2. Use technical terms but keep it understandable for average users.
+            3. Structure the response strictly under these 3 bullet points:
+               - 🟢 **Overall Compatibility:** (State compatibility in one sentence)
+               - ⚠️ **Bottlenecks/Risks:** (Mention bottlenecks or PSU issues if any, otherwise say 'No issues')
+               - 🚀 **Performance Estimate:** (Summarize gaming performance/resolution in 1-2 sentences)
+            4. Total response must not exceed 150 words.
+            `;
+        }
+
+        // Eski prompt başlığı ile yeni sıkı talimatları ve parça listesini birleştiriyoruz
+        const prompt = `${translations[currentLang]['analysis-prompt-title']}\n${strictInstructions}\n\nSİSTEM PARÇALARI:\n${partsList.join('\n')}`;
+        
+        // --- GÜNCELLEME BURADA BİTİYOR ---
+
         openModal(translations[currentLang]['action-expert'], '', true);
         const resultText = await callGeminiAPI(prompt);
         
-        // Markdown benzeri formatı basit HTML'e çevir (Bold için)
-        const formattedText = resultText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        // Markdown formatını basit HTML'e çevir
+        const formattedText = resultText
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold yapma
+            .replace(/\n/g, '<br>'); // Satır atlama
+            
         openModal(translations[currentLang]['action-expert'], formattedText);
     };
 
