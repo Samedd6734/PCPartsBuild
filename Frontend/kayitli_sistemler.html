@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="page-title">PCPartsBuild - Kayıtlı Sistemlerim</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+<script>
+    (function() {
+        // Tüm sayfalarda ortak anahtar: 'theme_builder'
+        const savedTheme = localStorage.getItem('theme_builder');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    })();
+</script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-gray-100 dark:bg-[#0d1117] font-sans text-gray-900 dark:text-white antialiased selection:bg-primary selection:text-white hidden">
+    <div class="relative flex min-h-screen flex-col">
+        
+        <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 bg-white dark:bg-background-dark transition-colors duration-300">
+            <nav class="container mx-auto max-w-[74,5%] flex justify-between items-center">
+                <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+                    <img src="Assets/Images/logo.webp" alt="PCPartsBuild" class="h-10 md:h-14">
+                </a>
+        
+                <nav class="hidden lg:flex items-center gap-9">
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <div id="languageSelector" class="relative">
+                        <button id="languageButton" class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-symbols-outlined text-xl">language</span>
+                        </button>
+                        <div id="languageDropdown" class="absolute right-0 top-full mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800 dark:border-gray-700">
+                            <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">Türkçe (TR)</a>
+                            <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">English (EN)</a>
+                        </div>
+                    </div>
+        
+                    <button id="darkModeButton" class="relative flex items-center justify-center h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors overflow-hidden">
+                        <span id="moonIcon" class="material-symbols-outlined absolute icon-transition opacity-0 scale-50 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">dark_mode</span>
+                        <span id="sunIcon" class="material-symbols-outlined absolute icon-transition opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-50 dark:-rotate-90">light_mode</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-1 py-10 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-[92%] w-full">
+                
+                <div class="mb-8 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white" data-i18n="menu-systems">Kayıtlı Sistemlerim</h1>
+                        <p class="text-gray-500 dark:text-white/60 mt-1" data-i18n="page-subtext-systems">Oluşturduğunuz taslakları ve favori sistemlerinizi yönetin.</p>
+                    </div>
+                    <button id="logout-btn-main" class="mt-4 md:mt-0 inline-flex items-center justify-center gap-2 rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-500 dark:hover:bg-red-500/20 transition-colors ring-1 ring-inset ring-red-500/20">
+                        <span class="material-icons-outlined text-lg">logout</span>
+                        <span data-i18n="auth-logout">Oturumu Kapat</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-16 lg:grid-cols-12">
+                    
+                    <aside class="lg:col-span-3 xl:col-span-2 w-full max-w-[280px]">
+                        <div class="sticky top-24 space-y-4">
+                            
+                            <div class="glass-panel rounded-2xl p-6 flex flex-col items-center text-center bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <div class="relative mb-4">
+                                    <img id="profile-img" src="" class="h-24 w-24 rounded-full border-4 border-gray-100 dark:border-[#0f171c] shadow-lg">
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="display-fullname">...</h2>
+                                <div class="mt-4 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400 ring-1 ring-inset ring-green-600/20">
+                                    <span data-i18n="status-active">Aktif Üye</span>
+                                </div>
+                            </div>
+
+                            <nav class="glass-panel rounded-xl overflow-hidden p-2 bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <a href="hesabim.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">person</span>
+                                    <span data-i18n="menu-profile">Profil Bilgileri</span>
+                                </a>
+
+                                <a href="kayitli_sistemler.html" class="flex items-center gap-3 rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition-colors">
+                                    <span class="material-icons-round">computer</span>
+                                    <span data-i18n="menu-systems">Kayıtlı Sistemlerim</span>
+                                </a>
+
+                                <a href="favorilerim.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">shopping_bag</span>
+                                    <span data-i18n="menu-favorites">Favoriler</span>
+                                </a>
+                                <a href="sifre-degistir.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">lock</span>
+                                    <span data-i18n="menu-password">Şifre Değiştir</span>
+                                </a>
+                            </nav>
+                        </div>
+                    </aside>
+
+                    <div class="lg:col-span-9 xl:col-span-10 space-y-6">
+                        
+                        <div class="glass-panel rounded-2xl p-6 sm:p-8 bg-white dark:bg-[#111c22] border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-300">
+                            
+                           <div class="mb-8 flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-6">
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">computer</span>
+                                    <span data-i18n="menu-systems">Kayıtlı Sistemlerim</span>
+
+                                </h3>
+                                <a href="pts.html" class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-bold text-white hover:brightness-110 transition-all"> 
+                                    <span class="material-icons-round text-base">add</span>
+                                    <span data-i18n="new-system">Yeni Sistem Topla</span>
+                                </a>
+                            </div>
+
+                            <div id="builds-container" class="space-y-4">
+                                <div class="text-center py-10">
+                                    <span class="material-icons-outlined text-4xl text-gray-400">hourglass_empty</span>
+                                    <p class="mt-2 text-gray-500">Yükleniyor...</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto border-t border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#0d1317] py-8 text-center transition-colors duration-300">
+            <p class="text-white/60 text-sm font-normal leading-normal" data-i18n="footer-copyright-container">
+                <span data-i18n="footer-copyright">© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:</span> <a class="underline hover:text-primary" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- 1. GÜVENLİK VE VERİ ÇEKME ---
+        document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Tema Kontrolü (theme_builder kullanarak)
+            // Head scripti zaten sınıfı ekledi, burada sadece buton mantığını kuruyoruz
+
+            // 2. Dil Ayarı
+            const savedLang = localStorage.getItem('lang') || 'tr';
+            setLanguage(savedLang);
+
+            // Dropdown ve Butonları Kur
+            setupUIEvents();
+
+            // Kullanıcı Kontrolü
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = 'giris.html';
+                return;
+            } else {
+                document.body.classList.remove('hidden');
+            fetchUserInfo(userId);
+            fetchUserBuilds(userId);
+            }
+        });
+
+        // Yardımcı Fonksiyon: UI Olayları
+        function setupUIEvents() {
+            // Dil Değiştirme
+            document.querySelectorAll('.language-option').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const lang = e.target.getAttribute('data-lang');
+                    setLanguage(lang);
+                    document.getElementById('languageDropdown')?.classList.add('hidden');
+                });
+            });
+
+            // Tema Değiştirme (Ortak Anahtar: theme_builder)
+            const darkModeBtn = document.getElementById('darkModeButton');
+            if (darkModeBtn) {
+                darkModeBtn.addEventListener('click', () => {
+                    const html = document.documentElement;
+                    if (html.classList.contains('dark')) {
+                        html.classList.remove('dark');
+                        localStorage.setItem('theme_builder', 'light');
+                    } else {
+                        html.classList.add('dark');
+                        localStorage.setItem('theme_builder', 'dark');
+                    }
+                });
+            }
+
+            // Dropdown aç/kapa (Language & Profile)
+            const langBtn = document.getElementById('languageButton');
+            const langMenu = document.getElementById('languageDropdown');
+            if (langBtn && langMenu) {
+                langBtn.addEventListener('click', (e) => { e.stopPropagation(); langMenu.classList.toggle('hidden'); });
+            }
+            document.addEventListener('click', () => { langMenu?.classList.add('hidden'); });
+
+            // Logout butonu işlemleri... (Mevcut kodunuzdaki gibi kalabilir)
+        }
+
+        function setLanguage(lang) {
+            localStorage.setItem('lang', lang);
+        }
+
+        // --- GLOBAL DEĞİŞKEN (Verileri burada tutacağız) ---
+    let allBuilds = [];
+
+    // --- SİSTEMLERİ ÇEKEN FONKSİYON ---
+    async function fetchUserBuilds(userId) {
+        const container = document.getElementById('builds-container');
+        
+        try {
+            const response = await fetch(`https://pcpartsbuild.com/api/Builds/${userId}`);
+            
+            if (response.ok) {
+                // Verileri global değişkene ata
+                allBuilds = await response.json();
+                
+                if (allBuilds.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12">
+                            <span class="material-icons-outlined text-6xl text-gray-300 dark:text-gray-700 mb-4">desktop_access_disabled</span>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Henüz kayıtlı sisteminiz yok.</h3>
+                            <p class="text-gray-500 dark:text-white/50 mt-1">PC Toplama Sihirbazı ile hayalinizdeki sistemi oluşturup buraya kaydedebilirsiniz.</p>
+                            <a href="pts.html" class="mt-6 inline-block rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:brightness-110">Sihirbaza Git</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Kartları Oluştur
+                container.innerHTML = allBuilds.map(build => createBuildCard(build)).join('');
+
+            } else {
+                container.innerHTML = `<p class="text-center text-red-500">Sistemler yüklenirken bir hata oluştu.</p>`;
+            }
+        } catch (error) {
+            console.error("Hata:", error);
+            container.innerHTML = `<p class="text-center text-red-500">Sunucuya bağlanılamadı.</p>`;
+        }
+    }
+
+    // --- KART OLUŞTURUCU (FİNAL TASARIM & DOĞRU İKONLAR) ---
+        // --- KART OLUŞTURUCU (HİZALI, SIKI TASARIM & DOĞRU İKONLAR) ---
+        function createBuildCard(build) {
+            const date = new Date(build.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+            const price = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(build.totalPrice);
+
+            // Ana Resim
+            let mainImageHtml = `<div class="flex h-full w-full items-center justify-center bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-gray-600"><span class="material-symbols-outlined text-6xl">computer</span></div>`;
+            const imgUrl = build.caseImage || build.gpuImage || build.cpuImage;
+            if (imgUrl) {
+                mainImageHtml = `<img src="${imgUrl}" class="h-full w-full object-contain p-4 hover:scale-105 transition-transform duration-500">`;
+            }
+
+            // Bileşen Satırı (Senin istediğin ikonlar ve sıkılaştırılmış boşluklar)
+            const row = (icon, color, name) => {
+                const missing = name.includes("Seçilmedi") || name.includes("Bulunamadı");
+                const textColor = missing ? "text-gray-400 dark:text-gray-600" : "text-gray-700 dark:text-gray-300";
+                const iconColor = missing ? "text-gray-300 dark:text-gray-700" : color;
+                const boxBg = missing ? "bg-gray-100 dark:bg-white/5" : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10";
+                
+                return `
+                    <div class="flex items-center gap-2.5 px-3 py-2 rounded-lg ${boxBg} transition-all">
+                        <div class="${iconColor} flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[20px]">${icon}</span>
+                        </div>
+                        <span class="text-xs font-medium ${textColor} truncate w-full" title="${name}">
+                            ${name}
+                        </span>
+                    </div>
+                `;
+            };
+
+            return `
+                <div class="group relative flex flex-col md:flex-row overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#161b22] shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300">
+                    
+                    <div class="w-full md:w-45 h-45 md:h-auto shrink-0 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 relative bg-white dark:bg-transparent">
+                        ${mainImageHtml}
+                        <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[13px] px-2 py-1 rounded-md font-medium border border-white/10">
+                            ${date}
+                        </div>
+                    </div>
+
+                    <div class="flex-1 p-4 flex flex-col justify-center gap-3">
+                        
+                        <div class="flex flex-col gap-1">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                                ${build.buildName || 'İsimsiz Sistem'}
+                            </h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                            ${row('memory', 'text-blue-500', build.cpuName)}            ${row('developer_board', 'text-indigo-500', build.motherboardName)} ${row('straighten', 'text-purple-500', build.ramName)}      ${row('videogame_asset', 'text-green-500', build.gpuName)}  ${row('save', 'text-cyan-500', build.storageName)}          ${row('computer', 'text-orange-500', build.caseName)}       ${row('power', 'text-yellow-500', build.psuName)}           ${row('mode_fan', 'text-teal-500', build.coolerName)}       </div>
+                    </div>
+
+                    <div class="w-full md:w-36 bg-gray-50 dark:bg-white/[0.02] border-t md:border-t-0 md:border-l border-gray-100 dark:border-white/5 p-4 flex flex-row md:flex-col items-center justify-between md:justify-center gap-2">
+                        <div class="text-center md:mb-1">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1" >TOPLAM</p>
+                            <p class="text-lg font-bold text-gray-900 dark:text-white font-mono">${price}</p>
+                        </div>
+                        <div class="flex md:flex-col gap-2 w-full">
+                            <button onclick="viewDetails(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-primary hover:text-white dark:hover:bg-primary border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all">
+                                <span class="material-symbols-outlined text-lg">visibility</span>
+                            </button>
+                            <button onclick="deleteBuild(${build.id})" class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-white/5 hover:bg-red-500 hover:text-white border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 py-2 rounded-lg transition-all">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- DETAY POPUP (8 BİLEŞENLİ) ---
+        function viewDetails(id) {
+            const build = allBuilds.find(b => b.id === id);
+            if (!build) return;
+            
+            const r = (lbl, val) => `<tr class="border-b border-gray-200 dark:border-white/10 last:border-0"><td class="py-3 text-gray-500 dark:text-white/60 w-1/3">${lbl}</td><td class="py-3 text-right font-medium text-gray-900 dark:text-white">${val}</td></tr>`;
+
+            Swal.fire({
+                title: `<span class="text-lg font-bold text-gray-900 dark:text-white">${build.buildName}</span>`,
+                html: `
+                    <div class="overflow-x-auto text-sm mt-4">
+                        <table class="w-full text-left">
+                            ${r('İşlemci', build.cpuName)}
+                            ${r('Anakart', build.motherboardName)}
+                            ${r('Ekran Kartı', build.gpuName)}
+                            ${r('RAM', build.ramName)}
+                            ${r('Depolama', build.storageName)}
+                            ${r('Kasa', build.caseName)}
+                            ${r('Güç Kaynağı', build.psuName)}
+                            ${r('Soğutucu', build.coolerName)}
+                        </table>
+                    </div>
+                `,
+                background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                confirmButtonColor: '#374151',
+                confirmButtonText: 'Kapat',
+                width: '600px'
+            });
+        }
+
+    // --- SİLME İŞLEMİ (Aynı kaldı ama fonksiyon adları çakışmasın diye ekledim) ---
+    async function deleteBuild(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu kayıtlı sistemi silmek üzeresiniz.",
+            icon: 'warning',
+            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+            color: document.documentElement.classList.contains('dark') ? '#fff' : '#000',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#374151',
+            confirmButtonText: 'Evet, Sil',
+            cancelButtonText: 'İptal'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`https://pcpartsbuild.com/api/Builds/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Silindi!',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                            color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                        });
+                        fetchUserBuilds(localStorage.getItem('userId'));
+                    }
+                } catch (error) {
+                    Swal.fire('Hata', 'Sunucuya ulaşılamadı.', 'error');
+                }
+            }
+        });
+    }
+
+        // --- PROFİL BİLGİSİ ÇEKME (Sol Menü İçin) ---
+        async function fetchUserInfo(userId) {
+            try {
+                const response = await fetch(`https://pcpartsbuild.com/api/auth/get-user/${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('display-fullname').innerText = data.fullName || data.username;
+                    const imgName = data.fullName ? data.fullName : data.username;
+                    document.getElementById('profile-img').src = `https://ui-avatars.com/api/?name=${imgName}&background=16a3b2&color=fff&size=128`;
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // --- DİĞER YARDIMCI FONKSİYONLAR ---
+        // (Dil, Tema, Dropdown kodlarını buraya ekleyebilirsin veya main.js'den çekiyorsan kalsın)
+        const translations = {
+            tr: {
+                "page-subtext-systems": "Oluşturulan taslakları ve favori sistemlerinizi yönetin.",
+                "new-system": "Yeni Sistem Topla",
+                "page-title": "PCPartsBuild - Kayıtlı Sistemler",
+                "nav-wizard": "PC Toplama Sihirbazı",
+                "nav-compatibility": "Parça Uyumluluk Kontrolü",
+                "nav-info": "PC Bileşenleri",
+                "auth-logout": "Çıkış Yap",
+                "page-header": "Hesap Ayarları",
+                "page-subtext": "Profil bilgilerinizi ve kayıtlı sistemlerinizi yönetin.",
+                "status-active": "Aktif Üye",
+                "menu-profile": "Profil Bilgileri",
+                "menu-systems": "Kayıtlı Sistemlerim",
+                "menu-favorites": "Favoriler",
+                "menu-password": "Şifre Değiştir",
+                "form-title": "Kişisel Bilgiler",
+                "btn-edit": "Düzenle",
+                "label-fullname": "Ad Soyad",
+                "label-username": "Kullanıcı Adı",
+                "label-email": "E-Posta",
+                "label-phone": "Telefon",
+                "btn-save": "Değişiklikleri Kaydet",
+                "footer-copyright": "© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:"
+            },
+            en: {
+                "page-subtext-systems": "Manage the drafts you've created and your favorite systems.",
+                "new-system": "Yeni Sistem Topla",
+                "new-system": "Create New System ",
+                "page-title": "PCPartsBuild - My Saved Builds",
+                "nav-wizard": "PC Builder Wizard",
+                "nav-compatibility": "Compatibility Check",
+                "nav-info": "PC Components",
+                "auth-logout": "Log Out",
+                "page-header": "Account Settings",
+                "page-subtext": "Manage your profile information and saved builds.",
+                "status-active": "Active Member",
+                "menu-profile": "Profile Info",
+                "menu-systems": "My Saved Builds",
+                "menu-favorites": "Favorites",
+                "menu-password": "Change Password",
+                "form-title": "Personal Information",
+                "btn-edit": "Edit",
+                "label-fullname": "Full Name",
+                "label-username": "Username",
+                "label-email": "Email",
+                "label-phone": "Phone",
+                "btn-save": "Save Changes",
+                "footer-copyright": "© 2025 PCPartsBuild. All Rights Reserved. Contact Us:"
+            }
+        };
+
+        function setLanguage(lang) {
+            if (!translations[lang]) lang = 'tr';
+            localStorage.setItem('lang', lang);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) el.textContent = translations[lang][key];
+            });
+        }
+        function setupDropdowns() { /* Dropdown ve logout kodların */
+             const logoutBtn = document.getElementById('logout-btn-main');
+             if(logoutBtn) {
+                 logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Çıkış', text: 'Emin misiniz?', icon: 'warning', showCancelButton: true,
+                        confirmButtonText: 'Evet', cancelButtonText: 'İptal',
+                        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                        color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                    }).then((r) => {
+                        if(r.isConfirmed) { localStorage.removeItem('loggedInUser'); localStorage.removeItem('userId'); window.location.href='anasayfa.html'; }
+                    });
+                 });
+             }
+             // Dark mode butonu vb. buraya
+             const darkModeBtn = document.getElementById('darkModeButton');
+             if(darkModeBtn) {
+                darkModeBtn.addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                });
+             }
+        }
+    </script>
+</body>
+</html>

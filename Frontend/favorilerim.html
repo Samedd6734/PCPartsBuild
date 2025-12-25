@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="page-title-favorites">PCPartsBuild - Favorilerim</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    (function() {
+        // Tüm sayfalarda ortak anahtar: 'theme_builder'
+        const savedTheme = localStorage.getItem('theme_builder');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    })();
+</script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="bg-gray-100 dark:bg-[#0d1117] font-sans text-gray-900 dark:text-white antialiased selection:bg-primary selection:text-white hidden">
+    
+    <div class="relative flex min-h-screen flex-col">
+        
+        <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 bg-white dark:bg-background-dark transition-colors duration-300">
+            <nav class="container mx-auto max-w-[74,5%] flex justify-between items-center">
+                <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+                    <img src="Assets/Images/logo.webp" alt="PCPartsBuild" class="h-10 md:h-14">
+                </a>
+        
+                <nav class="hidden lg:flex items-center gap-9">
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <div id="languageSelector" class="relative">
+                        <button id="languageButton" class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-symbols-outlined text-xl">language</span>
+                        </button>
+                        <div id="languageDropdown" class="absolute right-0 top-full mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800 dark:border-gray-700">
+                            <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">Türkçe (TR)</a>
+                            <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">English (EN)</a>
+                        </div>
+                    </div>
+        
+                    <button id="darkModeButton" class="relative flex items-center justify-center h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors overflow-hidden">
+                        <span id="moonIcon" class="material-symbols-outlined absolute icon-transition opacity-0 scale-50 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">dark_mode</span>
+                        <span id="sunIcon" class="material-symbols-outlined absolute icon-transition opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-50 dark:-rotate-90">light_mode</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-1 py-10 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-[92%] w-full">
+                
+                <div class="mb-8 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white" data-i18n="page-header-fav">Favorilerim</h1>
+                        <p class="text-gray-500 dark:text-white/60 mt-1" data-i18n="page-subtext-fav">Beğendiğiniz bileşenleri kategorilere göre filtreleyin.</p>
+                    </div>
+                    <button id="logout-btn-main" class="mt-4 md:mt-0 inline-flex items-center justify-center gap-2 rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-500 dark:hover:bg-red-500/20 transition-colors ring-1 ring-inset ring-red-500/20">
+                        <span class="material-icons-outlined text-lg">logout</span>
+                        <span data-i18n="auth-logout">Çıkış Yap</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-16 lg:grid-cols-12">
+                    
+                    <aside class="lg:col-span-3 xl:col-span-2 w-full max-w-[280px]">
+                        <div class="sticky top-24 space-y-4">
+                            
+                            <div class="glass-panel rounded-2xl p-6 flex flex-col items-center text-center bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <div class="relative mb-4">
+                                    <img id="profile-img" src="" class="h-24 w-24 rounded-full border-4 border-gray-100 dark:border-[#0f171c] shadow-lg">
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="display-fullname">...</h2>
+                                <div class="mt-4 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400 ring-1 ring-inset ring-green-600/20">
+                                    <span data-i18n="status-active">Aktif Üye</span>
+                                </div>
+                            </div>
+
+                            <nav class="glass-panel rounded-xl overflow-hidden p-2 bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <a href="hesabim.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">person</span>
+                                    <span data-i18n="menu-profile">Profil Bilgileri</span>
+                                </a>
+
+                                <a href="kayitli_sistemler.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">computer</span>
+                                    <span data-i18n="menu-systems">Kayıtlı Sistemlerim</span>
+                                </a>
+
+                                <a href="favorilerim.html" class="flex items-center gap-3 rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition-colors">
+                                    <span class="material-icons-round">shopping_bag</span>
+                                    <span data-i18n="menu-favorites">Favoriler</span>
+                                </a>
+                                <a href="sifre-degistir.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">lock</span>
+                                    <span data-i18n="menu-password">Şifre Değiştir</span>
+                                </a>
+                            </nav>
+                        </div>
+                    </aside>
+
+                    <div class="lg:col-span-9 xl:col-span-10 space-y-6">
+                        
+                        <div class="glass-panel rounded-2xl p-6 bg-white dark:bg-[#111c22] border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-300">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3" id="category-tabs">
+                                </div>
+                        </div>
+
+                        <div class="glass-panel rounded-2xl p-6 sm:p-8 bg-white dark:bg-[#111c22] border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-300 min-h-[400px]">
+                            
+                            <div class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-4 mb-6">
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary" >shopping_bag</span>
+                                    <span data-i18n="category-title" id="category-title">İşlemci Favorileri</span>
+                                </h3>
+                            </div>
+
+                            <div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="text-center py-10 col-span-2">
+                                    <span class="material-icons-outlined text-4xl text-gray-400 animate-pulse">hourglass_empty</span>
+                                    <p class="mt-2 text-gray-500">Yükleniyor...</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto border-t border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#0d1317] py-8 text-center transition-colors duration-300">
+            <p class="text-white/60 text-sm font-normal leading-normal" data-i18n="footer-copyright-container">
+                <span data-i18n="footer-copyright">© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:</span> <a class="underline hover:text-primary" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+    // --- 1. AYARLAR VE ÇEVİRİ SÖZLÜĞÜ ---
+    const categories = [
+        { id: 'cpu', icon: 'memory' },
+        { id: 'motherboard', icon: 'developer_board' },
+        { id: 'ram', icon: 'straighten' },
+        { id: 'gpu', icon: 'videogame_asset' },
+        { id: 'storage', icon: 'save' },
+        { id: 'case', icon: 'computer' },
+        { id: 'psu', icon: 'power' },
+        { id: 'cooler', icon: 'mode_fan' }
+    ];
+
+    const translations = {
+        tr: {
+            "nav-wizard": "PC Toplama Sihirbazı",
+            "nav-compatibility": "Parça Uyumluluk Kontrolü",
+            "nav-info": "PC Bileşenleri",
+            "page-title-favorites": "PCPartsBuild - Favorilerim",
+            "page-header-fav": "Favorilerim",
+            "page-subtext-fav": "Beğendiğiniz bileşenleri kategorilere göre filtreleyin.",
+            "menu-favorites": "Favoriler",
+            "auth-logout": "Çıkış Yap",
+            "status-active": "Aktif Üye",
+            "menu-profile": "Profil Bilgileri",
+            "menu-systems": "Kayıtlı Sistemlerim",
+            "menu-password": "Şifre Değiştir",
+            "footer-copyright": "© 2025 PCPartsBuild. Tüm Hakları Saklıdır.Bize Ulaşın:",
+            "favorites-loading": "Yükleniyor...",
+            "favorites-empty": "Listenizde henüz bu kategoride ürün yok.",
+            "favorites-title-suffix": "Favorileri",
+            // Kategori Çevirileri
+            "cat-cpu": "İşlemci",
+            "cat-motherboard": "Anakart",
+            "cat-ram": "Bellek",
+            "cat-gpu": "Ekran Kartı",
+            "cat-storage": "Depolama",
+            "cat-case": "Kasa",
+            "cat-psu": "Güç Kaynağı",
+            "cat-cooler": "Soğutucu"
+        },
+        en: {
+            "nav-wizard": "PC Build Wizard",
+            "nav-compatibility": "Part Compatibility Check",
+            "nav-info": "PC Components",
+            "page-title-favorites": "PCPartsBuild - Favorites",
+            "page-header-fav": "My Favorites",
+            "page-subtext-fav": "Filter your favorite components by category.",
+            "menu-favorites": "Favorites",
+            "auth-logout": "Log Out",
+            "status-active": "Active Member",
+            "menu-profile": "Profile Info",
+            "menu-systems": "My Saved Builds",
+            "menu-password": "Change Password",
+            "footer-copyright": "© 2025 PCPartsBuild. All Rights Reserved. Contact Us: pcpartsbuild@gmail.com",
+            "favorites-loading": "Loading...",
+            "favorites-empty": "No items in this category yet.",
+            "favorites-title-suffix": "Favorites",
+            // Category Translations
+            "cat-cpu": "Processor",
+            "cat-motherboard": "Motherboard",
+            "cat-ram": "Memory",
+            "cat-gpu": "Graphics Card",
+            "cat-storage": "Storage",
+            "cat-case": "Case",
+            "cat-psu": "Power Supply",
+            "cat-cooler": "Cooler"
+        }
+    };
+
+    let allFavorites = [];
+    let activeTab = 'cpu';
+
+    // --- 2. BAŞLANGIÇ (INIT) ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Tema Kontrolü (Diğer sayfalarla uyumlu)
+        const savedTheme = localStorage.getItem('theme_builder');
+        const html = document.documentElement;
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        // Dil Kontrolü
+        const savedLang = localStorage.getItem('lang') || 'tr';
+        setLanguage(savedLang);
+
+        // UI Olaylarını Başlat
+        setupUIEvents();
+
+        // Kullanıcı Kontrolü
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            window.location.href = 'giris.html';
+            return;
+        } else {
+            document.body.classList.remove('hidden');
+            fetchUserInfo(userId);
+            // İlk açılışta verileri çek
+            fetchFavorites(userId);
+        }
+    });
+
+    // --- 3. DİL YÖNETİMİ (KATEGORİLER DAHİL) ---
+    function setLanguage(lang) {
+        if (!translations[lang]) lang = 'tr';
+        localStorage.setItem('lang', lang);
+        document.documentElement.lang = lang;
+
+        // 1. Statik Metinleri Güncelle
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) el.textContent = translations[lang][key];
+        });
+
+        // 2. Kategori Sekmelerini Yeniden Çiz (Çeviri için kritik nokta)
+        renderTabs();
+
+        // 3. Başlığı Güncelle ("İşlemci Favorileri" vs.)
+        updateCategoryTitle();
+    }
+
+    // --- 4. SEKMELERİ ÇİZME (RENDER TABS) ---
+    function renderTabs() {
+        const container = document.getElementById('category-tabs');
+        const currentLang = localStorage.getItem('lang') || 'tr';
+
+        container.innerHTML = categories.map(cat => {
+            // Çeviriyi sözlükten alıyoruz
+            const label = translations[currentLang][`cat-${cat.id}`] || cat.id;
+            
+            return `
+            <button onclick="switchTab('${cat.id}')" 
+                class="flex flex-col items-center justify-center w-full h-20 p-1 rounded-xl transition-all duration-300 border 
+                ${activeTab === cat.id 
+                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-[1.02]' 
+                    : 'bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-white/60 border-transparent hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white'}">
+                <span class="material-symbols-outlined text-2xl mb-1 leading-none pointer-events-none">${cat.icon}</span>
+                <span class="text-[11px] font-medium text-center leading-tight pointer-events-none">${label}</span>
+            </button>
+        `}).join('');
+    }
+
+    // --- 5. SEKME DEĞİŞTİRME ---
+    function switchTab(id) {
+        activeTab = id;
+        renderTabs(); // Seçili olanın rengini güncellemek için
+        updateCategoryTitle();
+        renderList();
+    }
+
+    function updateCategoryTitle() {
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        const label = translations[currentLang][`cat-${activeTab}`];
+        const suffix = translations[currentLang]['favorites-title-suffix'];
+        
+        const titleEl = document.getElementById('category-title');
+        if(titleEl) titleEl.textContent = `${label} ${suffix}`;
+    }
+
+    // --- 6. UI OLAYLARI (DROPDOWN & TEMA) ---
+    function setupUIEvents() {
+        // Dil Butonu ve Menüsü
+        const langBtn = document.getElementById('languageButton');
+        const langMenu = document.getElementById('languageDropdown');
+        
+        if (langBtn && langMenu) {
+            langBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                langMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!langBtn.contains(e.target)) langMenu.classList.add('hidden');
+            });
+        }
+
+        // Dil Seçeneklerine Tıklama
+        document.querySelectorAll('.language-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.preventDefault();
+                const selectedLang = e.target.getAttribute('data-lang');
+                setLanguage(selectedLang);
+                langMenu.classList.add('hidden');
+            });
+        });
+
+        // Tema Butonu (theme_builder kullanarak)
+        const darkModeBtn = document.getElementById('darkModeButton');
+        if (darkModeBtn) {
+            darkModeBtn.addEventListener('click', () => {
+                const html = document.documentElement;
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.setItem('theme_builder', 'light');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.setItem('theme_builder', 'dark');
+                }
+            });
+        }
+
+        // Çıkış Yap
+        const logoutBtn = document.getElementById('logout-btn-main');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Çıkış',
+                    text: 'Emin misiniz?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Evet',
+                    cancelButtonText: 'İptal',
+                    background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                    color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                }).then((r) => {
+                    if (r.isConfirmed) {
+                        localStorage.removeItem('loggedInUser');
+                        localStorage.removeItem('userId');
+                        window.location.href = 'anasayfa.html';
+                    }
+                });
+            });
+        }
+    }
+
+    // --- 7. VERİ ÇEKME VE LİSTELEME ---
+    async function fetchFavorites(userId) {
+        const container = document.getElementById('favorites-container');
+        try {
+            const response = await fetch(`https://pcpartsbuild.com/api/Favorites/${userId}`);
+            if (response.ok) {
+                allFavorites = await response.json();
+                renderList();
+            } else {
+                container.innerHTML = `<p class="text-center col-span-2 text-red-500">Hata oluştu.</p>`;
+            }
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `<p class="text-center col-span-2 text-red-500">Sunucu hatası.</p>`;
+        }
+    }
+
+    function renderList() {
+        const container = document.getElementById('favorites-container');
+        const currentLang = localStorage.getItem('lang') || 'tr';
+        
+        const filtered = allFavorites.filter(item => {
+            if (activeTab === 'cooler') return item.componentType.toLowerCase().includes('cooler');
+            return item.componentType.toLowerCase() === activeTab;
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-white/40 col-span-2">
+                    <span class="material-symbols-outlined text-5xl mb-2 opacity-50">sentiment_dissatisfied</span>
+                    <p>${translations[currentLang]['favorites-empty']}</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filtered.map(item => createProductCard(item)).join('');
+    }
+
+    function createProductCard(item) {
+        const cat = categories.find(c => {
+            if (activeTab === 'cooler') return c.id === 'cooler';
+            return c.id === item.componentType.toLowerCase();
+        });
+        const icon = cat ? cat.icon : 'category';
+        const priceDisplay = item.price > 0 
+            ? new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(item.price)
+            : 'Fiyat Yok';
+
+        return `
+            <div class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-1 transition-all hover:border-primary/50 dark:hover:border-white/20">
+                <div class="flex items-center gap-4 p-4">
+                    <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-white dark:bg-white/10 text-primary border border-gray-200 dark:border-transparent shrink-0 overflow-hidden">
+                        ${item.imageUrl && item.imageUrl.length > 5
+                            ? `<img src="${item.imageUrl}" class="h-full w-full object-contain p-1">` 
+                            : `<span class="material-symbols-outlined text-3xl leading-none">${icon}</span>`
+                        }
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-gray-900 dark:text-white truncate" title="${item.name}">${item.name || 'İsimsiz Ürün'}</h4>
+                        <div class="flex gap-2 mt-1 mb-2">
+                            <span class="text-[15px] whitespace-nowrap rounded bg-gray-200 dark:bg-white/10 px-2 py-1 text-gray-600 dark:text-white/60">
+                                ${item.specs || 'Detay Yok'}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <p class="font-mono text-sm font-bold text-green-600 dark:text-[#4ade80]">${priceDisplay}</p>
+                            <button onclick="removeFavorite(${item.componentId}, '${item.componentType}')" class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-500/20 dark:hover:text-red-500 transition-colors">
+                                <span class="material-icons-round text-lg leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    async function removeFavorite(compId, compType) {
+        Swal.fire({
+            title: 'Sil?', text: 'Bu favori silinecek.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Sil', confirmButtonColor: '#ef4444',
+            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff', color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+        }).then(async (r) => {
+            if (r.isConfirmed) {
+                try {
+                    await fetch('https://pcpartsbuild.com/api/Favorites/remove', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ userId: localStorage.getItem('userId'), componentType: compType, componentId: compId })
+                    });
+                    fetchFavorites(localStorage.getItem('userId'));
+                } catch (e) {}
+            }
+        });
+    }
+
+    async function fetchUserInfo(uid) {
+        try {
+            const r = await fetch(`https://pcpartsbuild.com/api/auth/get-user/${uid}`);
+            if(r.ok) {
+                const d = await r.json();
+                document.getElementById('display-fullname').innerText = d.fullName || d.username;
+                document.getElementById('profile-img').src = `https://ui-avatars.com/api/?name=${d.fullName || d.username}&background=16a3b2&color=fff&size=128`;
+            }
+        } catch(e){}
+    }
+</script>

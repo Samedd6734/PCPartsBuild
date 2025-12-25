@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title data-i18n="page-title-password">PCPartsBuild - Şifre Değiştir</title>
+    <link rel="icon" type="image/ico" href="Assets/Images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="./styles.css">
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme_builder');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-[#0d1117] font-sans text-gray-900 dark:text-white antialiased selection:bg-primary selection:text-white hidden">
+    
+    <div class="relative flex min-h-screen flex-col">
+        
+        <header class="w-full px-4 md:px-8 py-4 border-b border-gray-200 dark:border-gray-800/50 bg-white dark:bg-background-dark transition-colors duration-300">
+            <nav class="container mx-auto max-w-[74,5%] flex justify-between items-center">
+                <a class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white" href="anasayfa.html">
+                    <img src="Assets/Images/logo.webp" alt="PCPartsBuild" class="h-10 md:h-14">
+                </a>
+        
+                <nav class="hidden lg:flex items-center gap-9">
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pts.html" data-i18n="nav-wizard">PC Toplama Sihirbazı</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="puk.html" data-i18n="nav-compatibility">Parça Uyumluluk Kontrolü</a>
+                    <a class="text-gray-600 dark:text-white/80 text-sm font-medium hover:text-primary dark:hover:text-white transition-colors" href="pbg.html" data-i18n="nav-info">PC Bileşenleri</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <div id="languageSelector" class="relative">
+                        <button id="languageButton" class="flex cursor-pointer items-center justify-center rounded-lg h-10 w-10 bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors">
+                            <span class="material-symbols-outlined text-xl">language</span>
+                        </button>
+                        <div id="languageDropdown" class="absolute right-0 top-full mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden z-20 hidden dark:bg-gray-800 dark:border-gray-700">
+                            <a href="#" data-lang="tr" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">Türkçe (TR)</a>
+                            <a href="#" data-lang="en" class="language-option block px-4 py-2 text-sm text-gray-700 hover:bg-primary hover:text-white dark:text-gray-200 transition-colors">English (EN)</a>
+                        </div>
+                    </div>
+        
+                    <button id="darkModeButton" class="relative flex items-center justify-center h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-colors overflow-hidden">
+                        <span id="moonIcon" class="material-symbols-outlined absolute icon-transition opacity-0 scale-50 rotate-90 dark:opacity-100 dark:scale-100 dark:rotate-0">dark_mode</span>
+                        <span id="sunIcon" class="material-symbols-outlined absolute icon-transition opacity-100 scale-100 rotate-0 dark:opacity-0 dark:scale-50 dark:-rotate-90">light_mode</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-1 py-10 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-[92%] w-full">
+                
+                <div class="mb-8 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white" data-i18n="page-header-pass">Güvenlik Ayarları</h1>
+                        <p class="text-gray-500 dark:text-white/60 mt-1" data-i18n="page-subtext-pass">Hesabınızın güvenliği için şifrenizi buradan güncelleyebilirsiniz.</p>
+                    </div>
+                    <button id="logout-btn-main" class="mt-4 md:mt-0 inline-flex items-center justify-center gap-2 rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-500 dark:hover:bg-red-500/20 transition-colors ring-1 ring-inset ring-red-500/20">
+                        <span class="material-icons-outlined text-lg">logout</span>
+                        <span data-i18n="auth-logout">Çıkış Yap</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-16 lg:grid-cols-12">
+                    
+                    <aside class="lg:col-span-3 xl:col-span-2 w-full max-w-[280px]">
+                        <div class="sticky top-24 space-y-4">
+                            
+                            <div class="glass-panel rounded-2xl p-6 flex flex-col items-center text-center bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <div class="relative mb-4">
+                                    <img id="profile-img" src="" class="h-24 w-24 rounded-full border-4 border-gray-100 dark:border-[#0f171c] shadow-lg">
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="display-fullname">...</h2>
+                                <div class="mt-4 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400 ring-1 ring-inset ring-green-600/20">
+                                    <span data-i18n="status-active">Aktif Üye</span>
+                                </div>
+                            </div>
+
+                            <nav class="glass-panel rounded-xl overflow-hidden p-2 bg-white dark:bg-transparent border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                                <a href="hesabim.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">person</span>
+                                    <span data-i18n="menu-profile">Profil Bilgileri</span>
+                                </a>
+
+                                <a href="kayitli_sistemler.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">computer</span>
+                                    <span data-i18n="menu-systems">Kayıtlı Sistemlerim</span>
+                                </a>
+
+                                <a href="favorilerim.html" class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-600 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                    <span class="material-icons-round">shopping_bag</span>
+                                    <span data-i18n="menu-favorites">Favoriler</span>
+                                </a>
+                                
+                                <a href="sifre_degistir.html" class="flex items-center gap-3 rounded-lg bg-primary/10 px-4 py-3 text-sm font-medium text-primary transition-colors">
+                                    <span class="material-icons-round">lock</span>
+                                    <span data-i18n="menu-password">Şifre Değiştir</span>
+                                </a>
+                            </nav>
+                        </div>
+                    </aside>
+
+                    <div class="lg:col-span-9 xl:col-span-10 space-y-6">
+                        
+                        <div class="glass-panel rounded-2xl p-6 sm:p-10 bg-white dark:bg-[#111c22] border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-300">
+                            
+                            <div class="mb-8 flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-6">
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">lock</span>
+                                    <span data-i18n="form-title-pass">Şifre Değişikliği</span>
+                                </h3>
+                                </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+                                
+                                <form id="password-form" class="space-y-6 w-full">
+                                    
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-gray-500 dark:text-white/60 uppercase tracking-wider pl-1" data-i18n="label-current-pass">Mevcut Şifre</label>
+                                        <div class="relative group">
+                                            <input type="password" id="current-password" class="w-full rounded-xl bg-gray-50 dark:bg-black/30 border border-gray-300 dark:border-white/10 px-4 py-3.5 pl-10 pr-12 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                                            <button type="button" onclick="togglePassword('current-password')" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                                                <span class="material-icons-outlined text-xl leading-none">visibility</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-gray-500 dark:text-white/60 uppercase tracking-wider pl-1" data-i18n="label-new-pass">Yeni Şifre</label>
+                                        <div class="relative group">
+                                            <input type="password" id="new-password" class="w-full rounded-xl bg-gray-50 dark:bg-black/30 border border-gray-300 dark:border-white/10 px-4 py-3.5 pl-10 pr-12 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                                            <button type="button" onclick="togglePassword('new-password')" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                                                <span class="material-icons-outlined text-xl leading-none">visibility</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-gray-500 dark:text-white/60 uppercase tracking-wider pl-1" data-i18n="label-confirm-pass">Yeni Şifre (Tekrar)</label>
+                                        <div class="relative group">
+                                            <input type="password" id="confirm-password" class="w-full rounded-xl bg-gray-50 dark:bg-black/30 border border-gray-300 dark:border-white/10 px-4 py-3.5 pl-10 pr-12 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
+                                            <button type="button" onclick="togglePassword('confirm-password')" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                                                <span class="material-icons-outlined text-xl leading-none">visibility</span>
+                                            </button>
+                                        </div>
+                                        <div id="match-error" class="hidden flex items-center gap-1.5 mt-2 text-red-500 text-xs font-semibold bg-red-50 dark:bg-red-500/10 p-2 rounded-lg border border-red-100 dark:border-red-500/20">
+                                            <span class="material-icons-round text-sm">error</span>
+                                            <span data-i18n="error-mismatch">Şifreler eşleşmiyor!</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2">
+                                        <button type="submit" id="btn-save-pass" class="w-full rounded-xl bg-gradient-to-r from-primary to-cyan-600 px-8 py-4 text-sm font-bold text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.01] active:scale-[0.98] transition-all" data-i18n="btn-update-pass">
+                                            Şifreyi Güncelle
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                                <div class="hidden lg:block w-full">
+                                    <div class="rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-500/10 p-6 xl:p-8">
+                                        <div class="flex items-center justify-center h-20 w-20 rounded-full bg-white dark:bg-blue-600/10 text-primary mb-6 shadow-sm border border-blue-100 dark:border-blue-500/20 mx-auto">
+                                            <span class="material-symbols-outlined text-[40px]">security</span>
+                                        </div>
+                                        
+                                        <h4 class="text-center text-lg font-bold text-gray-900 dark:text-white mb-2" data-i18n="info-title">Güvenli Şifre İpuçları</h4>
+                                        <p class="text-center text-sm text-gray-500 dark:text-white/60 mb-6 leading-relaxed" data-i18n="info-desc">Hesap güvenliğinizi en üst düzeyde tutmak için güçlü bir şifre oluşturun.</p>
+                                        
+                                        <ul class="space-y-4">
+                                            <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                                                <span class="material-icons-round text-green-500 text-lg mt-0.5">check_circle</span>
+                                                <span data-i18n="info-rule-1">En az 8 karakter uzunluğunda olmalı.</span>
+                                            </li>
+                                            <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                                                <span class="material-icons-round text-green-500 text-lg mt-0.5">check_circle</span>
+                                                <span data-i18n="info-rule-2">Büyük harf, küçük harf ve rakam içermeli.</span>
+                                            </li>
+                                            <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                                                <span class="material-icons-round text-green-500 text-lg mt-0.5">check_circle</span>
+                                                <span data-i18n="info-rule-3">Tahmin edilmesi zor özel karakterler (!@#) kullanın.</span>
+                                            </li>
+                                            <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                                                <span class="material-icons-round text-red-400 text-lg mt-0.5">warning</span>
+                                                <span data-i18n="info-rule-4">Doğum tarihi veya isminizi şifre olarak kullanmayın.</span>
+                                            </li>
+                                        </ul>
+
+                                        <div class="mt-8 pt-6 border-t border-blue-100 dark:border-blue-500/10 text-center">
+                                            <p class="text-xs font-medium text-gray-400 dark:text-white/40 flex items-center justify-center gap-1">
+                                                <span class="material-icons-outlined text-sm">lock</span>
+                                                <span data-i18n="info-secure">Uçtan uca şifreleme ile korunmaktadır.</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto border-t border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#0d1317] py-8 text-center transition-colors duration-300">
+            <p class="text-white/60 text-sm font-normal leading-normal" data-i18n="footer-copyright-container">
+                <span data-i18n="footer-copyright">© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:</span> <a class="underline hover:text-primary" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- ÇEVİRİ VE AYARLAR ---
+        const translations = {
+            tr: {
+                "page-title-password": "PCPartsBuild - Şifre Değiştir",
+                "nav-wizard": "PC Toplama Sihirbazı",
+                "nav-compatibility": "Parça Uyumluluk Kontrolü",
+                "nav-info": "PC Bileşenleri",
+                "auth-logout": "Çıkış Yap",
+                "page-header-pass": "Güvenlik Ayarları",
+                "page-subtext-pass": "Hesabınızın güvenliği için şifrenizi buradan güncelleyebilirsiniz.",
+                "status-active": "Aktif Üye",
+                "menu-profile": "Profil Bilgileri",
+                "menu-systems": "Kayıtlı Sistemlerim",
+                "menu-favorites": "Favoriler",
+                "menu-password": "Şifre Değiştir",
+                "form-title-pass": "Şifre Değişikliği",
+                "label-current-pass": "Mevcut Şifre",
+                "label-new-pass": "Yeni Şifre",
+                "label-confirm-pass": "Yeni Şifre (Tekrar)",
+                "btn-update-pass": "Şifreyi Güncelle",
+                "footer-copyright": "© 2025 PCPartsBuild. Tüm Hakları Saklıdır. Bize Ulaşın:",
+                "error-mismatch": "Yeni şifreler eşleşmiyor!",
+                "error-empty": "Lütfen tüm alanları doldurun.",
+                "success-pass": "Şifreniz başarıyla güncellendi.",
+                "info-title": "Güvenli Şifre İpuçları",
+                "info-desc": "Hesap güvenliğinizi en üst düzeyde tutmak için güçlü bir şifre oluşturun.",
+                "info-rule-1": "En az 8 karakter uzunluğunda olmalı.",
+                "info-rule-2": "Büyük harf, küçük harf ve rakam içermeli.",
+                "info-rule-3": "Tahmin edilmesi zor özel karakterler (!@#) kullanın.",
+                "info-rule-4": "Doğum tarihi veya isminizi şifre olarak kullanmayın.",
+                "info-secure": "Uçtan uca şifreleme ile korunmaktadır."
+            },
+            en: {
+                "page-title-password": "PCPartsBuild - Change Password",
+                "nav-wizard": "PC Build Wizard",
+                "nav-compatibility": "Part Compatibility Check",
+                "nav-info": "PC Components",
+                "auth-logout": "Log Out",
+                "page-header-pass": "Security Settings",
+                "page-subtext-pass": "Update your password here to keep your account secure.",
+                "status-active": "Active Member",
+                "menu-profile": "Profile Info",
+                "menu-systems": "My Saved Builds",
+                "menu-favorites": "Favorites",
+                "menu-password": "Change Password",
+                "form-title-pass": "Change Password",
+                "label-current-pass": "Current Password",
+                "label-new-pass": "New Password",
+                "label-confirm-pass": "Confirm New Password",
+                "btn-update-pass": "Update Password",
+                "footer-copyright": "© 2025 PCPartsBuild. All Rights Reserved. Contact Us:",
+                "error-mismatch": "New passwords do not match!",
+                "error-empty": "Please fill in all fields.",
+                "success-pass": "Password updated successfully.",
+                "info-title": "Secure Password Tips",
+                "info-desc": "Create a strong password to keep your account security at the highest level.",
+                "info-rule-1": "Must be at least 8 characters long.",
+                "info-rule-2": "Must contain uppercase, lowercase, and numbers.",
+                "info-rule-3": "Use hard-to-guess special characters (!@#).",
+                "info-rule-4": "Do not use your birth date or name as a password.",
+                "info-secure": "Protected by end-to-end encryption."
+            }
+        };
+
+        // --- BAŞLANGIÇ ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Tema
+            const savedTheme = localStorage.getItem('theme_builder');
+            const html = document.documentElement;
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+
+            // 2. Dil
+            const savedLang = localStorage.getItem('lang') || 'tr';
+            setLanguage(savedLang);
+
+            // 3. UI
+            setupUIEvents();
+
+            // 4. Kullanıcı
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = 'giris.html';
+                return;
+            } else {
+                document.body.classList.remove('hidden');
+                fetchUserInfo(userId);
+            }
+        });
+
+        // --- DİL YÖNETİMİ ---
+        function setLanguage(lang) {
+            if (!translations[lang]) lang = 'tr';
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) el.textContent = translations[lang][key];
+            });
+        }
+
+        // --- UI OLAYLARI ---
+        function setupUIEvents() {
+            // Dil Dropdown
+            const langBtn = document.getElementById('languageButton');
+            const langMenu = document.getElementById('languageDropdown');
+            if (langBtn && langMenu) {
+                langBtn.addEventListener('click', (e) => { e.stopPropagation(); langMenu.classList.toggle('hidden'); });
+                document.addEventListener('click', () => langMenu.classList.add('hidden'));
+            }
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setLanguage(e.target.getAttribute('data-lang'));
+                    langMenu.classList.add('hidden');
+                });
+            });
+
+            // Tema
+            const darkModeBtn = document.getElementById('darkModeButton');
+            if (darkModeBtn) {
+                darkModeBtn.addEventListener('click', () => {
+                    const html = document.documentElement;
+                    if (html.classList.contains('dark')) {
+                        html.classList.remove('dark');
+                        localStorage.setItem('theme_builder', 'light');
+                    } else {
+                        html.classList.add('dark');
+                        localStorage.setItem('theme_builder', 'dark');
+                    }
+                });
+            }
+
+            // Çıkış
+            const logoutBtn = document.getElementById('logout-btn-main');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Çıkış', text: 'Emin misiniz?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Evet', cancelButtonText: 'İptal',
+                        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff', color: document.documentElement.classList.contains('dark') ? '#fff' : '#000',
+                        confirmButtonColor: '#16a3b2'
+                    }).then((r) => {
+                        if (r.isConfirmed) {
+                            localStorage.removeItem('loggedInUser');
+                            localStorage.removeItem('userId');
+                            window.location.href = 'anasayfa.html';
+                        }
+                    });
+                });
+            }
+
+            // Şifre Formu Submit
+            const form = document.getElementById('password-form');
+            if (form) form.addEventListener('submit', handlePasswordChange);
+            
+            // Eşleşme Kontrolü
+            const newPass = document.getElementById('new-password');
+            const confPass = document.getElementById('confirm-password');
+            const errorMsg = document.getElementById('match-error');
+
+            if(newPass && confPass) {
+                confPass.addEventListener('input', () => {
+                    if(confPass.value !== newPass.value) errorMsg.classList.remove('hidden');
+                    else errorMsg.classList.add('hidden');
+                });
+            }
+        }
+
+        window.togglePassword = function(fieldId) {
+            const input = document.getElementById(fieldId);
+            const icon = input.nextElementSibling.querySelector('span');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.textContent = "visibility_off";
+            } else {
+                input.type = "password";
+                icon.textContent = "visibility";
+            }
+        }
+
+        async function fetchUserInfo(uid) {
+            try {
+                const r = await fetch(`https://pcpartsbuild.com/api/auth/get-user/${uid}`);
+                if (r.ok) {
+                    const d = await r.json();
+                    document.getElementById('display-fullname').innerText = d.fullName || d.username;
+                    document.getElementById('profile-img').src = `https://ui-avatars.com/api/?name=${d.fullName || d.username}&background=16a3b2&color=fff&size=128`;
+                }
+            } catch (e) {}
+        }
+
+        async function handlePasswordChange(e) {
+            e.preventDefault();
+            const currentPass = document.getElementById('current-password').value;
+            const newPass = document.getElementById('new-password').value;
+            const confirmPass = document.getElementById('confirm-password').value;
+            const lang = localStorage.getItem('lang') || 'tr';
+
+            if (!currentPass || !newPass || !confirmPass) {
+                Swal.fire({ icon: 'warning', title: 'Uyarı', text: translations[lang]['error-empty'] });
+                return;
+            }
+            if (newPass !== confirmPass) {
+                Swal.fire({ icon: 'error', title: 'Hata', text: translations[lang]['error-mismatch'] });
+                return;
+            }
+
+            try {
+                const response = await fetch('https://pcpartsbuild.com/api/auth/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: localStorage.getItem('userId'),
+                        currentPassword: currentPass,
+                        newPassword: newPass
+                    })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    Swal.fire({ icon: 'success', title: 'Başarılı', text: translations[lang]['success-pass'], confirmButtonColor: '#16a3b2' })
+                    .then(() => {
+                         document.getElementById('password-form').reset();
+                    });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Hata', text: result.message || 'Hata oluştu.', confirmButtonColor: '#ef4444' });
+                }
+            } catch (error) {
+                Swal.fire('Hata', 'Sunucuya bağlanılamadı.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
