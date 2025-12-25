@@ -436,17 +436,17 @@
 const toggleDarkMode = () => {
     const html = document.documentElement;
     
-    // 1. Tüm geçişleri anlık olarak durdur
+    // 1. Tüm geçişleri ve hesaplamaları anlık olarak dondur
     html.classList.add('no-transitions');
     
     // 2. Temayı değiştir
     const isDark = html.classList.toggle('dark');
     localStorage.setItem('theme_builder', isDark ? 'dark' : 'light');
     
-    // 3. İkonları güncelle (Hızlıca)
+    // 3. İkonları hızlıca güncelle
     updateIcons(isDark);
     
-    // 4. Milisaniyeler içinde geçiş engelini kaldır (Kullanıcı fark etmez)
+    // 4. Milisaniyeler içinde dondurmayı kaldır
     setTimeout(() => {
         html.classList.remove('no-transitions');
     }, 20); 
@@ -456,6 +456,11 @@ const updateIcons = (isDark) => {
     const sunIcon = document.getElementById('sunIcon');
     const moonIcon = document.getElementById('moonIcon');
     if (!sunIcon || !moonIcon) return;
+
+    // CSS ile çakışmaması için transition süresini JS'den kontrol edin
+    const fastTransition = "0.15s ease";
+    sunIcon.style.transition = fastTransition;
+    moonIcon.style.transition = fastTransition;
 
     if (isDark) {
         moonIcon.style.opacity = '1';
@@ -469,39 +474,6 @@ const updateIcons = (isDark) => {
         moonIcon.style.transform = 'rotate(90deg) scale(0.5)';
     }
 };
-
-    const initializeTheme = (key = 'theme_builder') => {
-        const html = document.documentElement;
-        const savedTheme = localStorage.getItem(key);
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
-
-        let isDark = false;
-        if (savedTheme === 'dark') {
-            html.classList.add('dark');
-            isDark = true;
-        } else if (savedTheme === 'light') {
-            html.classList.remove('dark');
-            isDark = false;
-        } else if (html.classList.contains('dark')) {
-            localStorage.setItem(key, 'dark');
-            isDark = true;
-        } else {
-            localStorage.setItem(key, 'light');
-            isDark = false;
-        }
-
-        if (sunIcon && moonIcon) {
-            if (isDark) {
-                moonIcon.classList.add('opacity-100', 'scale-100');
-                sunIcon.classList.add('opacity-0', 'scale-75');
-            } else {
-                sunIcon.classList.add('opacity-100', 'scale-100');
-                moonIcon.classList.add('opacity-0', 'scale-75');
-            }
-        }
-    };
 
     const initializeLang = () => {
         const savedLang = localStorage.getItem('lang');

@@ -380,10 +380,27 @@ div:where(.swal2-container) button.swal2-cancel {
 }
 
 
-/* Tema değişimi sırasında kasılmayı önleyen sihirli sınıf */
+/* Tema değişimi sırasında kasılmayı önleyen kritik sınıf */
 .no-transitions *,
 .no-transitions *::before,
 .no-transitions *::after {
   transition: none !important;
   animation: none !important;
+}
+
+@layer base {
+  /* Sadece ana gövdede geçiş kalsın */
+  html, body {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  /* Butonlar için sınırlı geçiş */
+  button, a {
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  /* Metin ve ikonlarda geçişi TAMAMEN kapatın (Flicker'ı bitirir) */
+  span, p, h1, h2, h3, .material-symbols-outlined {
+    transition: none !important;
+  }
 }
