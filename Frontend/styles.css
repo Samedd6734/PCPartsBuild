@@ -3237,11 +3237,22 @@
   }
 }
 @layer base {
-  html, body {
-    transition: background-color 0.2s ease;
-  }
-  .material-symbols-outlined, span, p, h1, h2, h3, a {
+  *, ::before, ::after {
     transition: none !important;
+    animation: none !important;
+  }
+  .no-transitions * {
+    transition: none !important;
+    animation: none !important;
+  }
+  html {
+    background-color: var(--color-background-light);
+    color: #1f2937;
+    scrollbar-gutter: stable;
+  }
+  html.dark {
+    background-color: var(--color-background-dark);
+    color: #ffffff;
   }
 }
 #bg-video {

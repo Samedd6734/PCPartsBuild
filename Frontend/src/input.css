@@ -33,14 +33,27 @@
 }
 
 @layer base {
-  /* Sadece html ve body'de geçiş kalsın, yıldız (*) işaretli olan her şeyi sil */
-  html, body {
-    transition: background-color 0.2s ease;
+  /* 1. Tüm animasyon ve geçişleri evrensel olarak kapatıyoruz */
+  *, ::before, ::after {
+    transition: none !important;
+    animation: none !important;
   }
 
-  /* İkon ve metinlerdeki geçişleri tamamen kapat (Zaten yanıp sönmeye neden olan bunlar) */
-  .material-symbols-outlined, span, p, h1, h2, h3, a {
+  /* 2. Tema değişimi dondurucu sınıf (Kesin çözüm) */
+  .no-transitions * {
     transition: none !important;
+    animation: none !important;
+  }
+
+  html {
+    background-color: var(--color-background-light);
+    color: #1f2937;
+    scrollbar-gutter: stable;
+  }
+
+  html.dark {
+    background-color: var(--color-background-dark);
+    color: #ffffff;
   }
 }
 
