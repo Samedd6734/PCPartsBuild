@@ -471,6 +471,26 @@
 </div>
 
 <script>
+    // 1. Önce değişkeni boş tanımlıyoruz
+let GEMINI_API_KEY = "";
+
+// 2. Dosyadan anahtarı çeken fonksiyon
+async function loadApiKey() {
+    try {
+        const response = await fetch('api.txt');
+        const key = await response.text();
+        GEMINI_API_KEY = key.trim(); // Boşlukları temizleyip değişkene atıyoruz
+        console.log("API Anahtarı başarıyla yüklendi.");
+        
+        // API anahtarı yüklendikten sonra çalışacak fonksiyonu burada çağırabilirsin
+        // startApp(); 
+    } catch (error) {
+        console.error("API anahtarı okunurken hata oluştu:", error);
+    }
+}
+
+// Sayfa yüklendiğinde anahtarı çek
+loadApiKey();
     // Axios kütüphanesini dahil et
     document.write('<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></' + 'script>');
 
@@ -481,7 +501,7 @@
     // API Ayarları
     const API_BASE_URL = "https://pcpartsbuild.com"; // Senin API adresin
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=";
-    const GEMINI_API_KEY = "AIzaSyBkenPyKXPU2fzjwskLIPH2Oyqn7-qWbDM"; // Buraya kendi API anahtarını gireceksin
+
 
     // Endpoint Eşleşmeleri
     const endpoints = {

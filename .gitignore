@@ -43,3 +43,4 @@ node_modules/
 tailwindcss.exe
 package-lock.json
 .DS_Store
+api.txt
