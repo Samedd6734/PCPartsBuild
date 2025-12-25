@@ -380,7 +380,8 @@ div:where(.swal2-container) button.swal2-cancel {
 }
 
 
-/* Tema değişimi sırasında kasılmayı önleyen kritik sınıf */
+/* Tema değişimi sırasında her şeyi (kartlar, özet, butonlar) dondurur */
+.no-transitions,
 .no-transitions *,
 .no-transitions *::before,
 .no-transitions *::after {
@@ -389,18 +390,18 @@ div:where(.swal2-container) button.swal2-cancel {
 }
 
 @layer base {
-  /* Sadece ana gövdede geçiş kalsın */
+  /* Sadece sayfa ilk açıldığında arka plan yumuşak gelsin */
   html, body {
     transition: background-color 0.2s ease, color 0.2s ease;
   }
-  
-  /* Butonlar için sınırlı geçiş */
-  button, a {
-    transition: background-color 0.15s ease, opacity 0.15s ease;
-  }
 
-  /* Metin ve ikonlarda geçişi TAMAMEN kapatın (Flicker'ı bitirir) */
-  span, p, h1, h2, h3, .material-symbols-outlined {
+  /* Kartlar, metinler ve ikonlarda transition'ı kapatıyoruz */
+  /* Bu sayede tema değişince tık diye kararırlar */
+  .component-card, 
+  .sidebar, 
+  #system-summary, 
+  p, h1, h2, h3, span, 
+  .material-symbols-outlined {
     transition: none !important;
   }
 }
