@@ -106,11 +106,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-cpu">
                 <select id="cpu" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value="" data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('cpu')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400" data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('cpu', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -121,10 +121,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('cpu', this.value)" onclick="event.stopPropagation()">
+                        <input type="text" data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('cpu', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-cpu">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -143,11 +143,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-motherboard">
                 <select id="motherboard" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value=""data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('motherboard')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400"data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('motherboard', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -158,10 +158,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('motherboard', this.value)" onclick="event.stopPropagation()">
+                        <input type="text"  data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('motherboard', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-motherboard">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -179,11 +179,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-ram">
                 <select id="ram" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value=""data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('ram')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400"data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('ram', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -194,10 +194,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('ram', this.value)" onclick="event.stopPropagation()">
+                        <input type="text" data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('ram', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-ram">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -216,11 +216,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-gpu">
                 <select id="gpu" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value=""data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('gpu')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400"data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('gpu', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -231,10 +231,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('gpu', this.value)" onclick="event.stopPropagation()">
+                        <input type="text" data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('gpu', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-gpu">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -253,11 +253,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-storage">
                 <select id="storage" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value=""data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('storage')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400"data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('storage', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -268,10 +268,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('storage', this.value)" onclick="event.stopPropagation()">
+                        <input type="text" data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('storage', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-storage">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -290,11 +290,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-case">
                 <select id="case" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value=""data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('case')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400"data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('case', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -305,10 +305,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('case', this.value)" onclick="event.stopPropagation()">
+                        <input type="text" data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('case', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-case">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -327,11 +327,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-psu">
                 <select id="psu" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value=""data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('psu')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400"data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('psu', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -342,10 +342,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('psu', this.value)" onclick="event.stopPropagation()">
+                        <input type="text" data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('psu', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-psu">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -364,11 +364,11 @@
             
             <div class="custom-select-wrapper" id="wrapper-cpuCooler">
                 <select id="cpuCooler" class="hidden" onchange="handleSelectionChange(event)">
-                    <option value="">Seçim Yapınız...</option>
+                    <option value=""data-i18n="select-default">Seçim Yapınız...</option>
                 </select>
 
                 <div class="custom-select-trigger" onclick="toggleCustomDropdown('cpuCooler')">
-                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400">Seçim Yapınız...</span>
+                    <span class="selection-text truncate select-none text-gray-500 dark:text-gray-400"data-i18n="select-default">Seçim Yapınız...</span>
                     <div class="flex items-center">
                         <button class="clear-btn" onclick="clearCustomSelection('cpuCooler', event)">
                             <span class="material-symbols-outlined text-sm font-bold">close</span>
@@ -379,10 +379,10 @@
 
                 <div class="custom-select-options">
                     <div class="custom-search-box">
-                        <input type="text" placeholder="Ara..." onkeyup="filterCustomOptions('cpuCooler', this.value)" onclick="event.stopPropagation()">
+                        <input type="text" data-i18n-placeholder="search-title" onkeyup="filterCustomOptions('cpuCooler', this.value)" onclick="event.stopPropagation()">
                     </div>
                     <div class="custom-options-list" id="list-cpuCooler">
-                        <div class="p-3 text-center text-xs text-gray-400">Veriler Yükleniyor...</div>
+                        <div class="p-3 text-center text-xs text-gray-400"data-i18n="loading-data">Veriler Yükleniyor...</div>
                     </div>
                 </div>
             </div>
@@ -528,9 +528,11 @@ loadApiKey();
             "nav-wizard": "PC Toplama Sihirbazı",
             "nav-compatibility": "Parça Uyumluluk Kontrolü",
             "nav-info": "PC Bileşenleri",
+            "ai-analiz":"Yapay Zeka Analiz Ediyor...",
             "auth-signup": "Kayıt Ol",
             "auth-login": "Giriş Yap",
             "auth-welcome": "Hoş geldin,",
+            "loading-data":"Veriler Yükleniyor...",
             "nav-profile": "Hesabım",
             "auth-logout": "Çıkış Yap",
             "main-title": "PC Parça Uyumluluk Kontrolü",
@@ -544,6 +546,7 @@ loadApiKey();
             "type-cooler": "Soğutucu",
             "tab-case": "Kasa",
             "select-default": "Seçim Yapınız...",
+            "search-title":"ara...",
             "action-check": "Uyumluluğu Kontrol Et",
             "action-expert": "Parça Uzman Görüşü Al ✨",
             "results-title": "Kontrol Sonuçları",
@@ -570,13 +573,16 @@ loadApiKey();
             "main-subtitle": "Place your system components in the slots below. Our AI and algorithms will instantly check for compatibility.",
             "label-cpu": "Processor",
             "label-motherboard": "Motherboard",
+            "ai-analiz":"AI is Analyzing...",
             "label-ram": "Memory (RAM)",
             "label-psu": "Power Supply",
+            "loading-data":"Loading Data...",
             "type-gpu": "Graphics Card",
             "type-storage": "Storage",
             "type-cooler": "Cooler",
             "tab-case": "Case",
             "select-default": "Select...",
+            "search-title":"Search...",
             "action-check": "Check Compatibility",
             "action-expert": "Get Expert Opinion ✨",
             "results-title": "Check Results",
@@ -705,18 +711,26 @@ loadApiKey();
         modalTitle: document.getElementById('modalTitle')
     });
 
-    // Modal Aç/Kapa
-    const openModal = (title, content, isLoading = false) => {
-        const { modal, modalTitle, modalContent } = getModalElements();
-        modalTitle.textContent = title;
-        modalContent.innerHTML = isLoading 
-            ? `<div class="flex items-center justify-center space-x-2 text-primary py-8">
-                   <svg class="animate-spin h-6 w-6 mr-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"></circle><path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                   <span class="text-lg animate-pulse">Yapay Zeka Analiz Ediyor...</span>
-                 </div>`
-            : content;
-        modal.classList.remove('hidden');
-    };
+    // Modal Aç/Kapa (Çeviri Uyumlu)
+const openModal = (title, content, isLoading = false) => {
+    const { modal, modalTitle, modalContent } = getModalElements();
+    
+    // 1. O anki dili al (varsayılan tr)
+    const currentLang = localStorage.getItem('lang') || 'tr';
+    
+    // 2. Sözlükten ilgili çeviriyi çek
+    // translations[currentLang]['ai-analiz'] -> "Yapay Zeka Analiz Ediyor..." veya "AI is Analyzing..."
+    const loadingText = translations[currentLang]['ai-analiz'];
+
+    modalTitle.textContent = title;
+    modalContent.innerHTML = isLoading 
+        ? `<div class="flex items-center justify-center space-x-2 text-primary py-8">
+               <svg class="animate-spin h-6 w-6 mr-3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" class="opacity-25"></circle><path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+               <span class="text-lg animate-pulse" data-i18n="ai-analiz">${loadingText}</span>
+             </div>`
+        : content;
+    modal.classList.remove('hidden');
+};
 
     window.closeModal = () => {
         document.getElementById('geminiModal').classList.add('hidden');
@@ -1018,26 +1032,30 @@ loadApiKey();
         selectElement.dispatchEvent(event);
     }
 
-    // 3. Seçimi Temizle (X Butonu)
-    function clearCustomSelection(category, event) {
-        if(event) event.stopPropagation(); // Menü açılmasın
-        
-        const wrapper = document.getElementById(`wrapper-${category}`);
-        const selectElement = document.getElementById(category);
-        const triggerText = wrapper.querySelector('.selection-text');
+    // 3. Seçimi Temizle (X Butonu) - Çeviri Uyumlu
+function clearCustomSelection(category, event) {
+    if(event) event.stopPropagation(); // Menü açılmasın
+    
+    const wrapper = document.getElementById(`wrapper-${category}`);
+    const selectElement = document.getElementById(category);
+    const triggerText = wrapper.querySelector('.selection-text');
 
-        // Değerleri Sıfırla
-        selectElement.value = "";
-        triggerText.textContent = "Seçim Yapınız..."; 
-        triggerText.classList.add('text-gray-500', 'dark:text-gray-400');
-        triggerText.classList.remove('text-gray-900', 'dark:text-white', 'font-medium');
-        
-        wrapper.classList.remove('has-selection');
+    // 1. O anki dili ve sözlükteki karşılığını al
+    const currentLang = localStorage.getItem('lang') || 'tr';
+    const defaultText = translations[currentLang]['select-default'];
 
-        // Logic'i Tetikle
-        const evt = new Event('change');
-        selectElement.dispatchEvent(evt);
-    }
+    // 2. Değerleri Sıfırla
+    selectElement.value = "";
+    triggerText.textContent = defaultText; // Artık dinamik olarak "Select..." veya "Seçim Yapınız..." yazar
+    triggerText.classList.add('text-gray-500', 'dark:text-gray-400');
+    triggerText.classList.remove('text-gray-900', 'dark:text-white', 'font-medium');
+    
+    wrapper.classList.remove('has-selection');
+
+    // Logic'i Tetikle
+    const evt = new Event('change');
+    selectElement.dispatchEvent(evt);
+}
 
     // 4. Arama Filtreleme
     function filterCustomOptions(category, searchText) {

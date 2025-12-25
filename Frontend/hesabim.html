@@ -414,7 +414,6 @@
                 });
             });
         }
-            document.getElementById('logout-btn-main')?.addEventListener('click', logoutAction);
 
 // --- 3. DÜZENLEME VE KAYDETME MANTIĞI ---
 
@@ -424,20 +423,18 @@ const saveBtn = document.getElementById('btn-save-changes');
 // Inputları Tanımla
 const inputFullname = document.getElementById('input-fullname');
 const inputPhone = document.getElementById('input-phone');
-// EKLENENLER:
 const inputUsername = document.getElementById('input-username');
 const inputEmail = document.getElementById('input-email');
 
-// --- YENİ EKLENEN DEĞİŞKEN: ESKİ VERİLERİ TUTACAK ---
 let originalValues = {}; 
 
 // Düzenle Butonuna Tıklanınca
 editBtn.addEventListener('click', () => {
-    // Kilidi Aç / Kapat (Toggle)
     const isLocked = inputFullname.disabled;
+    const currentLang = localStorage.getItem('lang') || 'tr'; // Mevcut dili al
 
     if (isLocked) {
-        // --- 1. DÜZENLEME BAŞLADI: MEVCUT VERİLERİ YEDEKLE ---
+        // DÜZENLEME BAŞLADI: MEVCUT VERİLERİ YEDEKLE
         originalValues = {
             fullname: inputFullname.value,
             username: inputUsername.value,
@@ -445,39 +442,37 @@ editBtn.addEventListener('click', () => {
             phone: inputPhone.value
         };
 
-        // Düzenleme Modunu AÇ (Kilitleri Kaldır)
+        // Düzenleme Modunu AÇ
         inputFullname.disabled = false;
         inputPhone.disabled = false;
         inputUsername.disabled = false;
         inputEmail.disabled = false;
         
-        // Kaydet butonunu aktif et
         saveBtn.disabled = false;
         saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         
-        // Buton görünümünü değiştir
-        editBtn.innerText = "İptal";
+        // Buton metnini çeviriden al (İptal / Cancel)
+        // Eğer translations içinde "btn-cancel" yoksa manuel string yerine kütüphaneyi kullanmak daha iyidir
+        editBtn.innerText = currentLang === 'tr' ? "İptal" : "Cancel"; 
         editBtn.classList.replace('text-primary', 'text-red-500');
 
     } else {
-        // --- 2. İPTAL EDİLDİ: YEDEKTEN GERİ YÜKLE ---
+        // İPTAL EDİLDİ: YEDEKTEN GERİ YÜKLE
         inputFullname.value = originalValues.fullname;
         inputUsername.value = originalValues.username;
         inputEmail.value = originalValues.email;
         inputPhone.value = originalValues.phone;
 
-        // Düzenleme Modunu KAPAT (Tekrar Kilitle)
         inputFullname.disabled = true;
         inputPhone.disabled = true;
         inputUsername.disabled = true;
         inputEmail.disabled = true;
         
-        // Kaydet butonunu pasif et
         saveBtn.disabled = true;
         saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-        // Buton görünümünü eski haline getir
-        editBtn.innerText = "Düzenle"; 
+        // Buton metnini çeviriden al (Düzenle / Edit)
+        editBtn.innerText = translations[currentLang]['btn-edit']; 
         editBtn.classList.replace('text-red-500', 'text-primary');
     }
 });
