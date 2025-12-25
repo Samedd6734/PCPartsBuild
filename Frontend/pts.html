@@ -439,19 +439,17 @@
 const toggleDarkMode = () => {
     const html = document.documentElement;
     
-    // 1. Tüm geçişleri ve animasyonları ANLIK olarak dondur (Takılmayı önler)
+    // 1. Gecikmeyi ve bağımsız hareketleri durdurmak için sayfayı dondur
     html.classList.add('no-transitions');
     
-    // 2. Koyu tema sınıfını değiştir
+    // 2. Temayı PUK sayfasıyla aynı anahtar (theme_builder) üzerinden değiştir
     const isDark = html.classList.toggle('dark');
+    localStorage.setItem('theme_builder', isDark ? 'dark' : 'light'); 
     
-    // 3. PUK sayfasıyla senkronize çalışması için aynı anahtarı kullan
-    localStorage.setItem('theme_builder', isDark ? 'dark' : 'light');
-    
-    // 4. İkonları güncelle
+    // 3. İkonları güncelle
     updateIcons(isDark);
     
-    // 5. Milisaniyeler içinde dondurmayı kaldır (Kartlar anında yeni rengine bürünür)
+    // 4. Milisaniyeler içinde dondurmayı kaldır (Kartlar tık diye yeni rengine geçer)
     setTimeout(() => {
         html.classList.remove('no-transitions');
     }, 20); 
@@ -479,11 +477,6 @@ const updateIcons = (isDark) => {
     const sunIcon = document.getElementById('sunIcon');
     const moonIcon = document.getElementById('moonIcon');
     if (!sunIcon || !moonIcon) return;
-
-    // Geçiş süresini minimuma indirerek "yanıp sönme" hissini bitiriyoruz
-    const fastDuration = "150ms ease";
-    sunIcon.style.transition = fastDuration;
-    moonIcon.style.transition = fastDuration;
 
     if (isDark) {
         moonIcon.style.opacity = '1';

@@ -380,7 +380,7 @@ div:where(.swal2-container) button.swal2-cancel {
 }
 
 
-/* Tema değişimi sırasında her şeyi (kartlar, özet, butonlar) dondurur */
+/* Tema değişimi sırasında kartların ve özetin yavaş kararmasını zorla durdurur */
 .no-transitions,
 .no-transitions *,
 .no-transitions *::before,
@@ -395,8 +395,8 @@ div:where(.swal2-container) button.swal2-cancel {
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* Kartlar, metinler ve ikonlarda transition'ı kapatıyoruz */
-  /* Bu sayede tema değişince tık diye kararırlar */
+  /* Kartlarda, yan menüde ve ikonlarda geçişi TAMAMEN kapatın */
+  /* Bu kural olmazsa kartlar hala animasyonlu kararmaya çalışır */
   .component-card, 
   .sidebar, 
   #system-summary, 
