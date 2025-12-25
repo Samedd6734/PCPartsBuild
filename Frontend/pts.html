@@ -433,23 +433,50 @@
             renderBuildList();
         }
     };
+
+
+// === TEMA YÖNETİMİ (KESİN ÇÖZÜM) ===
+
 const toggleDarkMode = () => {
     const html = document.documentElement;
     
-    // 1. Tüm geçişleri ve hesaplamaları anlık olarak dondur
+    // 1. Kasma ve gecikmeyi önlemek için geçişleri anlık dondur
     html.classList.add('no-transitions');
     
     // 2. Temayı değiştir
     const isDark = html.classList.toggle('dark');
+    
+    // 3. PUK ile aynı anahtarı kullan (Senkronizasyon sağlar)
     localStorage.setItem('theme_builder', isDark ? 'dark' : 'light');
     
-    // 3. İkonları hızlıca güncelle
+    // 4. İkonları hızlıca güncelle
     updateIcons(isDark);
     
-    // 4. Milisaniyeler içinde dondurmayı kaldır
+    // 5. Milisaniyeler içinde dondurmayı kaldır (Kullanıcı fark etmez, kartlar anında kararır)
     setTimeout(() => {
         html.classList.remove('no-transitions');
     }, 20); 
+};
+
+const initializeTheme = (key = 'theme_builder') => {
+    const html = document.documentElement;
+    const savedTheme = localStorage.getItem(key);
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+
+    let isDark = false;
+    // PUK sayfasındaki mantığın aynısı:
+    if (savedTheme === 'dark') {
+        html.classList.add('dark');
+        isDark = true;
+    } else if (savedTheme === 'light') {
+        html.classList.remove('dark');
+        isDark = false;
+    } else if (html.classList.contains('dark')) {
+        isDark = true;
+    }
+
+    updateIcons(isDark);
 };
 
 const updateIcons = (isDark) => {
@@ -457,21 +484,22 @@ const updateIcons = (isDark) => {
     const moonIcon = document.getElementById('moonIcon');
     if (!sunIcon || !moonIcon) return;
 
-    // CSS ile çakışmaması için transition süresini JS'den kontrol edin
-    const fastTransition = "0.15s ease";
-    sunIcon.style.transition = fastTransition;
-    moonIcon.style.transition = fastTransition;
-
     if (isDark) {
-        moonIcon.style.opacity = '1';
-        moonIcon.style.transform = 'rotate(0deg) scale(1)';
-        sunIcon.style.opacity = '0';
-        sunIcon.style.transform = 'rotate(-90deg) scale(0.5)';
+        moonIcon.classList.replace('opacity-0', 'opacity-100');
+        moonIcon.classList.replace('scale-75', 'scale-100');
+        moonIcon.classList.replace('rotate-90', 'rotate-0');
+        
+        sunIcon.classList.replace('opacity-100', 'opacity-0');
+        sunIcon.classList.replace('scale-100', 'scale-75');
+        sunIcon.classList.replace('rotate-0', 'rotate-90');
     } else {
-        sunIcon.style.opacity = '1';
-        sunIcon.style.transform = 'rotate(0deg) scale(1)';
-        moonIcon.style.opacity = '0';
-        moonIcon.style.transform = 'rotate(90deg) scale(0.5)';
+        sunIcon.classList.replace('opacity-0', 'opacity-100');
+        sunIcon.classList.replace('scale-75', 'scale-100');
+        sunIcon.classList.replace('rotate-90', 'rotate-0');
+        
+        moonIcon.classList.replace('opacity-100', 'opacity-0');
+        moonIcon.classList.replace('scale-100', 'scale-75');
+        moonIcon.classList.replace('rotate-0', 'rotate-90');
     }
 };
 
@@ -480,9 +508,10 @@ const updateIcons = (isDark) => {
         let currentLang = savedLang || document.documentElement.lang || 'tr';
         setLanguage(currentLang);
     };
-    // === BÖLÜM 4: SİHİRBAZ ANA FONKSİYONLARI (GÜNCELLENDİ) ===
 
-    // ==========================================
+    
+// === BÖLÜM 4: SİHİRBAZ ANA FONKSİYONLARI (GÜNCELLENDİ) ===
+// ==========================================
 // GLOBAL TANIMLAMALAR
 // ==========================================
 
