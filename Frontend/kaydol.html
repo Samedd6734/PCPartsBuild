@@ -191,14 +191,9 @@
         setLanguage(savedLang || document.documentElement.lang || 'tr');
     };
     
-    const initializeTheme = () => {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark'); 
-    };
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeLang();
-        initializeTheme();
         
         // Dil Menüsü Kodları
         const languageSelector = document.getElementById('languageSelector');

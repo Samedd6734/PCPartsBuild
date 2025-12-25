@@ -10,20 +10,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
-<script>
-    (function() {
-        // Tüm sayfalarda ortak anahtar: 'theme_builder'
-        const savedTheme = localStorage.getItem('theme_builder');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    })();
-</script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="./styles.css">
@@ -447,38 +433,34 @@
             renderBuildList();
         }
     };
-// Tema Ayarları - DÜZELTİLMİŞ HALİ
-    const toggleDarkMode = () => {
-        const html = document.documentElement;
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
-        // Tailwind'in "dark:" sınıfları bu işi hallediyor.
-        
-        const isDarkMode = html.classList.contains('dark');
-        const newTheme = isDarkMode ? 'light' : 'dark';
+const toggleDarkMode = () => {
+    const html = document.documentElement;
+    const isDarkMode = html.classList.toggle('dark'); // Tek satırda class ekle/çıkar
+    const newTheme = isDarkMode ? 'dark' : 'light';
+    
+    localStorage.setItem('theme_builder', newTheme);
+    
+    // İkonları hızlıca güncelle
+    updateIcons(isDarkMode);
+};
 
-        if (isDarkMode) {
-            html.classList.remove('dark');
-        } else {
-            html.classList.add('dark');
-        }
-        localStorage.setItem('theme_builder', newTheme);
-        
-        if (sunIcon && moonIcon) {
-            if (newTheme === 'light') {
-                moonIcon.classList.remove('opacity-100', 'scale-100');
-                moonIcon.classList.add('opacity-0', 'scale-75');
-                sunIcon.classList.remove('opacity-0', 'scale-75');
-                sunIcon.classList.add('opacity-100', 'scale-100'); 
-            } else {
-                sunIcon.classList.remove('opacity-100', 'scale-100'); 
-                sunIcon.classList.add('opacity-0', 'scale-75'); 
-                moonIcon.classList.remove('opacity-0', 'scale-75');
-                moonIcon.classList.add('opacity-100', 'scale-100');
-            }
-        }
-    };
+const updateIcons = (isDark) => {
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+    if (!sunIcon || !moonIcon) return;
+
+    if (isDark) {
+        moonIcon.style.opacity = '1';
+        moonIcon.style.transform = 'rotate(0deg) scale(1)';
+        sunIcon.style.opacity = '0';
+        sunIcon.style.transform = 'rotate(-90deg) scale(0.5)';
+    } else {
+        sunIcon.style.opacity = '1';
+        sunIcon.style.transform = 'rotate(0deg) scale(1)';
+        moonIcon.style.opacity = '0';
+        moonIcon.style.transform = 'rotate(90deg) scale(0.5)';
+    }
+};
 
     const initializeTheme = (key = 'theme_builder') => {
         const html = document.documentElement;
