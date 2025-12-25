@@ -464,6 +464,31 @@
             }
         };
 
+
+        // Çıkış Yap
+        const logoutBtn = document.getElementById('logout-btn-main');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Çıkış',
+                    text: 'Emin misiniz?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Evet',
+                    cancelButtonText: 'İptal',
+                    background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                    color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                }).then((r) => {
+                    if (r.isConfirmed) {
+                        localStorage.removeItem('loggedInUser');
+                        localStorage.removeItem('userId');
+                        window.location.href = 'anasayfa.html';
+                    }
+                });
+            });
+        }
+
         function setLanguage(lang) {
             if (!translations[lang]) lang = 'tr';
             localStorage.setItem('lang', lang);
@@ -487,6 +512,7 @@
                     });
                  });
              }
+             
              // Dark mode butonu vb. buraya
              const darkModeBtn = document.getElementById('darkModeButton');
              if(darkModeBtn) {

@@ -72,7 +72,7 @@
                     </div>
                     <button id="logout-btn-main" class="mt-4 md:mt-0 inline-flex items-center justify-center gap-2 rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-200 dark:bg-red-500/10 dark:text-red-500 dark:hover:bg-red-500/20 transition-colors ring-1 ring-inset ring-red-500/20">
                         <span class="material-icons-outlined text-lg">logout</span>
-                        <span data-i18n="auth-logout">Oturumu Kapat</span>
+                        <span data-i18n="auth-logout">Çıkış Yap</span>
                     </button>
                 </div>
 
@@ -112,10 +112,10 @@
                         </div>
                     </aside>
 
-                    <div class="lg:col-span-9 space-y-6">
+                    <div class="lg:col-span-9 xl:col-span-10 space-y-6">
                         
                         <div class="glass-panel rounded-2xl p-6 sm:p-8 bg-white dark:bg-[#111c22] border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-300">
-                            <div class="mb-6 flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-4">
+                            <div class="mb-8 flex items-center justify-between border-b border-gray-200 dark:border-white/10 pb-6">
                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">person</span>
                                     <span data-i18n="form-title">Kişisel Bilgiler</span>
@@ -392,27 +392,28 @@
             });
 
             // Çıkış Yap
-            const logoutAction = (e) => {
+        const logoutBtn = document.getElementById('logout-btn-main');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 Swal.fire({
-                    title: 'Çıkış Yapılıyor',
-                    text: 'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+                    title: 'Çıkış',
+                    text: 'Emin misiniz?',
                     icon: 'warning',
-                    background: html.classList.contains('dark') ? '#1f2937' : '#ffffff',
-                    color: html.classList.contains('dark') ? '#ffffff' : '#1f2937',
                     showCancelButton: true,
-                    confirmButtonColor: '#16a3b2',
-                    cancelButtonColor: '#ef4444',
                     confirmButtonText: 'Evet',
-                    cancelButtonText: 'İptal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    cancelButtonText: 'İptal',
+                    background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                    color: document.documentElement.classList.contains('dark') ? '#fff' : '#000'
+                }).then((r) => {
+                    if (r.isConfirmed) {
                         localStorage.removeItem('loggedInUser');
-                        localStorage.removeItem('userId'); // ID'yi de sil
+                        localStorage.removeItem('userId');
                         window.location.href = 'anasayfa.html';
                     }
                 });
-            };
+            });
+        }
             document.getElementById('logout-btn-main')?.addEventListener('click', logoutAction);
 
 // --- 3. DÜZENLEME VE KAYDETME MANTIĞI ---
