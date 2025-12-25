@@ -3238,30 +3238,10 @@
 }
 @layer base {
   html, body {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.2s ease;
   }
-  .component-card, .custom-select-trigger, .custom-select-options, header, footer {
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  .material-symbols-outlined, span, p, h1, h2, h3 {
+  .material-symbols-outlined, span, p, h1, h2, h3, a {
     transition: none !important;
-  }
-  html {
-    background-color: var(--color-background-light);
-    color: #1f2937;
-    scrollbar-gutter: stable;
-    color-scheme: light;
-  }
-  html.dark {
-    background-color: var(--color-background-dark);
-    color: #ffffff;
-    color-scheme: dark;
-  }
-  body {
-    margin: 0;
-    min-height: 100dvh;
-    background-color: transparent;
-    color: inherit;
   }
 }
 #bg-video {
@@ -3736,6 +3716,10 @@ div:where(.swal2-container) .swal2-actions {
 div:where(.swal2-container) button.swal2-cancel {
   background-color: #4b5563 !important;
   color: #fff !important;
+}
+.no-transitions *, .no-transitions *::before, .no-transitions *::after {
+  transition: none !important;
+  animation: none !important;
 }
 @property --tw-translate-x {
   syntax: "*";

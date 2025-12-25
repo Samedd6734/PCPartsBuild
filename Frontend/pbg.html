@@ -10,20 +10,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
-<script>
-    (function() {
-        // Tüm sayfalarda ortak anahtar: 'theme_builder'
-        const savedTheme = localStorage.getItem('theme_builder');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    })();
-</script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="./styles.css">
@@ -248,13 +234,21 @@
     
 const toggleDarkMode = () => {
     const html = document.documentElement;
-    const isDarkMode = html.classList.toggle('dark'); // Tek satırda class ekle/çıkar
-    const newTheme = isDarkMode ? 'dark' : 'light';
     
-    localStorage.setItem('theme_builder', newTheme);
+    // 1. Tüm geçişleri anlık olarak durdur
+    html.classList.add('no-transitions');
     
-    // İkonları hızlıca güncelle
-    updateIcons(isDarkMode);
+    // 2. Temayı değiştir
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('theme_builder', isDark ? 'dark' : 'light');
+    
+    // 3. İkonları güncelle (Hızlıca)
+    updateIcons(isDark);
+    
+    // 4. Milisaniyeler içinde geçiş engelini kaldır (Kullanıcı fark etmez)
+    setTimeout(() => {
+        html.classList.remove('no-transitions');
+    }, 20); 
 };
 
 const updateIcons = (isDark) => {
@@ -274,6 +268,39 @@ const updateIcons = (isDark) => {
         moonIcon.style.transform = 'rotate(90deg) scale(0.5)';
     }
 };
+
+    const initializeTheme = (key = 'theme_builder') => {
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem(key);
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        // NOT: account_circle butonu artık manuel olarak burada değiştirilmiyor.
+
+        let isDark = false;
+        if (savedTheme === 'dark') {
+            html.classList.add('dark');
+            isDark = true;
+        } else if (savedTheme === 'light') {
+            html.classList.remove('dark');
+            isDark = false;
+        } else if (html.classList.contains('dark')) {
+            localStorage.setItem(key, 'dark');
+            isDark = true;
+        } else {
+            localStorage.setItem(key, 'light');
+            isDark = false;
+        }
+
+        if (sunIcon && moonIcon) {
+            if (isDark) {
+                moonIcon.classList.add('opacity-100', 'scale-100');
+                sunIcon.classList.add('opacity-0', 'scale-75');
+            } else {
+                sunIcon.classList.add('opacity-100', 'scale-100');
+                moonIcon.classList.add('opacity-0', 'scale-75');
+            }
+        }
+    };
 
     const initializeLang = () => {
         const savedLang = localStorage.getItem('lang');

@@ -618,12 +618,21 @@ loadApiKey();
 
 const toggleDarkMode = () => {
     const html = document.documentElement;
-    // Tek bir hamlede class değiştir
+    
+    // 1. Tüm geçişleri anlık olarak durdur
+    html.classList.add('no-transitions');
+    
+    // 2. Temayı değiştir
     const isDark = html.classList.toggle('dark');
     localStorage.setItem('theme_builder', isDark ? 'dark' : 'light');
     
-    // İkon geçişlerini CSS'e bırakmak en iyisidir, 
-    // JS ile sadece anlık durumu loglayabilirsin.
+    // 3. İkonları güncelle (Hızlıca)
+    updateIcons(isDark);
+    
+    // 4. Milisaniyeler içinde geçiş engelini kaldır (Kullanıcı fark etmez)
+    setTimeout(() => {
+        html.classList.remove('no-transitions');
+    }, 20); 
 };
 
 const updateIcons = (isDark) => {
