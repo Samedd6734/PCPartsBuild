@@ -779,13 +779,13 @@ const openModal = (title, content, isLoading = false) => {
         if (currentLang === 'tr') {
             strictInstructions = `
             YUKARIDAKİ PARÇALAR İÇİN ANALİZ TALİMATLARI:
-            1. Yanıtı çok KISA, ÖZ ve NET tut. Uzun paragraflardan kaçın.
-            2. Teknik jargon kullan ama amatör bir kullanıcının anlayacağı dilde olsun.
+            1. Yanıtı çok KISA, ÖZ ve NET tut. Uzun paragraflardan kaçın kullanıcıyı kötüleyen kelimele kullanma bu sistem rezlaet en kçtü sistem vs gibi.
+            2. Teknik terim kullanabilirsin ancak yabancı terimler kullanma amatör bir kullanıcının anlayacağı dilde olsun.
             3. Yanıtı sadece şu 3 kısa madde başlığı altında topla:
-               - 🟢 **Genel Uyum:** (Uyumlu olup olmadığını tek cümleyle belirt)
-               - ⚠️ **Darboğaz/Risk:** (Varsa darboğazı veya PSU yetersizliğini belirt, yoksa 'Sorun yok' de)
-               - 🚀 **Performans Tahmini:** (Hangi çözünürlükte/ayarlarda oyun oynatacağını 1-2 cümleyle özetle)
-            4. Toplam yanıt 150 kelimeyi geçmesin.
+               - 🟢 Genel Uyum: (Uyumlu olup olmayan bileşenleri adını tek tek belirt ama uzatma uyumlu olanları ayrı uyumsuz olanları ayrı belirt özellikle ekran kartı ve işlemci açısından mantıksız sistemleri denetle bu ilemci ekran kartıyla fiziksek olarak uyumlu olsa bile arasındaki devasa farktan dolayı bu işlemci erkan kartını besleyemez vs gibi)
+               - ⚠️ Darboğaz/Risk: (Varsa darboğazı ve tahmini yüzdesini veya varsa PSU yetersizliğini belirt, yoksa 'Sorun yok' de)
+               - 🚀 Performans Tahmini: (Hangi seviyede bir performansla oyun oynatacağını 1-2 cümleyle özetle düşük bir sistem ise hangi seviyede oyunları oynatamayayacağını belirt)
+            4. Toplam yanıt 200 kelimeyi geçmesin.
             `;
         } else {
             strictInstructions = `
