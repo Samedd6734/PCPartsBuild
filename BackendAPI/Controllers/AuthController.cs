@@ -85,17 +85,59 @@ namespace PCPartsAPI.Controllers
 
             if (user == null)
             {
+                // Güvenlik nedeniyle kullanıcı yoksa da "gönderildi" mesajı veriyoruz
                 return Ok(new { Message = "Doğrulama kodu e-posta adresinize gönderildi." });
             }
 
             var verificationCode = new Random().Next(100000, 999999).ToString();
             _memoryCache.Set($"ResetCode_{model.Email}", verificationCode, TimeSpan.FromMinutes(15));
 
-            await _emailSender.SendEmailAsync(model.Email, "Şifre Sıfırlama Kodu",
-                $"<h3>Şifre Sıfırlama Talebi</h3>" +
-                $"<p>Hesabınızın şifresini sıfırlamak için aşağıdaki kodu kullanın:</p>" +
-                $"<h2 style='color:#16a3b2'>{verificationCode}</h2>" +
-                $"<p>Bu kod 15 dakika geçerlidir.</p>");
+            // --- MODERN E-POSTA TASARIMI (ŞİFRE SIFIRLAMA) ---
+            string emailTemplate = $@"
+            <div style='font-family:Segoe UI, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f3f4f6; padding: 40px 20px;'>
+                <div style='background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden;'>
+            
+                    <div style='background-color: #1f2937; padding: 30px; text-align: center;'>
+                        <h1 style='color: #16a3b2; margin: 0; font-size: 24px; letter-spacing: 1px;'>PCPartsBuild</h1>
+                        <p style='color: #9ca3af; margin: 5px 0 0 0; font-size: 14px;'>Bilgisayar Toplama Sihirbazı</p>
+                    </div>
+
+                    <div style='padding: 40px 30px;'>
+                        <h2 style='color: #111827; margin-top: 0; font-size: 20px; text-align: center;'>Şifre Sıfırlama Talebi</h2>
+                
+                        <p style='color: #4b5563; font-size: 16px; line-height: 1.6; margin-top: 20px;'>
+                            Merhaba,
+                        </p>
+                        <p style='color: #4b5563; font-size: 16px; line-height: 1.6;'>
+                            Hesabınızın şifresini sıfırlamak için bir talep aldık. Aşağıdaki <strong>6 haneli doğrulama kodunu</strong> kullanarak işleminize devam edebilirsiniz:
+                        </p>
+
+                        <div style='text-align: center; margin: 35px 0;'>
+                            <div style='background-color: #f9fafb; border: 2px dashed #16a3b2; color: #16a3b2; padding: 20px; border-radius: 12px; font-size: 32px; font-weight: 800; letter-spacing: 8px; display: inline-block;'>
+                                {verificationCode}
+                            </div>
+                            <p style='color: #9ca3af; font-size: 13px; margin-top: 10px;'>Bu kod 15 dakika boyunca geçerlidir.</p>
+                        </div>
+
+                        <div style='background-color: #fff1f2; border-left: 4px solid #e11d48; padding: 15px; border-radius: 4px; margin-top: 30px;'>
+                            <p style='color: #9f1239; font-size: 13px; margin: 0; line-height: 1.5;'>
+                                <strong>Dikkat:</strong> Eğer bu talebi siz yapmadıysanız, lütfen bu e-postayı dikkate almayın. Hesabınız güvendedir ve kod kullanılmadığı sürece şifreniz değişmeyecektir.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style='background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;'>
+                        <p style='color: #6b7280; font-size: 12px; margin: 0;'>
+                            © 2025 PCPartsBuild. Tüm Hakları Saklıdır.
+                        </p>
+                        <p style='color: #9ca3af; font-size: 11px; margin-top: 5px;'>
+                            Bu e-posta otomatik olarak gönderilmiştir, lütfen yanıtlamayınız.
+                        </p>
+                    </div>
+                </div>
+            </div>";
+
+            await _emailSender.SendEmailAsync(model.Email, "PCPartsBuild - Şifre Sıfırlama Kodu", emailTemplate);
 
             return Ok(new { Message = "Doğrulama kodu e-posta adresinize gönderildi." });
         }
