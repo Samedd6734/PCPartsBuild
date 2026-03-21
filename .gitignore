@@ -60,6 +60,7 @@ PCPartsBuild-Frontend-Old/
 tailwindcss.exe
 api.txt
 package-lock.json
+.agent/
 
 # --- Others ---
 *.tmp
@@ -67,4 +68,4 @@ package-lock.json
 *.log
 *.db
 *.db-wal
-*.db-shm
+*.db-shm
