@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import Swal from 'sweetalert2';
@@ -95,72 +96,120 @@ export default function ResetPasswordPage() {
     if (!email || !token) return null;
 
     return (
-        <div className="relative z-10 flex min-h-screen items-center justify-center p-4 lg:p-8">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+        <div className="font-auth bg-background-dark font-display text-gray-300 transition-default overflow-hidden min-h-screen relative">
+            {/* 1. Background Video - SHARP & CLEAR */}
+            <video autoPlay id="bg-video" loop muted playsInline className="fixed inset-0 w-full h-full object-cover z-0 brightness-[0.5]">
+                <source src="/Videos/Video1.webm" type="video/webm" />
+                Your browser does not support the video tag.
+            </video>
+            
+            {/* 2. Top Navigation - SHARED */}
+            <Link 
+                href="/" 
+                className="absolute top-4 left-4 z-50 w-12 h-12 rounded-full bg-black/40 border border-white/10 flex items-center justify-center text-white hover:bg-black/60 transition-all hover:scale-105"
+                title="Home"
+            >
+                <span className="material-symbols-outlined text-xl"> home </span>
+            </Link>
 
-            <div className="relative w-full max-w-md p-6 sm:p-8 bg-gray-900/90 rounded-2xl shadow-2xl border border-white/5">
-                <header className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-white tracking-tight">
-                        {lang === 'tr' ? 'Yeni Şifrenizi Belirleyin' : 'Set Your New Password'}
-                    </h1>
-                </header>
+            {/* 3. Main Split Container - SHARP SYNC */}
+            <div className="relative z-10 min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-transparent">
+                
+                {/* Branding Side (Lg only) */}
+                <div className="hidden lg:flex flex-col items-center justify-center text-center px-8 bg-transparent animate-fade-in">
+                    <img src="/Images/logo.webp" alt="PCPartsBuild Logo" className="h-48 drop-shadow-2xl" />
+                    <p className="text-gray-300 mt-6 max-w-sm text-lg font-medium tracking-wide drop-shadow-lg">
+                        {lang === 'tr' ? 'Hayalinizdeki Bilgisayarı hassasiyet ve güvenle tasarlayın.' : 'Design your dream PC with precision and confidence.'}
+                    </p>
+                </div>
 
-                <main>
-                    <form onSubmit={handleReset} className="space-y-5">
-                        <div className="space-y-1">
-                            <label className="block text-sm font-semibold text-gray-300 ml-1" htmlFor="password">
-                                {lang === 'tr' ? 'Yeni Şifre' : 'New Password'}
-                            </label>
-                            <div className="relative">
-                                <input 
-                                    className="w-full bg-gray-800/80 border-gray-700/50 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary text-white placeholder:text-gray-500 transition-all h-12 pl-4 pr-12 outline-none" 
-                                    id="password" 
-                                    name="password" 
-                                    placeholder="••••••••" 
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                />
+                {/* Right Form Side - SHARP THEME (No Blur) */}
+                <div className="relative flex items-center justify-center p-4 lg:p-12 bg-background-dark/95 border-l border-gray-800 shadow-2xl">
+                    
+                    <div className="relative w-full max-w-md p-6 sm:p-10 bg-gray-900/40 rounded-[2.5rem] border border-white/5 animate-fade-in transition-all">
+                        <header className="text-center lg:text-left mb-8">
+                            <h1 className="text-3xl font-bold text-white tracking-tight">
+                                {lang === 'tr' ? 'Yeni Şifre Belirleyin' : 'Set New Password'}
+                            </h1>
+                            <p className="text-gray-400 mt-2 text-sm italic">
+                                {lang === 'tr' ? 'Güvenliğiniz için güçlü bir şifre seçin.' : 'Choose a strong password for your security.'}
+                            </p>
+                        </header>
+
+                        <main>
+                            <form onSubmit={handleReset} className="space-y-6">
+                                <div className="space-y-1.5">
+                                    <label className="block text-sm font-semibold text-gray-300 ml-1" htmlFor="password">
+                                        {lang === 'tr' ? 'Yeni Şifre' : 'New Password'}
+                                    </label>
+                                    <div className="relative">
+                                        <input 
+                                            className="w-full bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder:text-gray-600 transition-all h-14 pl-5 pr-12 outline-none active:bg-white/10 focus:bg-white/10" 
+                                            id="password" 
+                                            name="password" 
+                                            placeholder="••••••••" 
+                                            type={showPassword ? "text" : "password"}
+                                            required
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                        />
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setShowPassword(!showPassword)} 
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors p-1"
+                                        >
+                                            <span className="material-symbols-outlined text-xl">
+                                                {showPassword ? "visibility_off" : "visibility"}
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="block text-sm font-semibold text-gray-300 ml-1" htmlFor="repeatPassword">
+                                        {lang === 'tr' ? 'Yeni Şifre (Tekrar)' : 'New Password (Repeat)'}
+                                    </label>
+                                    <input 
+                                        className="w-full bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-primary focus:border-primary text-white placeholder:text-gray-600 transition-all h-14 px-5 outline-none active:bg-white/10 focus:bg-white/10" 
+                                        id="repeatPassword" 
+                                        name="repeatPassword" 
+                                        placeholder="••••••••" 
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        value={formData.repeatPassword}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
                                 <button 
-                                    type="button" 
-                                    onClick={() => setShowPassword(!showPassword)} 
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors focus:outline-none p-1"
+                                    className="w-full bg-primary text-white font-bold py-5 px-6 rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 mt-4 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
+                                    type="submit"
+                                    disabled={loading}
                                 >
-                                    <span className="material-symbols-outlined text-xl">
-                                        {showPassword ? "visibility_off" : "visibility"}
-                                    </span>
+                                    {loading ? (
+                                        <div className="h-5 w-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                    ) : (lang === 'tr' ? 'Şifreyi Güncelle' : 'Update Password')}
                                 </button>
-                            </div>
-                        </div>
+                            </form>
+                        </main>
 
-                        <div className="space-y-1">
-                            <label className="block text-sm font-semibold text-gray-300 ml-1" htmlFor="repeatPassword">
-                                {lang === 'tr' ? 'Yeni Şifre (Tekrar)' : 'New Password (Repeat)'}
-                            </label>
-                            <input 
-                                className="w-full bg-gray-800/80 border-gray-700/50 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary text-white placeholder:text-gray-500 transition-all h-12 px-4 outline-none" 
-                                id="repeatPassword" 
-                                name="repeatPassword" 
-                                placeholder="••••••••" 
-                                type={showPassword ? "text" : "password"}
-                                required
-                                value={formData.repeatPassword}
-                                onChange={handleChange}
-                            />
-                        </div>
+                        <footer className="text-center mt-10 pt-8 border-t border-white/5">
+                            <Link className="text-sm font-bold text-primary hover:underline transition-all" href="/giris">
+                                {lang === 'tr' ? 'Giriş Sayfasına Dön' : 'Back to Login'}
+                            </Link>
+                        </footer>
+                    </div>
 
-                        <button 
-                            className="w-full bg-primary text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mt-2 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
-                            type="submit"
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <div className="h-5 w-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                            ) : (lang === 'tr' ? 'Şifreyi Güncelle' : 'Update Password')}
-                        </button>
-                    </form>
-                </main>
+                    {/* Shared Page Footer */}
+                    <footer className="absolute bottom-6 w-full text-center px-4"> 
+                        <p className="text-xs text-gray-500 font-medium tracking-wide"> 
+                            © 2025 PCPartsBuild. {lang === 'tr' ? 'Tüm Hakları Saklıdır.' : 'All Rights Reserved.'}
+                            <span className="mx-2 opacity-30">|</span> 
+                            {lang === 'tr' ? 'Bize Ulaşın:' : 'Contact Us:'}{" "}
+                            <a className="text-primary hover:underline" href="mailto:pcpartsbuild@gmail.com">pcpartsbuild@gmail.com</a>
+                        </p>
+                    </footer>
+                </div>
             </div>
         </div>
     );

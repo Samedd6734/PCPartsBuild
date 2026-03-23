@@ -42,10 +42,9 @@
 }
 
 @layer base {
-  /* 1. Tüm animasyon ve geçişleri evrensel olarak kapatıyoruz */
-  *, ::before, ::after {
-    transition: none !important;
-    animation: none !important;
+  /* 1. Theme transition handling */
+  html, body {
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* 2. Tema değişimi dondurucu sınıf (Kesin çözüm) */
@@ -342,24 +341,10 @@ div:where(.swal2-container) button.swal2-cancel {
     color: #fff !important;
 }
 
-.no-transitions,
-.no-transitions *,
-.no-transitions *::before,
-.no-transitions *::after {
-  transition: none !important;
-  animation: none !important;
-}
-
 @layer base {
-  html, body {
-    transition: background-color 0.2s ease, color 0.2s ease;
-  }
-  .component-card, 
-  .sidebar, 
-  #system-summary, 
-  p, h1, h2, h3, span, 
-  .material-symbols-outlined {
+  .no-transitions * {
     transition: none !important;
+    animation: none !important;
   }
 }
 

@@ -10,8 +10,8 @@ export default function AccountLayout({ children }) {
 
     return (
         <main className="w-full min-h-screen bg-[#0d1117] pt-12 pb-24 px-4 sm:px-8 lg:px-16 xl:px-24">
-            {/* EN DIŞ GENİŞ KUTU (1600px) */}
-            <div className="w-full max-w-[1600px] mx-auto">
+            {/* EN DIŞ GENİŞ KUTU (Tam Ekran Yayılım) */}
+            <div className="w-full">
 
                 {/* BAŞLIK KISMI */}
                 <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-6">
