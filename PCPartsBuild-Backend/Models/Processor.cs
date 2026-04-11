@@ -1,4 +1,4 @@
-﻿namespace PCPartsAPI.Models
+namespace PCPartsAPI.Models
 {
     public class Processor
     {

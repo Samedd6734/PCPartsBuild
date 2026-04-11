@@ -59,7 +59,6 @@ next-env.d.ts
 PCPartsBuild-Frontend-Old/
 tailwindcss.exe
 api.txt
-package-lock.json
 .agent/
 
 # --- Others ---

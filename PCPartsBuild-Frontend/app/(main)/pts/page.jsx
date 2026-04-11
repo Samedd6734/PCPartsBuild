@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, Suspense, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { api } from '@/lib/api';
 import { translations } from '@/lib/translations';
 import Swal from 'sweetalert2';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { cacheManager } from '@/lib/cacheManager';
+import Pagination from '@/components/Pagination';
 
-// 1. API uç noktaları (pts.html ile 1:1)
-const COMPONENT_ENDPOINTS = {
+// 1. Backend Endpoint Mappings (Singular URL Key -> Plural Backend Controller)
+const ENDPOINT_MAP = {
     cpu: 'processors',
     motherboard: 'motherboards',
     ram: 'rams',
@@ -18,23 +21,37 @@ const COMPONENT_ENDPOINTS = {
     cpuCooler: 'cpuCoolers'
 };
 
-const ITEMS_PER_PAGE = 24;
+const COMPONENT_ENDPOINTS = ENDPOINT_MAP; // For backward compatibility within file
+
+const ITEMS_PER_PAGE = 25;
 
 export default function PtsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center pt-24"><div className="animate-spin text-primary material-symbols-outlined text-4xl">sync</div></div>}>
+            <PtsContent />
+        </Suspense>
+    );
+}
+
+function PtsContent() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+    const currentPage = parseInt(searchParams.get('page')) || 1;
+    const currentCategory = searchParams.get('category') || 'cpu';
+
     const [lang, setLang] = useState('tr');
-    const [currentCategory, setCurrentCategory] = useState('cpu');
-    const [allData, setAllData] = useState({
-        cpu: [], motherboard: [], ram: [], gpu: [],
-        storage: [], case: [], psu: [], cpuCooler: []
-    });
+    const [pageData, setPageData] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
     const [currentBuild, setCurrentBuild] = useState({
         cpu: null, motherboard: null, ram: null, gpu: null,
         storage: null, case: null, psu: null, cpuCooler: null
     });
     const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedFilters, setSelectedFilters] = useState({});
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('SearchTerm') || '');
+    const [filterFacets, setFilterFacets] = useState({});
+    const [facetsLoading, setFacetsLoading] = useState(false);
     const [expandedFilters, setExpandedFilters] = useState({});
     const [filterShowMore, setFilterShowMore] = useState({});
 
@@ -52,36 +69,174 @@ export default function PtsPage() {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
-    // Veri Çekme (Lazy Load + Cache)
+    const abortControllerRef = useRef(null);
+
+    // Fetch available facets for sidebar dynamically
     useEffect(() => {
-        const fetchData = async () => {
-            if (allData[currentCategory]?.length > 0) return;
-            setLoading(true);
-            try {
-                const endpoint = COMPONENT_ENDPOINTS[currentCategory];
-                const response = await api.get(endpoint);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (Array.isArray(data)) {
-                        setAllData(prev => ({ ...prev, [currentCategory]: data }));
+        const fetchFacets = async () => {
+            const backendSlug = ENDPOINT_MAP[currentCategory] || currentCategory;
+            const cacheKey = `facets_${backendSlug}`;
+            
+            // Try loading from localStorage cache first for Zero Loading UX
+            const cachedFacets = localStorage.getItem(cacheKey);
+            if (cachedFacets) {
+                try {
+                    const parsed = JSON.parse(cachedFacets);
+                    if (parsed.timestamp > Date.now() - 1000 * 60 * 60 * 24) { // 24h TTL
+                        setFilterFacets(parsed.data);
+                        // Process expansion state if needed, but still fetch fresh in background
                     }
+                } catch (e) {
+                    localStorage.removeItem(cacheKey);
                 }
-            } catch (error) {
-                console.error("Fetch error:", error);
+            }
+
+            setFacetsLoading(true);
+            try {
+                const res = await api.get(`/filters/${backendSlug}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setFilterFacets(data);
+                    
+                    // Save to localStorage for next time
+                    localStorage.setItem(cacheKey, JSON.stringify({
+                        timestamp: Date.now(),
+                        data: data
+                    }));
+
+                    // Auto-expand all filters by default
+                    const initialExpanded = {};
+                    Object.keys(data).forEach(key => {
+                        let prop = key.toLowerCase();
+                        if (prop.endsWith('s')) prop = prop.slice(0, -1);
+                        if (key.toLowerCase() === 'memorytypes') prop = 'memoryType';
+                        if (key.toLowerCase() === 'chipsetbrands') prop = 'chipsetBrand';
+                        initialExpanded[prop] = true;
+                    });
+                    setExpandedFilters(initialExpanded);
+                } else {
+                    console.error("Facet API error:", res.status);
+                    // Don't clear if we have cached data, just log
+                }
+            } catch (e) {
+                console.error("Facet load error:", e);
             } finally {
-                setLoading(false);
+                setFacetsLoading(false);
             }
         };
+        fetchFacets();
+    }, [currentCategory]);
+
+    // Veri Çekme (Lazy Load + Caching via LocalStorage)
+    useEffect(() => {
+        const fetchData = async () => {
+            const page = Math.max(1, currentPage);
+            
+            // Build API query string mapping all relevant searchParams
+            const apiParams = new URLSearchParams(searchParams.toString());
+            apiParams.set('PageNumber', page);
+            apiParams.set('PageSize', '25');
+            apiParams.delete('category'); // handled via routing endpoint
+            apiParams.delete('page');
+
+            const queryStrForCache = apiParams.toString();
+            const cacheKey = cacheManager.generateKey(currentCategory, queryStrForCache);
+            
+            const cachedData = cacheManager.getFromCache(cacheKey);
+            
+            if (cachedData) {
+                // Support both formats from cache for transition period
+                setPageData(cachedData.data || cachedData.Data || []);
+                setTotalPages(cachedData.totalPages || cachedData.TotalPages || 1);
+                setTotalCount(typeof cachedData.totalCount !== 'undefined' ? cachedData.totalCount : (typeof cachedData.TotalCount !== 'undefined' ? cachedData.TotalCount : 0));
+                setLoading(false);
+                return; // Zero loading time
+            }
+            
+            // Cancel previous in-flight request
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+            // Create new controller for current request
+            abortControllerRef.current = new AbortController();
+            const signal = abortControllerRef.current.signal;
+
+            setLoading(true);
+            try {
+                const backendSlug = ENDPOINT_MAP[currentCategory] || currentCategory;
+                const response = await api.get(`/${backendSlug}?${apiParams.toString()}`, {
+                    signal: signal
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Case-insensitive mapping for maximum robustness
+                    const items = data.data || data.Data || [];
+                    const count = typeof data.totalCount !== 'undefined' ? data.totalCount : (typeof data.TotalCount !== 'undefined' ? data.TotalCount : 0);
+                    const pages = data.totalPages || data.TotalPages || 1;
+
+                    setPageData(items);
+                    setTotalPages(pages);
+                    setTotalCount(count);
+
+                    // Cache duration 1 hour (Standardize cache format to PascalCase for internal consistency)
+                    cacheManager.saveToCache(cacheKey, { 
+                        Data: items, 
+                        TotalPages: pages,
+                        TotalCount: count
+                    }, 1);
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    return; // Silent catch for cancellation
+                }
+                console.error("Fetch error:", error);
+            } finally {
+                // Only reset loading if this specific request is still the active one
+                if (!signal.aborted) {
+                    setLoading(false);
+                }
+            }
+        };
+
         fetchData();
-        setCurrentPage(1);
-        setSearchQuery('');
-        setSelectedFilters({});
-    }, [currentCategory, allData]);
+        
+        // Cleanup on unmount
+        return () => {
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
+        
+    }, [currentCategory, currentPage, searchParams]);
+    
+    // Auto-scroll to top on pagination change
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [currentPage]);
+
+    // Search input debounce to URL syncing
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            const params = new URLSearchParams(searchParams.toString());
+            if (searchQuery) params.set('SearchTerm', searchQuery);
+            else params.delete('SearchTerm');
+            
+            if (params.get('SearchTerm') !== searchParams.get('SearchTerm')) {
+                params.set('page', '1');
+                router.push(`${pathname}?${params.toString()}`, { scroll: false });
+            }
+        }, 500);
+        return () => clearTimeout(delay);
+    }, [searchQuery, searchParams, pathname, router]);
 
     // Uyumsuzluk Kontrolü (Legacy pts.html logic)
     const compatibilityInfo = useMemo(() => {
         const messages = {};
-        const items = allData[currentCategory] || [];
+        const items = pageData || [];
         
         items.forEach(item => {
             let failReason = "";
@@ -117,26 +272,11 @@ export default function PtsPage() {
             if (!isCompatible) messages[item.id] = failReason;
         });
         return messages;
-    }, [allData, currentCategory, currentBuild, t]);
+    }, [pageData, currentCategory, currentBuild, t]);
 
-    // Filtreleme ve Arama
+    // Filtreleme ve Arama (Artık tamamen Backend hallediyor, burada sadece uyumluluk sıralaması)
     const filteredItems = useMemo(() => {
-        let items = [...(allData[currentCategory] || [])];
-
-        if (searchQuery) {
-            const lowQuery = searchQuery.toLowerCase();
-            items = items.filter(item => 
-                (item.modelName || "").toLowerCase().includes(lowQuery) || 
-                (item.brand || "").toLowerCase().includes(lowQuery)
-            );
-        }
-
-        // Kategorik filtreler
-        for (const [type, values] of Object.entries(selectedFilters)) {
-            if (values.length > 0) {
-                items = items.filter(item => values.includes(String(item[type])));
-            }
-        }
+        let items = [...(pageData || [])];
 
         // Uyumlu olanları öne çıkar
         items.sort((a, b) => {
@@ -146,10 +286,9 @@ export default function PtsPage() {
         });
 
         return items;
-    }, [allData, currentCategory, searchQuery, selectedFilters, compatibilityInfo]);
+    }, [pageData, compatibilityInfo]);
 
-    const paginatedItems = filteredItems.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-    const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+    const paginatedItems = filteredItems;
 
     // Hesaplamalar
     const totals = useMemo(() => {
@@ -161,39 +300,94 @@ export default function PtsPage() {
         return { wattage, psu, price };
     }, [currentBuild]);
 
-    const handleCategoryChange = (cat) => setCurrentCategory(cat);
+    const handleCategoryChange = (cat) => {
+        router.push(`${pathname}?category=${cat}&page=1`, { scroll: false });
+        setSearchQuery('');
+    };
     const addToBuild = (item) => setCurrentBuild(prev => ({ ...prev, [currentCategory]: item }));
     const removeFromBuild = (type) => setCurrentBuild(prev => ({ ...prev, [type]: null }));
 
-    const handleFilterChange = (type, value) => {
-        setSelectedFilters(prev => {
-            const current = prev[type] || [];
-            if (current.includes(value)) return { ...prev, [type]: current.filter(v => v !== value) };
-            return { ...prev, [type]: [...current, value] };
-        });
-        setCurrentPage(1);
+    const handleFilterChange = (propName, value) => {
+        const params = new URLSearchParams(searchParams.toString());
+        const stringVal = String(value);
+        const currentVals = params.get(propName) ? params.get(propName).split(',') : [];
+        let newVals;
+        
+        if (currentVals.includes(stringVal)) {
+            newVals = currentVals.filter(v => v !== stringVal);
+        } else {
+            newVals = [...currentVals, stringVal];
+        }
+        
+        if (newVals.length > 0) {
+            params.set(propName, newVals.join(','));
+        } else {
+            params.delete(propName);
+        }
+        
+        params.set('page', '1');
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
-    // Dinamik Filtre Özellikleri
+    // Dynamic Filter Mapping - Converts Backend Facets to Sidebar UI Props
     const dynamicFilterProps = useMemo(() => {
-        const configMap = {
-            cpu: ['brand', 'socket', 'coreCount'],
-            motherboard: ['brand', 'socket', 'chipset', 'formFactor', 'memoryType'],
-            ram: ['brand', 'memoryType', 'capacityPerModule', 'speed'],
-            gpu: ['brand', 'chipset'],
-            case: ['brand', 'caseType'],
-            psu: ['brand', 'wattage', 'rating'],
-            storage: ['brand', 'storageType', 'capacity'],
-            cpuCooler: ['brand', 'coolerType']
-        };
-        const props = configMap[currentCategory] || [];
-        const items = allData[currentCategory] || [];
+        if (!filterFacets || typeof filterFacets !== 'object') return [];
+        
+        return Object.entries(filterFacets).map(([key, values]) => {
+            // Standardize key from Backend to PascalCase DTO format
+            let prop = key.charAt(0).toUpperCase() + key.slice(1);
+            
+            // Critical UI Label/Param Overrides (Matches PaginationRequestParams.cs Exactly)
+            const overrides = {
+                'memorytypes': 'MemoryType',
+                'chipsetbrands': 'ChipsetBrand',
+                'chipsetbrand': 'ChipsetBrand',
+                'casetypes': 'CaseType',
+                'coolertypes': 'CoolerType',
+                'storagetypes': 'StorageType',
+                'formfactors': 'FormFactor',
+                'chipsets': 'Chipset',
+                'ratings': 'Rating',
+                'corecount': 'CoreCount',
+                'cores': 'CoreCount',
+                'threadcount': 'ThreadCount',
+                'tdp': 'Tdp',
+                'maxtdp': 'Tdp',
+                'integratedgraphics': 'IntegratedGraphics',
+                'm2slotcount': 'M2SlotCount',
+                'minm2slots': 'M2SlotCount',
+                'sataportcount': 'SataPortCount',
+                'capacities': 'TotalCapacity',
+                'speeds': 'Speed',
+                'vrammemorysize': 'VRAMMemorySize',
+                'minrecommendedpsu': 'RecommendedPsu',
+                'recommendedpsu': 'RecommendedPsu',
+                'wattage': 'Wattage',
+                'usb3count': 'Usb3Count',
+                'usb3ports': 'Usb3Count',
+                'hastypec': 'HasTypeC',
+                'integratedwifi': 'IntegratedWifi',
+                'argbsupport': 'ArgbSupport',
+                'hasrgb': 'HasRgb',
+                'ismodular': 'IsModular',
+                'caslatency': 'CasLatency',
+                'totalcapacity': 'TotalCapacity',
+                'radiatorsize': 'RadiatorSize',
+                'tdprating': 'TdpRating',
+                'supportedmotherboards': 'SupportedMotherboards',
+                'interface': 'Interface',
+                'nandtype': 'NandType',
+                'hasdramcache': 'HasDramCache',
+                'modulecount': 'ModuleCount'
+            };
+            
+            if (overrides[key.toLowerCase()]) {
+                prop = overrides[key.toLowerCase()];
+            }
 
-        return props.map(prop => {
-            const uniqueValues = [...new Set(items.map(i => String(i[prop])))].filter(v => v && v !== 'null').sort();
-            return { prop, values: uniqueValues };
+            return { prop, values: values || [] };
         }).filter(f => f.values.length > 0);
-    }, [currentCategory, allData]);
+    }, [filterFacets]);
 
     return (
         <div className="flex flex-col flex-1 bg-background-light dark:bg-background-dark min-h-screen pt-24 lg:pt-28">
@@ -261,37 +455,57 @@ export default function PtsPage() {
                                 </div>
                             </div>
                             <div className="p-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                                {dynamicFilterProps.map(({ prop, values }) => (
-                                    <div key={prop} className="border-b border-gray-50 dark:border-gray-800 last:border-0 py-2">
-                                        <button 
-                                            className="w-full flex justify-between items-center py-2 text-left group"
-                                            onClick={() => setExpandedFilters(p => ({...p, [prop]: !p[prop]}))}
-                                        >
-                                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:text-primary uppercase">{t[`filter-${prop}`] || prop}</span>
-                                            <span className={`material-symbols-outlined text-gray-400 transition-transform ${expandedFilters[prop] ? 'rotate-180' : ''}`}>expand_more</span>
-                                        </button>
-                                        {expandedFilters[prop] && (
-                                            <div className="space-y-1 mt-1 pb-3">
-                                                {(filterShowMore[prop] ? values : values.slice(0, 5)).map(v => (
-                                                    <label key={v} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            className="rounded border-gray-300 dark:border-gray-700 text-primary focus:ring-primary h-4 w-4"
-                                                            checked={(selectedFilters[prop] || []).includes(v)}
-                                                            onChange={() => handleFilterChange(prop, v)}
-                                                        />
-                                                        <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{v === 'true' ? t['filter-true'] : v === 'false' ? t['filter-false'] : v}</span>
-                                                    </label>
-                                                ))}
-                                                {values.length > 5 && (
-                                                    <button onClick={() => setFilterShowMore(p => ({...p, [prop]: !p[prop]}))} className="text-[10px] font-black text-primary px-2 uppercase mt-1">
-                                                        {filterShowMore[prop] ? t["action-show-less"] : t["action-show-all"]}
-                                                    </button>
+                                {facetsLoading ? (
+                                    <div className="space-y-4 animate-pulse">
+                                        <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-1/3"></div>
+                                        <div className="space-y-2">
+                                            <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2"></div>
+                                            <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-2/3"></div>
+                                        </div>
+                                    </div>
+                                ) : dynamicFilterProps.length > 0 ? (
+                                    dynamicFilterProps.map(({ prop, values }) => {
+                                        const currentUrlVals = searchParams.get(prop) ? searchParams.get(prop).split(',') : [];
+                                        return (
+                                            <div key={prop} className="border-b border-gray-50 dark:border-gray-800 last:border-0 py-2">
+                                                <button 
+                                                    className="w-full flex justify-between items-center py-2 text-left group"
+                                                    onClick={() => setExpandedFilters(p => ({...p, [prop]: !p[prop]}))}
+                                                >
+                                                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:text-primary uppercase">
+                                                        {t[`filter-${prop}`] || t[`filter-${prop.charAt(0).toLowerCase() + prop.slice(1)}`] || prop}
+                                                    </span>
+                                                    <span className={`material-symbols-outlined text-gray-400 transition-transform ${expandedFilters[prop] ? 'rotate-180' : ''}`}>expand_more</span>
+                                                </button>
+                                                {expandedFilters[prop] && (
+                                                    <div className="space-y-1 mt-1 pb-3">
+                                                        {(filterShowMore[prop] ? values : values.slice(0, 5)).map(v => (
+                                                            <label key={v} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer">
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    className="rounded border-gray-300 dark:border-gray-700 text-primary focus:ring-primary h-4 w-4"
+                                                                    checked={currentUrlVals.includes(String(v))}
+                                                                    onChange={() => handleFilterChange(prop, v)}
+                                                                />
+                                                                <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{v === 'true' ? t['filter-true'] : v === 'false' ? t['filter-false'] : v}</span>
+                                                            </label>
+                                                        ))}
+                                                        {values.length > 5 && (
+                                                            <button onClick={() => setFilterShowMore(p => ({...p, [prop]: !p[prop]}))} className="text-[10px] font-black text-primary px-2 uppercase mt-1">
+                                                                {filterShowMore[prop] ? t["action-show-less"] : t["action-show-all"]}
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
-                                        )}
+                                        );
+                                    })
+                                ) : (
+                                    <div className="py-8 text-center bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-200 dark:border-gray-800">
+                                        <span className="material-symbols-outlined text-gray-300 dark:text-gray-700 text-3xl mb-1">filter_list_off</span>
+                                        <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest px-4">{t["no-filters-available"] || "Filtre Bulunamadı"}</p>
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
                     </aside>
@@ -301,17 +515,16 @@ export default function PtsPage() {
                         <div className="flex justify-between items-end mb-6 bg-gradient-to-r from-primary/10 to-transparent p-5 rounded-xl border-l-4 border-primary">
                             <div>
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">{t[`step-title-${currentCategory === 'motherboard' ? 'motherboard' : currentCategory}`]}</h2>
-                                <p className="text-[10px] font-black text-gray-500 mt-1 uppercase tracking-[0.2em]">{filteredItems.length} {lang === 'tr' ? 'Parça Listeleniyor' : 'Components Found'}</p>
+                                <p className="text-[10px] font-black text-gray-500 mt-1 uppercase tracking-[0.2em]">{totalCount} {lang === 'tr' ? 'Parça Listeleniyor' : 'Components Found'}</p>
                             </div>
                         </div>
 
                         <div className="space-y-4 min-h-[500px]">
                             {loading ? (
-                                <div className="text-center py-20 animate-pulse">
-                                    <span className="material-symbols-outlined text-5xl text-primary animate-spin">sync</span>
-                                    <p className="mt-4 font-bold text-gray-400 uppercase tracking-widest">{lang === 'tr' ? 'Veritabanı Okunuyor...' : 'Reading Database...'}</p>
-                                </div>
-                            ) : paginatedItems.map(item => {
+                                Array.from({ length: 25 }).map((_, index) => (
+                                    <SkeletonCard key={`skeleton-${index}`} />
+                                ))
+                            ) : paginatedItems.map((item) => {
                                 const isSelected = currentBuild[currentCategory]?.id === item.id;
                                 const inc = compatibilityInfo[item.id] && !isSelected;
                                 return (
@@ -348,13 +561,7 @@ export default function PtsPage() {
                             })}
                         </div>
 
-                        {totalPages > 1 && (
-                            <div className="mt-10 flex justify-center gap-2">
-                                <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} className="w-10 h-10 rounded-lg border dark:border-gray-700 hover:border-primary transition-colors flex items-center justify-center"><span className="material-symbols-outlined">chevron_left</span></button>
-                                <span className="flex items-center px-4 font-bold text-gray-500 text-sm whitespace-nowrap">{currentPage} / {totalPages}</span>
-                                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} className="w-10 h-10 rounded-lg border dark:border-gray-700 hover:border-primary transition-colors flex items-center justify-center"><span className="material-symbols-outlined">chevron_right</span></button>
-                            </div>
-                        )}
+                        <Pagination currentPage={currentPage} totalPages={totalPages} />
                     </div>
 
                     {/* Right Sidebar: Summary - STICKY PINNED */}
@@ -429,4 +636,25 @@ function renderSpecs(item, category, lang) {
         case 'cpuCooler': return <><p>TIP: {item.coolerType}</p><p>RAD: {item.radiatorSize ? `${item.radiatorSize}mm` : 'N/A'}</p></>;
         default: return null;
     }
+}
+
+function SkeletonCard() {
+    return (
+        <div className="group bg-white dark:bg-card-dark p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex gap-6 animate-pulse">
+            <div className="w-32 h-32 bg-gray-200 dark:bg-gray-800/50 rounded-xl shrink-0"></div>
+            <div className="flex-grow flex flex-col justify-between py-1">
+                <div>
+                    <div className="h-5 bg-gray-200 dark:bg-gray-800/50 rounded flex w-3/4 mb-2"></div>
+                    <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+                        <div className="h-3 bg-gray-200 dark:bg-gray-800/50 rounded w-1/2"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-800/50 rounded w-2/3"></div>
+                    </div>
+                </div>
+                <div className="flex items-center justify-between border-t border-gray-100 dark:border-gray-800 pt-3 mt-3">
+                    <div className="h-6 bg-gray-200 dark:bg-gray-800/50 rounded w-1/4"></div>
+                    <div className="h-8 bg-gray-200 dark:bg-gray-800/50 rounded-lg w-24"></div>
+                </div>
+            </div>
+        </div>
+    );
 }

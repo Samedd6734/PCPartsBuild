@@ -56,10 +56,11 @@ export default function PukPage() {
         if (allData[catId]) return;
         setLoadingStates(prev => ({ ...prev, [catId]: true }));
         try {
-            const response = await api.get(endpoint);
+            const resEndpoint = endpoint.includes('?') ? `${endpoint}&pageSize=1000` : `${endpoint}?pageSize=1000`;
+            const response = await api.get(resEndpoint);
             if (response.ok) {
                 const data = await response.json();
-                setAllData(prev => ({ ...prev, [catId]: data }));
+                setAllData(prev => ({ ...prev, [catId]: data.data || data }));
             }
         } catch (error) {
             console.error(`Failed to load ${catId}:`, error);

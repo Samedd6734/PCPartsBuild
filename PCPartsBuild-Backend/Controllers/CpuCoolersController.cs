@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using PCPartsAPI.Models;
 using PCPartsAPI.Data;
 
@@ -11,34 +12,76 @@ namespace PCPartsAPI.Controllers
     public class CpuCoolersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMemoryCache _cache;
 
-        public CpuCoolersController(ApplicationDbContext context)
+        public CpuCoolersController(ApplicationDbContext context, IMemoryCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
-        // GET: api/cpucoolers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CpuCooler>>> GetCpuCoolers()
+        public async Task<ActionResult<PCPartsAPI.Dtos.PagedResponse<CpuCooler>>> GetCpuCoolers([FromQuery] PCPartsAPI.Dtos.PaginationRequestParams request)
         {
-            // Yorumu da düzelttim
-            // Veritabanındaki tüm CpuCooler'ları çekip döndürür
-            return await _context.CpuCoolers.ToListAsync();
+            var query = _context.CpuCoolers.AsQueryable().AsNoTracking();
+
+            if (!string.IsNullOrEmpty(request.SearchTerm)) {
+                var search = request.SearchTerm.ToLowerInvariant();
+                query = query.Where(c => (c.Brand ?? "").ToLower().Contains(search) || (c.ModelName ?? "").ToLower().Contains(search));
+            }
+
+            if (!string.IsNullOrEmpty(request.Brand)) {
+                var brands = request.Brand.Split(',').Select(b => b.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(c => brands.Contains((c.Brand ?? "").ToLower().Trim()));
+            }
+
+            if (!string.IsNullOrEmpty(request.CoolerType)) {
+                var types = request.CoolerType.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(c => types.Contains((c.CoolerType ?? "").ToLower().Trim()));
+            }
+
+            if (!string.IsNullOrEmpty(request.Socket)) {
+                var sockets = request.Socket.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(c => sockets.Any(s => (c.SupportedSockets ?? "").ToLower().Contains(s)));
+            }
+
+            if (!string.IsNullOrEmpty(request.HasRgb)) {
+                var boolVals = request.HasRgb.Split(',').Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null).Where(b => b != null).Select(b => b.Value).ToList();
+                if (boolVals.Any()) query = query.Where(c => boolVals.Contains(c.HasRgb));
+            }
+
+            if (!string.IsNullOrEmpty(request.TdpRating)) {
+                var vals = request.TdpRating.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(c => c.TdpRating >= vals.Min());
+            }
+
+            if (!string.IsNullOrEmpty(request.RadiatorSize)) {
+                var vals = request.RadiatorSize.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(c => vals.Contains(c.RadiatorSize));
+            }
+
+            string cacheKey = $"TotalCount_CpuCoolers_V8_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.CoolerType?.ToLowerInvariant()}_{request.Socket?.ToLowerInvariant()}_{request.HasRgb}_{request.TdpRating}_{request.RadiatorSize}";
+
+            if (!_cache.TryGetValue(cacheKey, out int totalCount))
+            {
+                totalCount = await query.CountAsync();
+                _cache.Set(cacheKey, totalCount, TimeSpan.FromHours(1));
+            }
+
+            int pageNum = request.PageNumber > 0 ? request.PageNumber : 1;
+            int pageSize = request.PageSize > 0 ? request.PageSize : 25;
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            
+            var cpuCoolers = await query.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return Ok(new PCPartsAPI.Dtos.PagedResponse<CpuCooler> { Data = cpuCoolers, TotalCount = totalCount, TotalPages = totalPages, HasNextPage = pageNum < totalPages });
         }
 
-        // GET: api/cpucoolers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CpuCooler>> GetCpuCooler(int id)
         {
-            // Değişken adını daha anlaşılır yaptım (CpuCoolers -> cpuCooler)
             var cpuCooler = await _context.CpuCoolers.FindAsync(id);
-
-            if (cpuCooler == null)
-            {
-                return NotFound();
-            }
-
-            return cpuCooler;
+            return cpuCooler == null ? NotFound() : Ok(cpuCooler);
         }
     }
 }

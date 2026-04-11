@@ -85,7 +85,10 @@ namespace PCPartsAPI
             // 4. EKLENDİ: Mail Gönderme Servisini Tanıtma
             // Sistem "IEmailSender" istendiğinde senin "EmailSender" sınıfını kullanacak.
             builder.Services.AddScoped<EmailSender>();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options => {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
