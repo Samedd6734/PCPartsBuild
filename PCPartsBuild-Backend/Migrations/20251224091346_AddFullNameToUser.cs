@@ -8,15 +8,12 @@ namespace PCPartsAPI.Migrations
     public partial class AddFullNameToUser : Migration
     {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<string>(
-                name: "FullName",
-                table: "AspNetUsers",
-                type: "text",
-                nullable: false,
-                defaultValue: "");
-        }
+       protected override void Up(MigrationBuilder migrationBuilder)
+{
+    // Bu metodun içini tamamen sildik/boş bıraktık.
+    // Çünkü FullName kolonu veritabanında zaten var.
+}
+
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)

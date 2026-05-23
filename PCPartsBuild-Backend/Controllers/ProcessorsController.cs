@@ -87,6 +87,17 @@ namespace PCPartsAPI.Controllers
             int pageSize = request.PageSize > 0 ? request.PageSize : 25;
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             
+            // Compatibility Sorting
+            if (!string.IsNullOrEmpty(request.CompatibleMotherboardSocket))
+            {
+                var moboSocket = request.CompatibleMotherboardSocket.ToLowerInvariant().Trim();
+                query = query.OrderByDescending(p => p.Socket != null && p.Socket.ToLower() == moboSocket).ThenBy(p => p.Id);
+            }
+            else
+            {
+                query = query.OrderBy(p => p.Id);
+            }
+
             var processors = await query
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)

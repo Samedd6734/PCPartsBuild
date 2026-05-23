@@ -4,6 +4,7 @@ using PCPartsAPI.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services; // 1. EKLENDİ: Mail arayüzü
 using PCPartsAPI.Services; // 2. EKLENDİ: Senin EmailSender sınıfın
+using PCPartsAPI.Services.Interfaces; // Asistan servisleri
 using PCPartsAPI.Models; // AppUser için gerekli
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,19 @@ namespace PCPartsAPI
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddMemoryCache();
+
+            // --- ASISTAN SERVİSLERİ ---
+            builder.Services.AddScoped<IDynamicBudgetService, DynamicBudgetService>();
+            builder.Services.AddScoped<ICompatibilityEngine, CompatibilityEngine>();
+            builder.Services.AddScoped<IAiPromptService, AiPromptService>();
+            builder.Services.AddScoped<ISessionManager, SessionManager>();
+
+            // Named HttpClient for LLM API (Groq/Gemini)
+            builder.Services.AddHttpClient("LlmClient", client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(60);
+            });
+
 
             // --- 1. CORS AYARLARI ---
             builder.Services.AddCors(options =>

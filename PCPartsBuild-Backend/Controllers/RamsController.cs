@@ -71,6 +71,17 @@ namespace PCPartsAPI.Controllers
             int pageSize = request.PageSize > 0 ? request.PageSize : 25;
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             
+            // Compatibility Sorting
+            if (!string.IsNullOrEmpty(request.CompatibleMotherboardMemoryType))
+            {
+                var moboMemType = request.CompatibleMotherboardMemoryType.ToLowerInvariant().Trim();
+                query = query.OrderByDescending(r => r.MemoryType != null && r.MemoryType.ToLower() == moboMemType).ThenBy(r => r.Id);
+            }
+            else
+            {
+                query = query.OrderBy(r => r.Id);
+            }
+
             var rams = await query.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return Ok(new PCPartsAPI.Dtos.PagedResponse<Ram> { Data = rams, TotalCount = totalCount, TotalPages = totalPages, HasNextPage = pageNum < totalPages });

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PCPartsAPI.Models; // AppUser burada olduğu için ekliyoruz
 
@@ -22,5 +22,21 @@ namespace PCPartsAPI.Data
         public DbSet<CpuCooler> CpuCoolers { get; set; }
         public DbSet<Favorites> Favorites { get; set; }
         public DbSet<SavedBuilds> SavedBuilds { get; set; }
+
+        // Asistan Oturumları
+        public DbSet<AssistantSession> AssistantSessions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<AssistantSession>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.SelectedComponentsJson).HasColumnType("jsonb");
+                entity.Property(e => e.CurrentStep).HasConversion<int>();
+                entity.HasIndex(e => e.UserId);
+            });
+        }
     }
 }

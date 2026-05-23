@@ -44,9 +44,21 @@ function PtsContent() {
     const [pageData, setPageData] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
-    const [currentBuild, setCurrentBuild] = useState({
-        cpu: null, motherboard: null, ram: null, gpu: null,
-        storage: null, case: null, psu: null, cpuCooler: null
+    const [currentBuild, setCurrentBuild] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('pts_current_build');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    console.error("Initial build parse error:", e);
+                }
+            }
+        }
+        return {
+            cpu: null, motherboard: null, ram: null, gpu: null,
+            storage: null, case: null, psu: null, cpuCooler: null
+        };
     });
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState(searchParams.get('SearchTerm') || '');
@@ -68,6 +80,13 @@ function PtsContent() {
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
+
+    // Build Değişikliklerini Kaydet
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('pts_current_build', JSON.stringify(currentBuild));
+        }
+    }, [currentBuild]);
 
     const abortControllerRef = useRef(null);
 
@@ -139,6 +158,16 @@ function PtsContent() {
             apiParams.delete('category'); // handled via routing endpoint
             apiParams.delete('page');
 
+            // Add Compatibility Sorting Parameters
+            if (currentCategory === 'motherboard') {
+                if (currentBuild.cpu) apiParams.set('CompatibleCpuSocket', currentBuild.cpu.socket);
+                if (currentBuild.ram) apiParams.set('CompatibleRamMemoryType', currentBuild.ram.memoryType);
+            } else if (currentCategory === 'cpu') {
+                if (currentBuild.motherboard) apiParams.set('CompatibleMotherboardSocket', currentBuild.motherboard.socket);
+            } else if (currentCategory === 'ram') {
+                if (currentBuild.motherboard) apiParams.set('CompatibleMotherboardMemoryType', currentBuild.motherboard.memoryType);
+            }
+
             const queryStrForCache = apiParams.toString();
             const cacheKey = cacheManager.generateKey(currentCategory, queryStrForCache);
             
@@ -209,7 +238,7 @@ function PtsContent() {
             }
         };
         
-    }, [currentCategory, currentPage, searchParams]);
+    }, [currentCategory, currentPage, searchParams, currentBuild]);
     
     // Auto-scroll to top on pagination change
     useEffect(() => {

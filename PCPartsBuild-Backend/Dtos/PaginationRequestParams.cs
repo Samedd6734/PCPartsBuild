@@ -59,5 +59,11 @@ namespace PCPartsAPI.Dtos
         public string? TdpRating { get; set; }
         public string? HasRgb { get; set; }
         public string? RadiatorSize { get; set; }
+
+        // 9. Compatibility Sorting Parameters
+        public string? CompatibleCpuSocket { get; set; }
+        public string? CompatibleMotherboardSocket { get; set; }
+        public string? CompatibleMotherboardMemoryType { get; set; }
+        public string? CompatibleRamMemoryType { get; set; }
     }
 }

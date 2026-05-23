@@ -86,6 +86,22 @@ namespace PCPartsAPI.Controllers
             int pageSize = request.PageSize > 0 ? request.PageSize : 25;
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             
+            // Compatibility Sorting
+            if (!string.IsNullOrEmpty(request.CompatibleCpuSocket) || !string.IsNullOrEmpty(request.CompatibleRamMemoryType))
+            {
+                var cpuSocket = request.CompatibleCpuSocket?.ToLowerInvariant()?.Trim();
+                var ramMemType = request.CompatibleRamMemoryType?.ToLowerInvariant()?.Trim();
+
+                query = query.OrderByDescending(m => 
+                    (string.IsNullOrEmpty(cpuSocket) || (m.Socket != null && m.Socket.ToLower() == cpuSocket)) &&
+                    (string.IsNullOrEmpty(ramMemType) || (m.MemoryType != null && m.MemoryType.ToLower() == ramMemType))
+                ).ThenBy(m => m.Id);
+            }
+            else
+            {
+                query = query.OrderBy(m => m.Id);
+            }
+
             var motherboards = await query.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return Ok(new PCPartsAPI.Dtos.PagedResponse<Motherboard> { Data = motherboards, TotalCount = totalCount, TotalPages = totalPages, HasNextPage = pageNum < totalPages });
