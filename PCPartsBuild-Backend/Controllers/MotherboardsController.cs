@@ -26,7 +26,7 @@ namespace PCPartsAPI.Controllers
 
             if (!string.IsNullOrEmpty(request.SearchTerm)) {
                 var search = request.SearchTerm.ToLowerInvariant();
-                query = query.Where(m => (m.Brand ?? "").ToLower().Contains(search) || (m.ModelName ?? "").ToLower().Contains(search));
+                query = query.Where(m => (m.Brand ?? "").ToLower().Contains(search) || (m.ProductName ?? "").ToLower().Contains(search));
             }
 
             if (!string.IsNullOrEmpty(request.Brand)) {
@@ -34,14 +34,9 @@ namespace PCPartsAPI.Controllers
                 query = query.Where(m => brands.Contains((m.Brand ?? "").ToLower().Trim()));
             }
 
-            if (!string.IsNullOrEmpty(request.Socket)) {
-                var sockets = request.Socket.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
-                query = query.Where(m => sockets.Contains((m.Socket ?? "").ToLower().Trim()));
-            }
-
-            if (!string.IsNullOrEmpty(request.Chipset)) {
-                var chipsets = request.Chipset.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
-                query = query.Where(m => chipsets.Contains((m.Chipset ?? "").ToLower().Trim()));
+            if (!string.IsNullOrEmpty(request.SocketType)) {
+                var sockets = request.SocketType.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(m => sockets.Contains((m.SocketType ?? "").ToLower().Trim()));
             }
 
             if (!string.IsNullOrEmpty(request.FormFactor)) {
@@ -54,27 +49,39 @@ namespace PCPartsAPI.Controllers
                 query = query.Where(m => memTypes.Contains((m.MemoryType ?? "").ToLower().Trim()));
             }
 
-            if (!string.IsNullOrEmpty(request.IntegratedWifi)) {
-                var boolVals = request.IntegratedWifi.Split(',').Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null).Where(b => b != null).Select(b => b.Value).ToList();
-                if (boolVals.Any()) query = query.Where(m => boolVals.Contains(m.IntegratedWifi));
-            }
-
-            if (!string.IsNullOrEmpty(request.IntegratedBluetooth)) {
-                var boolVals = request.IntegratedBluetooth.Split(',').Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null).Where(b => b != null).Select(b => b.Value).ToList();
-                if (boolVals.Any()) query = query.Where(m => boolVals.Contains(m.IntegratedBluetooth));
-            }
-
-            if (!string.IsNullOrEmpty(request.ArgbSupport)) {
-                var boolVals = request.ArgbSupport.Split(',').Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null).Where(b => b != null).Select(b => b.Value).ToList();
-                if (boolVals.Any()) query = query.Where(m => boolVals.Contains(m.ArgbSupport));
-            }
-
             if (!string.IsNullOrEmpty(request.M2SlotCount)) {
                 var counts = request.M2SlotCount.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
                 if (counts.Any()) query = query.Where(m => counts.Contains(m.M2SlotCount));
             }
 
-            string cacheKey = $"TotalCount_Motherboards_V9_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.Socket?.ToLowerInvariant()}_{request.Chipset?.ToLowerInvariant()}_{request.FormFactor?.ToLowerInvariant()}_{request.MemoryType?.ToLowerInvariant()}_{request.IntegratedWifi}_{request.IntegratedBluetooth}_{request.ArgbSupport}_{request.M2SlotCount}";
+            if (!string.IsNullOrEmpty(request.MemorySlotCount)) {
+                var counts = request.MemorySlotCount.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (counts.Any()) query = query.Where(m => counts.Contains(m.MemorySlotCount));
+            }
+
+            if (!string.IsNullOrEmpty(request.SataPortCount)) {
+                var counts = request.SataPortCount.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (counts.Any()) query = query.Where(m => counts.Contains(m.SataPortCount));
+            }
+
+            if (!string.IsNullOrEmpty(request.PCIex16SlotCount)) {
+                var counts = request.PCIex16SlotCount.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (counts.Any()) query = query.Where(m => counts.Contains(m.PCIex16SlotCount));
+            }
+
+            if (!string.IsNullOrEmpty(request.SupportsOverclock)) {
+                var boolVals = request.SupportsOverclock.Split(',')
+                    .Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null)
+                    .Where(b => b != null).Select(b => b.Value).ToList();
+                if (boolVals.Any()) query = query.Where(m => boolVals.Contains(m.SupportsOverclock));
+            }
+
+            if (request.MinPrice.HasValue)
+                query = query.Where(m => m.Price >= request.MinPrice.Value);
+            if (request.MaxPrice.HasValue)
+                query = query.Where(m => m.Price <= request.MaxPrice.Value);
+
+            string cacheKey = $"TotalCount_Motherboards_V10_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.SocketType?.ToLowerInvariant()}_{request.FormFactor?.ToLowerInvariant()}_{request.MemoryType?.ToLowerInvariant()}_{request.M2SlotCount}_{request.MemorySlotCount}_{request.SataPortCount}_{request.PCIex16SlotCount}_{request.SupportsOverclock}_{request.MinPrice}_{request.MaxPrice}";
 
             if (!_cache.TryGetValue(cacheKey, out int totalCount))
             {
@@ -93,7 +100,7 @@ namespace PCPartsAPI.Controllers
                 var ramMemType = request.CompatibleRamMemoryType?.ToLowerInvariant()?.Trim();
 
                 query = query.OrderByDescending(m => 
-                    (string.IsNullOrEmpty(cpuSocket) || (m.Socket != null && m.Socket.ToLower() == cpuSocket)) &&
+                    (string.IsNullOrEmpty(cpuSocket) || (m.SocketType != null && m.SocketType.ToLower() == cpuSocket)) &&
                     (string.IsNullOrEmpty(ramMemType) || (m.MemoryType != null && m.MemoryType.ToLower() == ramMemType))
                 ).ThenBy(m => m.Id);
             }

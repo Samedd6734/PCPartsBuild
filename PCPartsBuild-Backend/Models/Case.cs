@@ -1,27 +1,63 @@
-﻿namespace PCPartsAPI.Models
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PCPartsAPI.Models
 {
     public class Case
     {
+        [Key]
         public int Id { get; set; }
-        public string Brand { get; set; }
-        public string ModelName { get; set; }
-        public string CaseType { get; set; } // Mid Tower, Full Tower
 
-        // Desteklediği Anakartlar (Array veya Virgüllü String)
-        public string SupportedMotherboards { get; set; } // "ATX, Micro-ATX, Mini-ITX"
+        [Required]
+        [MaxLength(500)]
+        public string EpeyUrl { get; set; } = string.Empty;
 
-        // Fiziksel Sınırlar (Uyumluluk)
-        public int MaxGpuLength { get; set; } // mm
-        public int MaxCpuCoolerHeight { get; set; } // mm
-        public int MaxPsuLength { get; set; } // mm
+        [Required]
+        [MaxLength(300)]
+        public string ProductName { get; set; } = string.Empty;
 
-        // Radyatör Desteği (Sıvı Soğutma)
-        public string RadiatorSupportFront { get; set; } // "120, 240, 360"
-        public string RadiatorSupportTop { get; set; } // "120, 240"
+        [Required]
+        [MaxLength(100)]
+        public string Brand { get; set; } = string.Empty;
 
-        // Ön Panel Portları (Anakart Header uyumu için)
-        public bool HasTypeC { get; set; }
-        public int Usb3Count { get; set; }
-        public string ImageUrl { get; set; } = ""; // Resim linki
+        public decimal? Price { get; set; }
+
+        [MaxLength(500)]
+        public string ImageUrl { get; set; } = string.Empty;
+
+        public int? EpeyScore { get; set; }
+
+        // Anakart Uyumluluğu
+        [MaxLength(200)]
+        public string SupportedMotherboardFormFactors { get; set; } = string.Empty;
+
+        // GPU Uyumluluğu
+        public int MaxGPULengthMm { get; set; }
+
+        // Soğutucu Uyumluluğu
+        public int MaxCPUCoolerHeightMm { get; set; }
+
+        public int TopRadiatorSupportMm { get; set; }
+
+        public int FrontRadiatorSupportMm { get; set; }
+
+        // Fan Uyumluluğu
+        public int FanCapacity { get; set; }
+
+        public int MaxFanSizeMm { get; set; }
+
+        // PSU Uyumluluğu
+        public bool HasBuiltInPSU { get; set; }
+
+        public int? BuiltInPSUWattage { get; set; }
+
+        // Depolama Yuvası
+        public int Drive25Bays { get; set; }
+
+        public int Drive35Bays { get; set; }
+
+        // Ham Epey Verisi
+        [Column(TypeName = "jsonb")]
+        public string RawEpeyData { get; set; } = "{}";
     }
 }

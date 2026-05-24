@@ -1,27 +1,66 @@
-﻿namespace PCPartsAPI.Models
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PCPartsAPI.Models
 {
     public class Gpu
     {
+        [Key]
         public int Id { get; set; }
-        public string Brand { get; set; } // Asus, MSI
-        public string ChipsetBrand { get; set; } // NVIDIA, AMD, Intel
-        public string ModelName { get; set; }
 
-        // Fiziksel Boyutlar (Kasa Uyumu)
-        public int Length { get; set; } // mm
-        public int Height { get; set; } // 
+        [Required]
+        [MaxLength(500)]
+        public string EpeyUrl { get; set; } = string.Empty;
 
-        // Güç (PSU Uyumu - ÇOK ÖNEMLİ)
-        public int Tdp { get; set; } // Harcadığı güç
-        public int RecommendedPsu { get; set; } // Önerilen PSU
-        // Örn: "1x16pin" (12VHPWR) veya "3x8pin ekran kartı güç girişinin kaç pin olduğu"
-        public string PowerConnectors { get; set; }
+        [Required]
+        [MaxLength(300)]
+        public string ProductName { get; set; } = string.Empty;
 
-        // Performans
-        public string Interface { get; set; } // PCIe 4.0 x16
-        public int VRAMMemorySize { get; set; } // GB
-        public string MemoryType { get; set; } // GDDR6X
-        public int BoostClock { get; set; } // MHz
-        public string ImageUrl { get; set; } = ""; // Resim linki 
+        [Required]
+        [MaxLength(100)]
+        public string Brand { get; set; } = string.Empty;
+
+        public decimal? Price { get; set; }
+
+        [MaxLength(500)]
+        public string ImageUrl { get; set; } = string.Empty;
+
+        public int? EpeyScore { get; set; }
+
+        // Chip / Performans
+        [MaxLength(150)]
+        public string GpuChip { get; set; } = string.Empty;
+
+        [MaxLength(50)]
+        public string ChipManufacturer { get; set; } = string.Empty;
+
+        public int VRAMGB { get; set; }
+
+        [MaxLength(50)]
+        public string MemoryType { get; set; } = string.Empty;
+
+        [MaxLength(20)]
+        public string PCIeInterface { get; set; } = string.Empty;
+
+        public int? PassMarkScore { get; set; }
+
+        // Fiziksel Boyutlar (Kasa Uyumluluğu)
+        public int LengthMm { get; set; }
+
+        public int ThicknessMm { get; set; }
+
+        public int FanCount { get; set; }
+
+        // Güç / PSU Uyumluluğu
+        public int RecommendedPSUW { get; set; }
+
+        public int TDPWatt { get; set; }
+
+        [MaxLength(200)]
+        public string PowerConnectors { get; set; } = string.Empty;
+
+        // Ham Epey Verisi
+        [Column(TypeName = "jsonb")]
+        public string RawEpeyData { get; set; } = "{}";
     }
 }

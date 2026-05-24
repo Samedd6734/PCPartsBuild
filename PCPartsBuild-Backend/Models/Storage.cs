@@ -1,55 +1,46 @@
-﻿using System.ComponentModel.DataAnnotations.Schema; // NotMapped için gerekli
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PCPartsAPI.Models
 {
     public class Storage
     {
+        [Key]
         public int Id { get; set; }
-        public string Brand { get; set; } = string.Empty; // Örn: "Samsung", "Seagate"
-        public string ModelName { get; set; } = string.Empty; // Örn: "990 Pro", "BarraCuda"
 
-        public string StorageType { get; set; } = string.Empty; // "SSD" veya "HDD"
+        [Required, MaxLength(500)]
+        public string EpeyUrl { get; set; } = string.Empty;
 
-        // --- 1. KAPASİTE VE PERFORMANS ---
+        [Required, MaxLength(300)]
+        public string ProductName { get; set; } = string.Empty;
 
-        // Veritabanında GB cinsinden tutulur. (Gerçek 2'lik sistem değeri)
-        // Örn: 1 TB için 1024, 2 TB için 2048, 500 GB için 500 veya 512 girilmeli.
-        public int Capacity { get; set; }
+        [Required, MaxLength(100)]
+        public string Brand { get; set; } = string.Empty;
 
-        // BU YENİ ÖZELLİK: Veritabanında sütun oluşturmaz, otomatik hesaplar.
-        // Frontend'de "1 TB", "512 GB" gibi düzgün göstermek için kullanılır.
-        [NotMapped]
-        public string CapacityFormatted
-        {
-            get
-            {
-                if (Capacity >= 1024 && Capacity % 1024 == 0)
-                {
-                    return $"{Capacity / 1024} TB";
-                }
-                else
-                {
-                    return $"{Capacity} GB";
-                }
-            }
-        }
+        public decimal? Price { get; set; }
 
-        public int ReadSpeed { get; set; } // MB/s (Örn: 7450)
-        public int WriteSpeed { get; set; } // MB/s (Örn: 6900)
+        [MaxLength(500)]
+        public string ImageUrl { get; set; } = string.Empty;
 
-        // --- 2. BAĞLANTI VE FORM FAKTÖRÜ ---
-        public string FormFactor { get; set; } = string.Empty; // "M.2", "2.5 Inch"
-        public string Interface { get; set; } = string.Empty; // "PCIe 4.0 x4", "SATA III"
-        public bool IsNvme { get; set; }
+        public int? EpeyScore { get; set; }
 
-        // --- 3. TEKNİK DETAYLAR ---
-        public bool HasDramCache { get; set; }
-        public string NandType { get; set; } = string.Empty; // "TLC", "QLC"
-        public int Tbw { get; set; } // Ömür (Total Bytes Written)
+        // Form Faktör ve Arayüz
+        [MaxLength(50)]
+        public string FormFactor { get; set; } = string.Empty;
 
-        // --- 5. HDD ÖZEL ---
-        public int Rpm { get; set; }
-        public int CacheSizeMB { get; set; }
-        public string ImageUrl { get; set; } = ""; // Resim linki 
+        [MaxLength(50)]
+        public string Interface { get; set; } = string.Empty;
+
+        // Kapasite
+        public int CapacityGB { get; set; }
+
+        // Performans
+        public int? ReadSpeedMBs { get; set; }
+
+        public int? WriteSpeedMBs { get; set; }
+
+        // Ham Epey Verisi
+        [Column(TypeName = "jsonb")]
+        public string RawEpeyData { get; set; } = "{}";
     }
 }

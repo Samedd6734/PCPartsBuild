@@ -24,25 +24,21 @@ namespace PCPartsAPI.Controllers
         {
             var query = _context.Processors.AsQueryable().AsNoTracking();
 
-            // 1. SearchTerm (Culture Invariant)
             if (!string.IsNullOrEmpty(request.SearchTerm)) {
                 var search = request.SearchTerm.ToLowerInvariant();
-                query = query.Where(p => (p.Brand ?? "").ToLower().Contains(search) || (p.ModelName ?? "").ToLower().Contains(search));
+                query = query.Where(p => (p.Brand ?? "").ToLower().Contains(search) || (p.ProductName ?? "").ToLower().Contains(search));
             }
 
-            // 2. Brand (Culture Invariant)
             if (!string.IsNullOrEmpty(request.Brand)) {
                 var brands = request.Brand.Split(',').Select(b => b.Trim().ToLowerInvariant()).ToList();
                 query = query.Where(p => brands.Contains((p.Brand ?? "").ToLower().Trim()));
             }
 
-            // 3. Socket (Culture Invariant)
-            if (!string.IsNullOrEmpty(request.Socket)) {
-                var sockets = request.Socket.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
-                query = query.Where(p => sockets.Contains((p.Socket ?? "").ToLower().Trim()));
+            if (!string.IsNullOrEmpty(request.SocketType)) {
+                var sockets = request.SocketType.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(p => sockets.Contains((p.SocketType ?? "").ToLower().Trim()));
             }
 
-            // 4. CoreCount
             if (!string.IsNullOrEmpty(request.CoreCount)) {
                 var coreCounts = request.CoreCount.Split(',')
                     .Select(s => int.TryParse(s, out int n) ? n : (int?)null)
@@ -50,7 +46,6 @@ namespace PCPartsAPI.Controllers
                 if (coreCounts.Any()) query = query.Where(p => coreCounts.Contains(p.CoreCount));
             }
 
-            // 5. ThreadCount
             if (!string.IsNullOrEmpty(request.ThreadCount)) {
                 var threadCounts = request.ThreadCount.Split(',')
                     .Select(s => int.TryParse(s, out int n) ? n : (int?)null)
@@ -58,24 +53,36 @@ namespace PCPartsAPI.Controllers
                 if (threadCounts.Any()) query = query.Where(p => threadCounts.Contains(p.ThreadCount));
             }
 
-            // 6. TDP
-            if (!string.IsNullOrEmpty(request.Tdp)) {
-                var tdpVals = request.Tdp.Split(',')
-                    .Select(s => int.TryParse(s, out int n) ? n : (int?)null)
-                    .Where(n => n != null).Select(n => n.Value).ToList();
-                if (tdpVals.Any()) query = query.Where(p => p.Tdp <= tdpVals.Max());
-            }
-
-            // 7. IntegratedGraphics
             if (!string.IsNullOrEmpty(request.IntegratedGraphics)) {
                 var boolVals = request.IntegratedGraphics.Split(',')
                     .Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null)
                     .Where(b => b != null).Select(b => b.Value).ToList();
-                if (boolVals.Any()) query = query.Where(p => boolVals.Contains(p.IntegratedGraphics));
+                if (boolVals.Any()) query = query.Where(p => boolVals.Contains(p.HasIntegratedGraphics));
             }
 
-            // Cache Key Bumping to Version 8 for Culture Invariant Logic
-            string cacheKey = $"TotalCount_Processors_V8_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.Socket?.ToLowerInvariant()}_{request.CoreCount}_{request.ThreadCount}_{request.Tdp}_{request.IntegratedGraphics}";
+            if (!string.IsNullOrEmpty(request.TDP)) {
+                var tdps = request.TDP.Split(',')
+                    .Select(s => int.TryParse(s, out int n) ? n : (int?)null)
+                    .Where(n => n != null).Select(n => n.Value).ToList();
+                if (tdps.Any()) query = query.Where(p => tdps.Contains(p.TDP));
+            }
+
+            if (!string.IsNullOrEmpty(request.SupportedMemoryType)) {
+                var memTypes = request.SupportedMemoryType.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(p => memTypes.Contains((p.SupportedMemoryType ?? "").ToLower().Trim()));
+            }
+
+            if (!string.IsNullOrEmpty(request.PCIeVersion)) {
+                var pcies = request.PCIeVersion.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(p => pcies.Contains((p.PCIeVersion ?? "").ToLower().Trim()));
+            }
+
+            if (request.MinPrice.HasValue)
+                query = query.Where(p => p.Price >= request.MinPrice.Value);
+            if (request.MaxPrice.HasValue)
+                query = query.Where(p => p.Price <= request.MaxPrice.Value);
+
+            string cacheKey = $"TotalCount_Processors_V10_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.SocketType?.ToLowerInvariant()}_{request.CoreCount}_{request.ThreadCount}_{request.IntegratedGraphics}_{request.TDP}_{request.SupportedMemoryType}_{request.PCIeVersion}_{request.MinPrice}_{request.MaxPrice}";
 
             if (!_cache.TryGetValue(cacheKey, out int totalCount))
             {
@@ -91,7 +98,7 @@ namespace PCPartsAPI.Controllers
             if (!string.IsNullOrEmpty(request.CompatibleMotherboardSocket))
             {
                 var moboSocket = request.CompatibleMotherboardSocket.ToLowerInvariant().Trim();
-                query = query.OrderByDescending(p => p.Socket != null && p.Socket.ToLower() == moboSocket).ThenBy(p => p.Id);
+                query = query.OrderByDescending(p => p.SocketType != null && p.SocketType.ToLower() == moboSocket).ThenBy(p => p.Id);
             }
             else
             {

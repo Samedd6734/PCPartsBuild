@@ -1,20 +1,65 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace PCPartsAPI.Models
 {
     public class Processor
     {
+        [Key]
         public int Id { get; set; }
-        public string Brand { get; set; } // Intel, AMD
-        public string ModelName { get; set; }
-        public string Socket { get; set; } // AM5, LGA1700
+
+        [Required]
+        [MaxLength(500)]
+        public string EpeyUrl { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(300)]
+        public string ProductName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(100)]
+        public string Brand { get; set; } = string.Empty;
+
+        public decimal? Price { get; set; }
+
+        [MaxLength(500)]
+        public string ImageUrl { get; set; } = string.Empty;
+
+        public int? EpeyScore { get; set; }
+
+        // Uyumluluk Kritik Alanlar
+        [MaxLength(50)]
+        public string SocketType { get; set; } = string.Empty;
+
+        [MaxLength(100)]
+        public string SupportedMemoryType { get; set; } = string.Empty;
+
+        public int MaxMemorySpeedMHz { get; set; }
+
+        [MaxLength(50)]
+        public string PCIeVersion { get; set; } = string.Empty;
+
+        public int TDP { get; set; }
+
+        public bool HasIntegratedGraphics { get; set; }
+
+        // Performans / Darboğaz Analizi
         public int CoreCount { get; set; }
+
         public int ThreadCount { get; set; }
-        public double BaseClockSpeed { get; set; }
-        public double BoostClockSpeed { get; set; }
-        public int L3Cache { get; set; }
-        public int Tdp { get; set; } // Soğutucu seçimi ve PSU hesaplaması için kritik
-        public bool IntegratedGraphics { get; set; } // Ekran kartsız görüntü verir mi
-        public string SupportedMemoryTypes { get; set; } // Örn: "DDR4, DDR5"
-        public int MaxMemoryCapacity { get; set; } // GB (Örn: 128)
-        public string ImageUrl { get; set; } = ""; // Resim linki 
+
+        public decimal BaseClockGHz { get; set; }
+
+        public decimal BoostClockGHz { get; set; }
+
+        public int L3CacheMB { get; set; }
+
+        public int? PassMarkScoreMulti { get; set; }
+
+        public int? PassMarkScoreSingle { get; set; }
+
+        // Ham Epey Verisi
+        [Column(TypeName = "jsonb")]
+        public string RawEpeyData { get; set; } = "{}";
     }
 }

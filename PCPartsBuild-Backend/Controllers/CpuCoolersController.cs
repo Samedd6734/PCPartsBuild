@@ -27,7 +27,7 @@ namespace PCPartsAPI.Controllers
 
             if (!string.IsNullOrEmpty(request.SearchTerm)) {
                 var search = request.SearchTerm.ToLowerInvariant();
-                query = query.Where(c => (c.Brand ?? "").ToLower().Contains(search) || (c.ModelName ?? "").ToLower().Contains(search));
+                query = query.Where(c => (c.Brand ?? "").ToLower().Contains(search) || (c.ProductName ?? "").ToLower().Contains(search));
             }
 
             if (!string.IsNullOrEmpty(request.Brand)) {
@@ -40,27 +40,32 @@ namespace PCPartsAPI.Controllers
                 query = query.Where(c => types.Contains((c.CoolerType ?? "").ToLower().Trim()));
             }
 
-            if (!string.IsNullOrEmpty(request.Socket)) {
-                var sockets = request.Socket.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+            if (!string.IsNullOrEmpty(request.SocketType)) {
+                var sockets = request.SocketType.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
                 query = query.Where(c => sockets.Any(s => (c.SupportedSockets ?? "").ToLower().Contains(s)));
             }
 
-            if (!string.IsNullOrEmpty(request.HasRgb)) {
-                var boolVals = request.HasRgb.Split(',').Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null).Where(b => b != null).Select(b => b.Value).ToList();
-                if (boolVals.Any()) query = query.Where(c => boolVals.Contains(c.HasRgb));
+            if (!string.IsNullOrEmpty(request.TDPCapacityW)) {
+                var vals = request.TDPCapacityW.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(c => c.TDPCapacityW >= vals.Min());
             }
 
-            if (!string.IsNullOrEmpty(request.TdpRating)) {
-                var vals = request.TdpRating.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
-                if (vals.Any()) query = query.Where(c => c.TdpRating >= vals.Min());
+            if (!string.IsNullOrEmpty(request.RadiatorSizeMm)) {
+                var vals = request.RadiatorSizeMm.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(c => vals.Contains(c.RadiatorSizeMm));
             }
 
-            if (!string.IsNullOrEmpty(request.RadiatorSize)) {
-                var vals = request.RadiatorSize.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
-                if (vals.Any()) query = query.Where(c => vals.Contains(c.RadiatorSize));
+            if (!string.IsNullOrEmpty(request.FanSizeMm)) {
+                var vals = request.FanSizeMm.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(c => vals.Contains(c.FanSizeMm));
             }
 
-            string cacheKey = $"TotalCount_CpuCoolers_V8_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.CoolerType?.ToLowerInvariant()}_{request.Socket?.ToLowerInvariant()}_{request.HasRgb}_{request.TdpRating}_{request.RadiatorSize}";
+            if (request.MinPrice.HasValue)
+                query = query.Where(c => c.Price >= request.MinPrice.Value);
+            if (request.MaxPrice.HasValue)
+                query = query.Where(c => c.Price <= request.MaxPrice.Value);
+
+            string cacheKey = $"TotalCount_CpuCoolers_V10_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.CoolerType?.ToLowerInvariant()}_{request.SocketType?.ToLowerInvariant()}_{request.TDPCapacityW}_{request.RadiatorSizeMm}_{request.FanSizeMm}_{request.MinPrice}_{request.MaxPrice}";
 
             if (!_cache.TryGetValue(cacheKey, out int totalCount))
             {
@@ -72,6 +77,27 @@ namespace PCPartsAPI.Controllers
             int pageSize = request.PageSize > 0 ? request.PageSize : 25;
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             
+            // Compatibility Sorting
+            if (!string.IsNullOrEmpty(request.CompatibleCpuSocket) || request.CompatibleCpuTdp > 0 || request.CompatibleCaseMaxCoolerHeight > 0 || request.CompatibleCaseFrontRad > 0 || request.CompatibleCaseTopRad > 0)
+            {
+                var socket = request.CompatibleCpuSocket?.ToLowerInvariant()?.Trim() ?? "";
+                var tdp = request.CompatibleCpuTdp ?? 0;
+                var maxHeight = request.CompatibleCaseMaxCoolerHeight ?? 0;
+                var frontRad = request.CompatibleCaseFrontRad ?? 0;
+                var topRad = request.CompatibleCaseTopRad ?? 0;
+
+                query = query.OrderByDescending(c =>
+                    (string.IsNullOrEmpty(socket) || (c.SupportedSockets != null && c.SupportedSockets.ToLower().Contains(socket))) &&
+                    (tdp == 0 || c.TDPCapacityW == 0 || c.TDPCapacityW >= tdp) &&
+                    (maxHeight == 0 || (c.CoolerType != null && c.CoolerType.ToLower().Contains("liquid")) || c.HeightMm == 0 || c.HeightMm <= maxHeight) &&
+                    ((frontRad == 0 && topRad == 0) || !(c.CoolerType != null && c.CoolerType.ToLower().Contains("liquid")) || c.RadiatorSizeMm == 0 || (c.RadiatorSizeMm <= frontRad || c.RadiatorSizeMm <= topRad))
+                ).ThenBy(c => c.Id);
+            }
+            else
+            {
+                query = query.OrderBy(c => c.Id);
+            }
+
             var cpuCoolers = await query.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return Ok(new PCPartsAPI.Dtos.PagedResponse<CpuCooler> { Data = cpuCoolers, TotalCount = totalCount, TotalPages = totalPages, HasNextPage = pageNum < totalPages });

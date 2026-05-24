@@ -35,9 +35,6 @@ namespace PCPartsAPI.Controllers
             _context = context;
         }
 
-        /// <summary>
-        /// Asistan oturumunu başlatır. İlk adım (CPU) bütçesini hesaplar ve karşılama mesajı üretir.
-        /// </summary>
         [HttpPost("start")]
         public async Task<IActionResult> Start([FromBody] AssistantStartRequestDto request)
         {
@@ -47,7 +44,6 @@ namespace PCPartsAPI.Controllers
             if (string.IsNullOrWhiteSpace(request.Purpose))
                 return BadRequest(new { message = "Kullanım amacı belirtilmelidir." });
 
-            // UserId — JWT varsa al, yoksa null (anonim)
             string? userId = User.Identity?.IsAuthenticated == true
                 ? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
                 : null;
@@ -73,13 +69,9 @@ namespace PCPartsAPI.Controllers
             });
         }
 
-        /// <summary>
-        /// Seçilen parçayı uyumluluk motoruyla test eder. Uyumluysa build'e ekler ve sonraki adıma geçer.
-        /// </summary>
         [HttpPost("process-selection")]
         public async Task<IActionResult> ProcessSelection([FromBody] AssistantSelectionRequestDto request)
         {
-            // 1. Session'ı getir
             var session = await _sessionManager.GetSessionAsync(request.SessionId);
             if (session == null)
                 return BadRequest(new { message = "Oturum bulunamadı." });
@@ -87,14 +79,12 @@ namespace PCPartsAPI.Controllers
             if (session.CurrentStep == ComponentStep.Completed)
                 return BadRequest(new { message = "Tüm adımlar zaten tamamlandı." });
 
-            // 2. CurrentStep'e göre doğru tablodan parçayı bul
             var stepName = session.CurrentStep.ToString();
             var (component, componentSpecs) = await FindComponentAsync(session.CurrentStep, request.ComponentId);
 
             if (component == null)
                 return BadRequest(new { message = $"{stepName} ID:{request.ComponentId} bulunamadı." });
 
-            // 3. Uyumluluk kontrolü
             var compatibility = await _compatibilityEngine.CheckCompatibilityAsync(
                 session.SelectedComponentsJson,
                 stepName,
@@ -102,7 +92,6 @@ namespace PCPartsAPI.Controllers
 
             if (!compatibility.IsCompatible)
             {
-                // Uyumsuz — LLM hata mesajı üret, kaydetme
                 var errorMessage = await _aiPromptService.GenerateErrorMessageAsync(
                     compatibility.AttemptedComponentName ?? stepName,
                     compatibility.ExistingComponentName ?? "Mevcut Parça",
@@ -121,20 +110,16 @@ namespace PCPartsAPI.Controllers
                 });
             }
 
-            // 4. Uyumlu — SelectedComponents'a ekle
             var selectedJson = JsonNode.Parse(session.SelectedComponentsJson) as JsonObject ?? new JsonObject();
             selectedJson[stepName] = JsonNode.Parse(componentSpecs);
             session.SelectedComponentsJson = selectedJson.ToJsonString();
 
-            // 5. Bütçeyi güncelle (Price alanı yoksa 0 varsay)
             var price = GetComponentPrice(component);
             var nextStep = (ComponentStep)((int)session.CurrentStep + 1);
             var nextAllocated = _budgetService.RecalculateBudget(session, price, nextStep);
 
-            // 6. Adımı ilerlet
             await _sessionManager.AdvanceStepAsync(session);
 
-            // 7. Tamamlandıysa veya sonraki adım için AI mesajı üret
             string aiMessage;
             string? nextStepName = null;
 
@@ -164,9 +149,6 @@ namespace PCPartsAPI.Controllers
             });
         }
 
-        /// <summary>
-        /// CurrentStep'e göre doğru DbSet'ten parçayı bulur ve JSON spec özetini döndürür.
-        /// </summary>
         private async Task<(object? component, string specs)> FindComponentAsync(ComponentStep step, int componentId)
         {
             switch (step)
@@ -178,11 +160,12 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = p.Id,
-                        name = $"{p.Brand} {p.ModelName}",
-                        socket = p.Socket,
-                        tdp = p.Tdp,
-                        memoryTypes = p.SupportedMemoryTypes,
-                        integratedGraphics = p.IntegratedGraphics
+                        name = p.ProductName,
+                        socket = p.SocketType,
+                        tdp = p.TDP,
+                        memoryTypes = p.SupportedMemoryType,
+                        integratedGraphics = p.HasIntegratedGraphics,
+                        price = p.Price
                     });
                     return (p, specs);
                 }
@@ -193,14 +176,13 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = m.Id,
-                        name = $"{m.Brand} {m.ModelName}",
-                        socket = m.Socket,
-                        chipset = m.Chipset,
+                        name = m.ProductName,
+                        socket = m.SocketType,
                         formFactor = m.FormFactor,
                         memoryType = m.MemoryType,
-                        memorySlots = m.MemorySlots,
+                        memorySlots = m.MemorySlotCount,
                         m2SlotCount = m.M2SlotCount,
-                        maxCpuCoolerHeight = 0  // Anakart bu bilgiyi tutmuyor, Kasa tutuyor
+                        price = m.Price
                     });
                     return (m, specs);
                 }
@@ -211,11 +193,12 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = r.Id,
-                        name = $"{r.Brand} {r.ModelName}",
+                        name = r.ProductName,
                         memoryType = r.MemoryType,
-                        speed = r.Speed,
-                        totalCapacity = r.TotalCapacity,
-                        moduleCount = r.ModuleCount
+                        speed = r.SpeedMHz,
+                        totalCapacity = r.CapacityGB,
+                        moduleConfig = r.ModuleConfig,
+                        price = r.Price
                     });
                     return (r, specs);
                 }
@@ -226,12 +209,13 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = g.Id,
-                        name = $"{g.Brand} {g.ModelName}",
-                        tdp = g.Tdp,
-                        length = g.Length,
+                        name = g.ProductName,
+                        tdp = g.TDPWatt,
+                        length = g.LengthMm,
                         powerConnectors = g.PowerConnectors,
-                        vram = g.VRAMMemorySize,
-                        recommendedPsu = g.RecommendedPsu
+                        vram = g.VRAMGB,
+                        recommendedPsu = g.RecommendedPSUW,
+                        price = g.Price
                     });
                     return (g, specs);
                 }
@@ -242,11 +226,11 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = s.Id,
-                        name = $"{s.Brand} {s.ModelName}",
+                        name = s.ProductName,
                         formFactor = s.FormFactor,
-                        storageType = s.StorageType,
-                        capacity = s.Capacity,
-                        isNvme = s.IsNvme
+                        interfaceType = s.Interface,
+                        capacity = s.CapacityGB,
+                        price = s.Price
                     });
                     return (s, specs);
                 }
@@ -257,13 +241,13 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = c.Id,
-                        name = $"{c.Brand} {c.ModelName}",
-                        supportedMotherboards = c.SupportedMotherboards,
-                        maxGpuLength = c.MaxGpuLength,
-                        maxCpuCoolerHeight = c.MaxCpuCoolerHeight,
-                        maxPsuLength = c.MaxPsuLength,
-                        radiatorSupportFront = c.RadiatorSupportFront,
-                        radiatorSupportTop = c.RadiatorSupportTop
+                        name = c.ProductName,
+                        supportedMotherboards = c.SupportedMotherboardFormFactors,
+                        maxGpuLength = c.MaxGPULengthMm,
+                        maxCpuCoolerHeight = c.MaxCPUCoolerHeightMm,
+                        topRadiatorSupport = c.TopRadiatorSupportMm,
+                        frontRadiatorSupport = c.FrontRadiatorSupportMm,
+                        price = c.Price
                     });
                     return (c, specs);
                 }
@@ -274,11 +258,12 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = ps.Id,
-                        name = $"{ps.Brand} {ps.ModelName}",
-                        wattage = ps.Wattage,
-                        rating = ps.Rating,
-                        has12VHPWR = ps.Has12VHPWR,
-                        length = ps.Length
+                        name = ps.ProductName,
+                        wattage = ps.WattageW,
+                        certification = ps.Certification,
+                        isModular = ps.IsModular,
+                        formFactor = ps.FormFactor,
+                        price = ps.Price
                     });
                     return (ps, specs);
                 }
@@ -289,12 +274,13 @@ namespace PCPartsAPI.Controllers
                     var specs = JsonSerializer.Serialize(new
                     {
                         id = co.Id,
-                        name = $"{co.Brand} {co.ModelName}",
+                        name = co.ProductName,
                         coolerType = co.CoolerType,
-                        tdpRating = co.TdpRating,
+                        tdpCapacity = co.TDPCapacityW,
                         supportedSockets = co.SupportedSockets,
-                        height = co.Height,
-                        radiatorSize = co.RadiatorSize
+                        height = co.HeightMm,
+                        radiatorSize = co.RadiatorSizeMm,
+                        price = co.Price
                     });
                     return (co, specs);
                 }
@@ -303,9 +289,6 @@ namespace PCPartsAPI.Controllers
             }
         }
 
-        /// <summary>
-        /// Parçanın fiyatını alır. Model'larda Price alanı yoksa 0 döner.
-        /// </summary>
         private static decimal GetComponentPrice(object component)
         {
             var priceProp = component.GetType().GetProperty("Price");

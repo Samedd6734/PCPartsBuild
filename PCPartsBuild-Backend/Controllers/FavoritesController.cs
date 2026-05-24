@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PCPartsAPI.Data;
 using PCPartsAPI.Models;
-using PCPartsAPI.DTOs; // DTO klasörünü eklemeyi unutma
+using PCPartsAPI.DTOs;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -18,8 +18,6 @@ namespace PCPartsAPI.Controllers
             _context = context;
         }
 
-        // 1. Ekleme ve 2. Silme metodları aynen kalsın...
-        // (Buraya ekleme/silme kodlarını tekrar yapıştırmıyorum, onlar değişmedi)
         [HttpPost("add")]
         public IActionResult AddFavorite([FromBody] Favorites favorite)
         {
@@ -50,7 +48,6 @@ namespace PCPartsAPI.Controllers
             return Ok(new { Message = "Favorilerden kaldırıldı." });
         }
 
-        // --- GÜNCELLENEN KISIM: DETAYLI FAVORİ GETİRME ---
         [HttpGet("{userId}")]
         public IActionResult GetUserFavorites(string userId)
         {
@@ -66,7 +63,6 @@ namespace PCPartsAPI.Controllers
                     ComponentType = fav.ComponentType
                 };
 
-                // Türüne göre detayları bul
                 switch (fav.ComponentType.ToLower())
                 {
                     case "cpu":
@@ -74,9 +70,10 @@ namespace PCPartsAPI.Controllers
                         if (cpu != null)
                         {
                             dto.Brand = cpu.Brand;
-                            dto.Name = $"{cpu.Brand} {cpu.ModelName}";
+                            dto.Name = cpu.ProductName;
                             dto.ImageUrl = cpu.ImageUrl;
-                            dto.Specs = $"{cpu.CoreCount} Çekirdek, {cpu.Socket}";
+                            dto.Specs = $"{cpu.CoreCount} Çekirdek, {cpu.SocketType}";
+                            dto.Price = cpu.Price ?? 0;
                         }
                         break;
 
@@ -85,9 +82,10 @@ namespace PCPartsAPI.Controllers
                         if (mobo != null)
                         {
                             dto.Brand = mobo.Brand;
-                            dto.Name = $"{mobo.Brand} {mobo.ModelName}";
+                            dto.Name = mobo.ProductName;
                             dto.ImageUrl = mobo.ImageUrl;
-                            dto.Specs = $"{mobo.FormFactor}, {mobo.Socket}, {mobo.Chipset}";
+                            dto.Specs = $"{mobo.FormFactor}, {mobo.SocketType}";
+                            dto.Price = mobo.Price ?? 0;
                         }
                         break;
 
@@ -96,9 +94,10 @@ namespace PCPartsAPI.Controllers
                         if (ram != null)
                         {
                             dto.Brand = ram.Brand;
-                            dto.Name = $"{ram.Brand} {ram.ModelName}";
+                            dto.Name = ram.ProductName;
                             dto.ImageUrl = ram.ImageUrl;
-                            dto.Specs = $"{ram.MemoryType}, {ram.Speed}MHz, {ram.TotalCapacity}GB";
+                            dto.Specs = $"{ram.MemoryType}, {ram.SpeedMHz}MHz, {ram.CapacityGB}GB";
+                            dto.Price = ram.Price ?? 0;
                         }
                         break;
 
@@ -107,9 +106,10 @@ namespace PCPartsAPI.Controllers
                         if (gpu != null)
                         {
                             dto.Brand = gpu.Brand;
-                            dto.Name = $"{gpu.Brand} {gpu.ModelName}";
+                            dto.Name = gpu.ProductName;
                             dto.ImageUrl = gpu.ImageUrl;
-                            dto.Specs = $"{gpu.ChipsetBrand}, {gpu.VRAMMemorySize}GB VRAM";
+                            dto.Specs = $"{gpu.ChipManufacturer}, {gpu.VRAMGB}GB VRAM";
+                            dto.Price = gpu.Price ?? 0;
                         }
                         break;
 
@@ -118,11 +118,11 @@ namespace PCPartsAPI.Controllers
                         if (ssd != null)
                         {
                             dto.Brand = ssd.Brand;
-                            dto.Name = $"{ssd.Brand} {ssd.ModelName}";
+                            dto.Name = ssd.ProductName;
                             dto.ImageUrl = ssd.ImageUrl;
-                            // Kapasiteyi formatla
-                            string cap = ssd.Capacity >= 1024 ? $"{ssd.Capacity/1024} TB" : $"{ssd.Capacity} GB";
-                            dto.Specs = $"{cap}, {ssd.StorageType}, {ssd.ReadSpeed}/{ssd.WriteSpeed} MB/s";
+                            string cap = ssd.CapacityGB >= 1000 ? $"{ssd.CapacityGB/1000} TB" : $"{ssd.CapacityGB} GB";
+                            dto.Specs = $"{cap}, {ssd.Interface}, {ssd.ReadSpeedMBs}/{ssd.WriteSpeedMBs} MB/s";
+                            dto.Price = ssd.Price ?? 0;
                         }
                         break;
 
@@ -131,9 +131,10 @@ namespace PCPartsAPI.Controllers
                         if (kase != null)
                         {
                             dto.Brand = kase.Brand;
-                            dto.Name = $"{kase.Brand} {kase.ModelName}";
+                            dto.Name = kase.ProductName;
                             dto.ImageUrl = kase.ImageUrl;
-                            dto.Specs = $"{kase.CaseType}, {kase.SupportedMotherboards}";
+                            dto.Specs = $"{kase.SupportedMotherboardFormFactors}";
+                            dto.Price = kase.Price ?? 0;
                         }
                         break;
 
@@ -142,26 +143,27 @@ namespace PCPartsAPI.Controllers
                         if (psu != null)
                         {
                             dto.Brand = psu.Brand;
-                            dto.Name = $"{psu.Brand} {psu.ModelName}";
+                            dto.Name = psu.ProductName;
                             dto.ImageUrl = psu.ImageUrl;
-                            dto.Specs = $"{psu.Wattage}W, {psu.Rating}, {psu.FormFactor}";
+                            dto.Specs = $"{psu.WattageW}W, {psu.Certification}, {psu.FormFactor}";
+                            dto.Price = psu.Price ?? 0;
                         }
                         break;
 
-                    case "cooler": // Frontend'de "cooler" veya "cpucooler" kullanıyorsan ikisini de kontrol et
+                    case "cooler":
                     case "cpucooler":
                         var cooler = _context.CpuCoolers.Find(fav.ComponentId);
                         if (cooler != null)
                         {
                             dto.Brand = cooler.Brand;
-                            dto.Name = $"{cooler.Brand} {cooler.ModelName}";
+                            dto.Name = cooler.ProductName;
                             dto.ImageUrl = cooler.ImageUrl;
-                            dto.Specs = $"{cooler.CoolerType}, {cooler.FanSize}mm Fan";
+                            dto.Specs = $"{cooler.CoolerType}, {cooler.FanSizeMm}mm Fan";
+                            dto.Price = cooler.Price ?? 0;
                         }
                         break;
                 }
 
-                // Eğer parça silinmişse listeye ekleme
                 if (!string.IsNullOrEmpty(dto.Name))
                 {
                     dtoList.Add(dto);

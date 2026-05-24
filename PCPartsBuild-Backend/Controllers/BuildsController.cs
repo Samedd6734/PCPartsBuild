@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PCPartsAPI.Data;
 using PCPartsAPI.Models;
-using PCPartsAPI.DTOs; // DTO kullanımı için
+using PCPartsAPI.DTOs;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -18,7 +18,6 @@ namespace PCPartsAPI.Controllers
             _context = context;
         }
 
-        // 1. Sistemi Kaydet (AYNEN KALIYOR)
         [HttpPost("save")]
         public IActionResult SaveBuild([FromBody] SavedBuilds build)
         {
@@ -32,7 +31,6 @@ namespace PCPartsAPI.Controllers
             return Ok(new { Message = "Sistem başarıyla kaydedildi!", BuildId = build.Id });
         }
 
-        // 2. Kullanıcının Kayıtlı Sistemlerini Getir (8 PARÇA DESTEKLİ)
         [HttpGet("{userId}")]
         public IActionResult GetUserBuilds(string userId)
         {
@@ -53,63 +51,55 @@ namespace PCPartsAPI.Controllers
                     TotalPrice = build.TotalPrice
                 };
 
-                // 1. İŞLEMCİ
                 if (build.CpuId != null)
                 {
                     var p = _context.Processors.Find(build.CpuId);
-                    dto.CpuName = p != null ? $"{p.Brand} {p.ModelName}" : "İşlemci Bulunamadı";
+                    dto.CpuName = p != null ? $"{p.Brand} {p.ProductName}" : "İşlemci Bulunamadı";
                     dto.CpuImage = p?.ImageUrl;
                 }
 
-                // 2. EKRAN KARTI
                 if (build.GpuId != null)
                 {
                     var p = _context.Gpus.Find(build.GpuId);
-                    dto.GpuName = p != null ? $"{p.Brand} {p.ModelName}" : "GPU Bulunamadı";
+                    dto.GpuName = p != null ? $"{p.Brand} {p.ProductName}" : "GPU Bulunamadı";
                     dto.GpuImage = p?.ImageUrl;
                 }
 
-                // 3. RAM
                 if (build.RamId != null)
                 {
                     var p = _context.Rams.Find(build.RamId);
-                    dto.RamName = p != null ? $"{p.Brand} {p.ModelName} ({p.TotalCapacity}GB)" : "RAM Bulunamadı";
+                    dto.RamName = p != null ? $"{p.Brand} {p.ProductName} ({p.CapacityGB}GB)" : "RAM Bulunamadı";
                 }
 
-                // 4. ANAKART (YENİ)
                 if (build.MotherboardId != null)
                 {
                     var p = _context.Motherboards.Find(build.MotherboardId);
-                    dto.MotherboardName = p != null ? $"{p.Brand} {p.ModelName}" : "Anakart Bulunamadı";
+                    dto.MotherboardName = p != null ? $"{p.Brand} {p.ProductName}" : "Anakart Bulunamadı";
                 }
 
-                // 5. DEPOLAMA (YENİ)
                 if (build.StorageId != null)
                 {
                     var p = _context.Storages.Find(build.StorageId);
-                    dto.StorageName = p != null ? $"{p.Brand} {p.ModelName}" : "Disk Bulunamadı";
+                    dto.StorageName = p != null ? $"{p.Brand} {p.ProductName}" : "Disk Bulunamadı";
                 }
 
-                // 6. KASA
                 if (build.CaseId != null)
                 {
                     var p = _context.Cases.Find(build.CaseId);
-                    dto.CaseName = p != null ? $"{p.Brand} {p.ModelName}" : "Kasa Bulunamadı";
+                    dto.CaseName = p != null ? $"{p.Brand} {p.ProductName}" : "Kasa Bulunamadı";
                     dto.CaseImage = p?.ImageUrl;
                 }
 
-                // 7. PSU (YENİ)
                 if (build.PsuId != null)
                 {
                     var p = _context.Psus.Find(build.PsuId);
-                    dto.PsuName = p != null ? $"{p.Brand} {p.ModelName} ({p.Wattage}W)" : "PSU Bulunamadı";
+                    dto.PsuName = p != null ? $"{p.Brand} {p.ProductName} ({p.WattageW}W)" : "PSU Bulunamadı";
                 }
 
-                // 8. SOĞUTUCU (YENİ)
                 if (build.CpuCoolerId != null)
                 {
                     var p = _context.CpuCoolers.Find(build.CpuCoolerId);
-                    dto.CoolerName = p != null ? $"{p.Brand} {p.ModelName}" : "Soğutucu Bulunamadı";
+                    dto.CoolerName = p != null ? $"{p.Brand} {p.ProductName}" : "Soğutucu Bulunamadı";
                 }
 
                 buildDtos.Add(dto);
@@ -118,7 +108,6 @@ namespace PCPartsAPI.Controllers
             return Ok(buildDtos);
         }
 
-        // 3. Sistemi Sil (AYNEN KALIYOR)
         [HttpDelete("{id}")]
         public IActionResult DeleteBuild(int id)
         {

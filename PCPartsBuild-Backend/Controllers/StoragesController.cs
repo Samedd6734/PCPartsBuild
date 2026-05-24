@@ -26,7 +26,7 @@ namespace PCPartsAPI.Controllers
 
             if (!string.IsNullOrEmpty(request.SearchTerm)) {
                 var search = request.SearchTerm.ToLowerInvariant();
-                query = query.Where(s => (s.Brand ?? "").ToLower().Contains(search) || (s.ModelName ?? "").ToLower().Contains(search));
+                query = query.Where(s => (s.Brand ?? "").ToLower().Contains(search) || (s.ProductName ?? "").ToLower().Contains(search));
             }
 
             if (!string.IsNullOrEmpty(request.Brand)) {
@@ -34,29 +34,14 @@ namespace PCPartsAPI.Controllers
                 query = query.Where(s => brands.Contains((s.Brand ?? "").ToLower().Trim()));
             }
 
-            if (!string.IsNullOrEmpty(request.StorageType)) {
-                var types = request.StorageType.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
-                query = query.Where(s => types.Contains((s.StorageType ?? "").ToLower().Trim()));
-            }
-
-            if (!string.IsNullOrEmpty(request.TotalCapacity)) {
-                var vals = request.TotalCapacity.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
-                if (vals.Any()) query = query.Where(s => vals.Contains(s.Capacity));
-            }
-
-            if (!string.IsNullOrEmpty(request.IsNvme)) {
-                var boolVals = request.IsNvme.Split(',').Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null).Where(b => b != null).Select(b => b.Value).ToList();
-                if (boolVals.Any()) query = query.Where(s => boolVals.Contains(s.IsNvme));
-            }
-
             if (!string.IsNullOrEmpty(request.FormFactor)) {
                 var formFactors = request.FormFactor.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
                 query = query.Where(s => formFactors.Contains((s.FormFactor ?? "").ToLower().Trim()));
             }
 
-            if (!string.IsNullOrEmpty(request.HasDramCache)) {
-                var boolVals = request.HasDramCache.Split(',').Select(s => bool.TryParse(s, out bool b) ? b : (bool?)null).Where(b => b != null).Select(b => b.Value).ToList();
-                if (boolVals.Any()) query = query.Where(s => boolVals.Contains(s.HasDramCache));
+            if (!string.IsNullOrEmpty(request.CapacityGB)) {
+                var vals = request.CapacityGB.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(s => vals.Contains(s.CapacityGB));
             }
 
             if (!string.IsNullOrEmpty(request.Interface)) {
@@ -64,12 +49,17 @@ namespace PCPartsAPI.Controllers
                 query = query.Where(s => interfaces.Contains((s.Interface ?? "").ToLower().Trim()));
             }
 
-            if (!string.IsNullOrEmpty(request.NandType)) {
-                var nandTypes = request.NandType.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
-                query = query.Where(s => nandTypes.Contains((s.NandType ?? "").ToLower().Trim()));
+            if (!string.IsNullOrEmpty(request.StorageFormFactor)) {
+                var formFactors = request.StorageFormFactor.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(s => formFactors.Contains((s.FormFactor ?? "").ToLower().Trim()));
             }
 
-            string cacheKey = $"TotalCount_Storages_V8_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.StorageType?.ToLowerInvariant()}_{request.TotalCapacity}_{request.FormFactor?.ToLowerInvariant()}_{request.IsNvme}_{request.HasDramCache}_{request.Interface?.ToLowerInvariant()}_{request.NandType?.ToLowerInvariant()}";
+            if (request.MinPrice.HasValue)
+                query = query.Where(s => s.Price >= request.MinPrice.Value);
+            if (request.MaxPrice.HasValue)
+                query = query.Where(s => s.Price <= request.MaxPrice.Value);
+
+            string cacheKey = $"TotalCount_Storages_V10_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.FormFactor?.ToLowerInvariant()}_{request.StorageFormFactor?.ToLowerInvariant()}_{request.CapacityGB}_{request.Interface?.ToLowerInvariant()}_{request.MinPrice}_{request.MaxPrice}";
 
             if (!_cache.TryGetValue(cacheKey, out int totalCount))
             {
@@ -81,6 +71,16 @@ namespace PCPartsAPI.Controllers
             int pageSize = request.PageSize > 0 ? request.PageSize : 25;
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             
+            // Compatibility Sorting
+            if (request.CompatibleMoboM2Slots == 0 && request.CompatibleMotherboardId != null) // Mobo selected but no M2 slots
+            {
+                query = query.OrderByDescending(s => !(s.FormFactor != null && s.FormFactor.ToLower().Contains("m.2"))).ThenBy(s => s.Id);
+            }
+            else
+            {
+                query = query.OrderBy(s => s.Id);
+            }
+
             var storages = await query.Skip((pageNum - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return Ok(new PCPartsAPI.Dtos.PagedResponse<Storage> { Data = storages, TotalCount = totalCount, TotalPages = totalPages, HasNextPage = pageNum < totalPages });

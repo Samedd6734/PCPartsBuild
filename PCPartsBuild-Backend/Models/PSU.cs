@@ -1,21 +1,48 @@
-﻿namespace PCPartsAPI.Models
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PCPartsAPI.Models
 {
     public class Psu
     {
+        [Key]
         public int Id { get; set; }
-        public string Brand { get; set; }
-        public string ModelName { get; set; }
-        public int Wattage { get; set; }
-        public string Rating { get; set; } // 80+ Gold, Bronze
-        public string FormFactor { get; set; } // ATX, SFX
-        public bool IsModular { get; set; }
-        public int Length { get; set; } // mm (Kasa uyumu için)
 
-        // Kablo Sayıları (Uyumluluk Kontrolü İçin Kritik)
-        public int Eps8PinCount { get; set; } // CPU Güç Kablosu Sayısı (Anakartın istediği kadar olmalı)
-        public int Pcie8PinCount { get; set; } // Ekran Kartı Güç Kablosu Sayısı (6+2 pin)
-        public bool Has12VHPWR { get; set; } // Yeni nesil Nvidia kartlar için tekli 16 pin kablo var mı?
-        public int SataCount { get; set; } // HDD/SSD için
-        public string ImageUrl { get; set; } = ""; // Resim linki 
+        [Required, MaxLength(500)]
+        public string EpeyUrl { get; set; } = string.Empty;
+
+        [Required, MaxLength(300)]
+        public string ProductName { get; set; } = string.Empty;
+
+        [Required, MaxLength(100)]
+        public string Brand { get; set; } = string.Empty;
+
+        public decimal? Price { get; set; }
+
+        [MaxLength(500)]
+        public string ImageUrl { get; set; } = string.Empty;
+
+        public int? EpeyScore { get; set; }
+
+        // Güç Kapasitesi
+        public int WattageW { get; set; }
+
+        // Kasa Uyumluluğu
+        [MaxLength(20)]
+        public string FormFactor { get; set; } = string.Empty;
+
+        // Verimlilik ve Standart
+        [MaxLength(50)]
+        public string Certification { get; set; } = string.Empty;
+
+        [MaxLength(50)]
+        public string ATXVersion { get; set; } = string.Empty;
+
+        [Required, MaxLength(30)]
+        public string IsModular { get; set; } = string.Empty;
+
+        // Ham Epey Verisi
+        [Column(TypeName = "jsonb")]
+        public string RawEpeyData { get; set; } = "{}";
     }
 }

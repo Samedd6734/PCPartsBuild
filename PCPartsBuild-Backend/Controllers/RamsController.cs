@@ -26,7 +26,7 @@ namespace PCPartsAPI.Controllers
 
             if (!string.IsNullOrEmpty(request.SearchTerm)) {
                 var search = request.SearchTerm.ToLowerInvariant();
-                query = query.Where(r => (r.Brand ?? "").ToLower().Contains(search) || (r.ModelName ?? "").ToLower().Contains(search));
+                query = query.Where(r => (r.Brand ?? "").ToLower().Contains(search) || (r.ProductName ?? "").ToLower().Contains(search));
             }
 
             if (!string.IsNullOrEmpty(request.Brand)) {
@@ -39,14 +39,14 @@ namespace PCPartsAPI.Controllers
                 query = query.Where(r => memTypes.Contains((r.MemoryType ?? "").ToLower().Trim()));
             }
 
-            if (!string.IsNullOrEmpty(request.TotalCapacity)) {
-                var vals = request.TotalCapacity.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
-                if (vals.Any()) query = query.Where(r => vals.Contains(r.TotalCapacity));
+            if (!string.IsNullOrEmpty(request.CapacityGB)) {
+                var vals = request.CapacityGB.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(r => vals.Contains(r.CapacityGB));
             }
 
-            if (!string.IsNullOrEmpty(request.Speed)) {
-                var vals = request.Speed.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
-                if (vals.Any()) query = query.Where(r => vals.Contains(r.Speed));
+            if (!string.IsNullOrEmpty(request.SpeedMHz)) {
+                var vals = request.SpeedMHz.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
+                if (vals.Any()) query = query.Where(r => vals.Contains(r.SpeedMHz));
             }
 
             if (!string.IsNullOrEmpty(request.CasLatency)) {
@@ -54,12 +54,17 @@ namespace PCPartsAPI.Controllers
                 if (vals.Any()) query = query.Where(r => vals.Contains(r.CasLatency));
             }
 
-            if (!string.IsNullOrEmpty(request.ModuleCount)) {
-                var vals = request.ModuleCount.Split(',').Select(s => int.TryParse(s, out int n) ? n : (int?)null).Where(n => n != null).Select(n => n.Value).ToList();
-                if (vals.Any()) query = query.Where(r => vals.Contains(r.ModuleCount));
+            if (!string.IsNullOrEmpty(request.ModuleConfig)) {
+                var configs = request.ModuleConfig.Split(',').Select(s => s.Trim().ToLowerInvariant()).ToList();
+                query = query.Where(r => configs.Contains((r.ModuleConfig ?? "").ToLower().Trim()));
             }
 
-            string cacheKey = $"TotalCount_Rams_V8_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.MemoryType?.ToLowerInvariant()}_{request.TotalCapacity}_{request.Speed}_{request.CasLatency}_{request.ModuleCount}";
+            if (request.MinPrice.HasValue)
+                query = query.Where(r => r.Price >= request.MinPrice.Value);
+            if (request.MaxPrice.HasValue)
+                query = query.Where(r => r.Price <= request.MaxPrice.Value);
+
+            string cacheKey = $"TotalCount_Rams_V10_{request.SearchTerm?.ToLowerInvariant()}_{request.Brand?.ToLowerInvariant()}_{request.MemoryType?.ToLowerInvariant()}_{request.CapacityGB}_{request.SpeedMHz}_{request.CasLatency}_{request.ModuleConfig?.ToLowerInvariant()}_{request.MinPrice}_{request.MaxPrice}";
 
             if (!_cache.TryGetValue(cacheKey, out int totalCount))
             {

@@ -122,8 +122,8 @@ export default function PukPage() {
         const normalize = v => v ? String(v).trim().toLowerCase() : "";
         
         if (cpu && mobo) {
-            if (normalize(cpu.socket) !== normalize(mobo.socket)) {
-                issues.push({ level: 'critical', msg: `${lang === 'tr' ? 'İşlemci' : 'CPU'} soketi (${cpu.socket}) ile Anakart soketi (${mobo.socket}) uyumsuz.` });
+            if (normalize(cpu.socketType) !== normalize(mobo.socketType)) {
+                issues.push({ level: 'critical', msg: `${lang === 'tr' ? 'İşlemci' : 'CPU'} soketi (${cpu.socketType}) ile Anakart soketi (${mobo.socketType}) uyumsuz.` });
             }
         }
         if (ram && mobo) {
@@ -132,8 +132,8 @@ export default function PukPage() {
             }
         }
         if (gpu && pcCase) {
-            if (gpu.length > pcCase.maxGpuLength) {
-                issues.push({ level: 'critical', msg: `Ekran kartı (${gpu.length}mm) kasaya sığmıyor (Max ${pcCase.maxGpuLength}mm).` });
+            if (gpu.lengthMm > pcCase.maxGPULengthMm) {
+                issues.push({ level: 'critical', msg: `Ekran kartı (${gpu.lengthMm}mm) kasaya sığmıyor (Max ${pcCase.maxGPULengthMm}mm).` });
             }
         }
 
@@ -220,7 +220,7 @@ export default function PukPage() {
                                         onClick={() => toggleDropdown(slot.id, slot.endpoint)}
                                     >
                                         <span className={`truncate select-none font-medium ${selectedParts[slot.id] ? 'text-gray-900 dark:text-white' : 'text-gray-400'}`}>
-                                            {selectedParts[slot.id] ? `${selectedParts[slot.id].brand} ${selectedParts[slot.id].modelName}` : t["select-default"]}
+                                            {selectedParts[slot.id] ? `${selectedParts[slot.id].brand} ${selectedParts[slot.id].productName}` : t["select-default"]}
                                         </span>
                                         <div className="flex items-center gap-1">
                                             {selectedParts[slot.id] && (
@@ -250,14 +250,14 @@ export default function PukPage() {
                                                 ) : (
                                                     allData[slot.id]?.filter(item => {
                                                         const search = (searchTerms[slot.id] || '').toLowerCase();
-                                                        return `${item.brand} ${item.modelName}`.toLowerCase().includes(search);
+                                                        return `${item.brand} ${item.productName}`.toLowerCase().includes(search);
                                                     }).map(item => (
                                                         <div 
                                                             key={item.id}
                                                             className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors"
                                                             onClick={() => handleSelect(slot.id, item)}
                                                         >
-                                                            {item.brand} {item.modelName}
+                                                            {item.brand} {item.productName}
                                                         </div>
                                                     ))
                                                 )}
