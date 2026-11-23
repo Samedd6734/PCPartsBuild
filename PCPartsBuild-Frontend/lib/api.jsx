@@ -1,7 +1,7 @@
 // Relative path for client-side to leverage Next.js rewrites
 const CLIENT_API_URL = '/api';
 // Full path for server-side if needed (fallback)
-const SERVER_API_URL = 'http://localhost:5298/api';
+const SERVER_API_URL = `${process.env.BACKEND_API_URL || 'http://localhost:5298'}/api`;
 
 const apiFetch = async (endpoint, options = {}) => {
   const isServer = typeof window === 'undefined';

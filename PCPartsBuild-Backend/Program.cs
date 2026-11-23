@@ -7,6 +7,7 @@ using PCPartsAPI.Services; // 2. EKLENDİ: Senin EmailSender sınıfın
 using PCPartsAPI.Services.Interfaces; // Asistan servisleri
 using PCPartsAPI.Models; // AppUser için gerekli
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -18,6 +19,26 @@ namespace PCPartsAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var allowedOrigins = builder.Configuration
+                .GetSection("CorsSettings:AllowedOrigins")
+                .Get<string[]>() ?? Array.Empty<string>();
+
+            if (allowedOrigins.Length == 0)
+            {
+                allowedOrigins = new[]
+                {
+                    "http://localhost:3000",
+                    "http://127.0.0.1:3000",
+                    "http://localhost:5500",
+                    "http://127.0.0.1:5500"
+                };
+            }
+
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddMemoryCache();
@@ -38,15 +59,11 @@ namespace PCPartsAPI
             // --- 1. CORS AYARLARI ---
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll",
-                    b => b.SetIsOriginAllowed(origin => 
-                        {
-                            var host = new Uri(origin).Host;
-                            return host == "localhost" || host == "127.0.0.1";
-                        })
-                         .AllowAnyHeader()
-                         .AllowAnyMethod()
-                         .AllowCredentials());
+                options.AddPolicy("AllowConfigured",
+                    b => b.WithOrigins(allowedOrigins)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials());
             });
 
             // --- VERİTABANI BAĞLANTISI ---
@@ -110,12 +127,15 @@ namespace PCPartsAPI
 
             // --- MIDDLEWARE (UYGULAMA AKIŞI) ---
 
+            app.UseForwardedHeaders();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            else
+
+            if (app.Configuration.GetValue("ReverseProxy:UseHttpsRedirection", false))
             {
                 app.UseHttpsRedirection();
             }
@@ -125,7 +145,7 @@ namespace PCPartsAPI
 
             // 5. CORS'U AKTİF ET (Auth'dan önce olmalı)
             app.UseRouting();
-            app.UseCors("AllowAll");
+            app.UseCors("AllowConfigured");
 
             app.UseAuthentication();
             app.UseAuthorization();

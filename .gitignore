@@ -28,6 +28,8 @@ packages/
 # We keep appsettings templates, but ignore actual config with secrets
 appsettings.json
 appsettings.Development.json
+appsettings.Production.json
+!appsettings.Production.example.json
 PCPartsAPI.http
 PCPartsBuild-Backend/build_output*.txt
 

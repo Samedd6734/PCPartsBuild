@@ -1,0 +1,17 @@
+[Unit]
+Description=PCPartsBuild Frontend
+After=network.target pcp-api.service
+
+[Service]
+WorkingDirectory=/var/www/pcpartsbuild/frontend
+ExecStart=/usr/bin/npm run start -- -p 3000
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+User=www-data
+Group=www-data
+Environment=NODE_ENV=production
+Environment=HOME=/var/www/pcpartsbuild
+
+[Install]
+WantedBy=multi-user.target

@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
+const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:5298';
+
 const nextConfig = {
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:5298/api/:path*', // Proxy to Backend
+        destination: `${backendUrl}/api/:path*`,
       },
     ];
   },

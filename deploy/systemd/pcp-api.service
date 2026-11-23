@@ -1,0 +1,17 @@
+[Unit]
+Description=PCPartsBuild API
+After=network.target
+
+[Service]
+WorkingDirectory=/var/www/pcpartsbuild/backend
+ExecStart=/usr/bin/dotnet /var/www/pcpartsbuild/backend/PCPartsAPI.dll
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+User=www-data
+Group=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5298
+
+[Install]
+WantedBy=multi-user.target
