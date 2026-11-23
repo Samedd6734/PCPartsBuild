@@ -1,6 +1,0 @@
-@PCPartsAPI_HostAddress = http://localhost:5298
-
-GET {{PCPartsAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
